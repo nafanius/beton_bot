@@ -1,8 +1,7 @@
 import logging
 import telebot
 from telebot import types
-
-from auth_data import token
+import json
 
 def telegram_bot(token):
     bot = telebot.TeleBot(token)
@@ -64,12 +63,12 @@ def telegram_bot(token):
         # bot.send_message(message.chat.id, " ")
         user_state[message.chat.id] = 0  # Устанавливаем начальное состояние пользователя
         markup = types.InlineKeyboardMarkup(row_width=1)  # Создаем разметку с кнопками
-        btn1 = types.InlineKeyboardButton("Посмотреть расписание на сегодня", callback_data="button1")
-        btn2 = types.InlineKeyboardButton("Посмотреть текущую погоду", callback_data="button2")
-        btn3 = types.InlineKeyboardButton("Найти TОЧНЫЙ АДРЕС БУДОВЫ", callback_data="button3")
+        btn1 = types.InlineKeyboardButton("ПОСМОТРЕТЬ РАСПИСАНИЕ НА СЕГОДНЯ", callback_data="button1")
+        btn2 = types.InlineKeyboardButton("ПОСМОТРЕТЬ ТЕКУЩУЮ ПОГОДУ", callback_data="button2")
+        btn3 = types.InlineKeyboardButton("НАЙТИ ТОЧНЫЙ АДРЕС БУДОВЫ", callback_data="button3")
         btn4 = types.InlineKeyboardButton("ТЕЛЕФОНЫ КОЛЛЕГ", callback_data="button4")
         btn5 = types.InlineKeyboardButton("ГДЕ ПРОДАТЬ БЕТОН", callback_data="button5")
-        btn6 = types.InlineKeyboardButton("Посмотреть где, кто сейчас находится", callback_data="button6")
+        btn6 = types.InlineKeyboardButton("ПОСМОТРЕТЬ ГДЕ, КТО СЕЙЧАС НАХОДИТЬСЯ", callback_data="button6")
         markup.add(btn1, btn2, btn3, btn4, btn5, btn6)  # Добавляем кнопки в разметку
         bot.send_message(message.chat.id, "ЧЕМ Я МОГУ ПОМОЧЬ:", reply_markup=markup)
 
@@ -87,6 +86,21 @@ def telegram_bot(token):
 
     @bot.message_handler(commands=['add'])
     def add_message(message):
+
+        # Функция для записи словаря в файл
+        def save_dict_to_file(dictionary, filename):
+            with open(filename, 'w', encoding='utf-8') as f:
+                json.dump(dictionary, f, ensure_ascii=False, indent=4)
+
+        # Функция для загрузки словаря из файла
+        def load_dict_from_file(filename):
+            with open(filename, 'r', encoding='utf-8') as f:
+                return json.load(f)
+
+        dic_bud = load_dict_from_file("dic_bud.json")
+
+
+        """добавляем будову"""
         bot.send_message(message.chat.id, f"{message.from_user.first_name}\n"
                                           f"Я бот помогающий дать всю необходимую информацию для начинающих и продвинутых бетономешальщиков\n"
                                           f"Hабери '/h' - и я тебе расскажу что я умею\n"
