@@ -43,128 +43,183 @@ def telegram_bot(token):
                              f"Добро пожаловать, {new_member.first_name}! Ты находишся в чатике CONCRETных мужиков,"
                              f"льющих БЕТОН")
 
+            bot.send_message(message.chat.id,
+                             f"{new_member.first_name}\n:набери '/h' - и я тебе расскажу что я умею\n"
+                             f"'/s' -  функции которые я могу выполнять \n")
+
     @bot.callback_query_handler(func=lambda call: True)
     def handle_callback(call):
         if call.data == "button1":
             user_state[call.message.chat.id] += 1
-            next_question(call.message)
+            bot.send_message(call.message.chat.id, "НАЖАТА КНОПКА 1")
+            # как вызывать дочернюю функцию
+            # next_question(call.message)
 
         elif call.data == "button2":
             user_state[call.message.chat.id] += 1
-            next_question(call.message)
 
     # Приветствие
-    @bot.message_handler(commands=['start'])
+    @bot.message_handler(commands=['s'])
     def start_message(message):
-        bot.send_message(message.chat.id, "")
+        # bot.send_message(message.chat.id, " ")
         user_state[message.chat.id] = 0  # Устанавливаем начальное состояние пользователя
-        bot.send_message(message.chat.id, questions[0])
+        markup = types.InlineKeyboardMarkup(row_width=1)  # Создаем разметку с кнопками
+        btn1 = types.InlineKeyboardButton("Посмотреть расписание на сегодня", callback_data="button1")
+        btn2 = types.InlineKeyboardButton("Посмотреть текущую погоду", callback_data="button2")
+        btn3 = types.InlineKeyboardButton("Найти TОЧНЫЙ АДРЕС БУДОВЫ", callback_data="button3")
+        btn4 = types.InlineKeyboardButton("ТЕЛЕФОНЫ КОЛЛЕГ", callback_data="button4")
+        btn5 = types.InlineKeyboardButton("ГДЕ ПРОДАТЬ БЕТОН", callback_data="button5")
+        btn6 = types.InlineKeyboardButton("Посмотреть где, кто сейчас находится", callback_data="button6")
+        markup.add(btn1, btn2, btn3, btn4, btn5, btn6)  # Добавляем кнопки в разметку
+        bot.send_message(message.chat.id, "ЧЕМ Я МОГУ ПОМОЧЬ:", reply_markup=markup)
 
-    # Обработка текстовых ответов
-    @bot.message_handler(content_types=['text'])
-    def handle_text(message):
-        state = user_state.get(message.chat.id, 0)
-        logging.info(f" state handle_text {state}")
 
-        # if state == 0:
-        #     return
-        if message.chat.id not in user_state:
-            return
 
-        if state == len(questions) or state == len(questions) + 2 or state == len(questions) + 5:
-            bot.send_message(message.chat.id, "Пожалуйста, отправьте аудиосообщение, как указано в задании.")
-            return
+    # help
+    @bot.message_handler(commands=['h'])
+    def help_message(message):
+        bot.send_message(message.chat.id, f"{message.from_user.first_name}\n"
+                                          f"Я бот помогающий дать всю необходимую информацию для начинающих и продвинутых бетономешальщиков\n"
+                                          f"Hабери '/h' - и я тебе расскажу что я умею\n"
+                                          f"'/s' -  функции которые я могу выполнять \n")
+        user_state[message.chat.id] = 0  # Устанавливаем начальное состояние пользователя
 
-        if state < len(questions):
-            user_state[message.chat.id] += 1
-            next_question(message)
 
-        elif state == len(questions):
-            user_state[message.chat.id] += 1
-            next_question(message)
+    @bot.message_handler(commands=['add'])
+    def add_message(message):
+        bot.send_message(message.chat.id, f"{message.from_user.first_name}\n"
+                                          f"Я бот помогающий дать всю необходимую информацию для начинающих и продвинутых бетономешальщиков\n"
+                                          f"Hабери '/h' - и я тебе расскажу что я умею\n"
+                                          f"'/s' -  функции которые я могу выполнять \n")
+        user_state[message.chat.id] = 0  # Устанавливаем начальное состояние пользователя
 
-        elif state == len(questions) + 1:
-            user_state[message.chat.id] += 1
-            next_question(message)
 
-        elif state == len(questions) + 2:
-            user_state[message.chat.id] += 1
-            next_question(message)
 
-        elif state == len(questions) + 3:
-            user_state[message.chat.id] += 1
-            next_question(message)
 
-        elif state == len(questions) + 4:
-            user_state[message.chat.id] += 1
-            next_question(message)
 
-        elif state == len(questions) + 6:
-            user_state[message.chat.id] += 1
-            next_question(message)
 
-        elif state == len(questions) + 7:
-            user_state[message.chat.id] += 1
-            next_question(message)
 
-        elif state == len(questions) + 8:
-            user_state[message.chat.id] += 1
-            next_question(message)
 
-        elif state == len(questions) + 9:
-            user_state[message.chat.id] += 1
-            next_question(message)
 
-        elif state == len(questions) + 10:
-            user_state[message.chat.id] += 1
-            next_question(message)
 
-    @bot.message_handler(content_types=['voice'])
-    def handle_audio(message):
-        bot.send_message(message.chat.id, "Спасибо за ваше аудиосообщение!")
-        user_state[message.chat.id] += 1
-        next_question(message)
 
-    # Функция для перехода к следующему вопросу
-    def next_question(message):
 
-        state = user_state.get(message.chat.id, 0)
-        logging.info(state)
-        if state < len(questions):
-            bot.send_message(message.chat.id, questions[state])
-        elif state == len(questions):
-            bot.send_message(message.chat.id, audio_task_1)
 
-        elif state == len(questions) + 1:
-            bot.send_message(message.chat.id,
-                             "Прямо сейчас выполните все упражнения по этому видео\n https://youtu.be/BaSK40u4Kq4")
 
-            markup = types.InlineKeyboardMarkup()  # Создаем разметку с кнопками
-            btn1 = types.InlineKeyboardButton("Проверочное задание 1", callback_data="button1")
-            markup.add(btn1)  # Добавляем кнопки в разметку
-            bot.send_message(message.chat.id, "После выполнения нажмите на кнопку", reply_markup=markup)
 
-            # handle_text(message)
-        elif state == len(questions) + 2:
-            bot.send_message(message.chat.id, audio_task_2)
-        elif state == len(questions) + 3:
-            bot.send_message(message.chat.id,
-                             "Послушайте предыдущее аудио. Напишите, есть ли изменения в вашей дикции.")
 
-        elif state == len(questions) + 4:
-            bot.send_message(message.chat.id, "Выполните все упражнения по этому видео https://youtu.be/VlbLHjPnQ3w")
-            markup = types.InlineKeyboardMarkup()  # Создаем разметку с кнопками
-            btn2 = types.InlineKeyboardButton("Проверочное задание 2", callback_data="button2")
-            markup.add(btn2)  # Добавляем кнопки в разметку
-            bot.send_message(message.chat.id, "После выполнения нажмите на кнопку", reply_markup=markup)
 
-        elif state == len(questions) + 5:
-            bot.send_message(message.chat.id, audio_task_3)
-        elif state == len(questions) + 6:
-            bot.send_message(message.chat.id, "Есть ли изменения в вашей дикции и голосе после двух уроков?")
 
-        elif state == len(questions) + 7:
-            bot.send_message(message.chat.id, final_message)
+
+
+
+
+    #
+    # # Обработка текстовых ответов
+    # @bot.message_handler(content_types=['text'])
+    # def handle_text(message):
+    #     state = user_state.get(message.chat.id, 0)
+    #     logging.info(f" state handle_text {state}")
+    #
+    #     # if state == 0:
+    #     #     return
+    #     if message.chat.id not in user_state:
+    #         return
+    #
+    #     if state == len(questions) or state == len(questions) + 2 or state == len(questions) + 5:
+    #         bot.send_message(message.chat.id, "Пожалуйста, отправьте аудиосообщение, как указано в задании.")
+    #         return
+    #
+    #     if state < len(questions):
+    #         user_state[message.chat.id] += 1
+    #         next_question(message)
+    #
+    #     elif state == len(questions):
+    #         user_state[message.chat.id] += 1
+    #         next_question(message)
+    #
+    #     elif state == len(questions) + 1:
+    #         user_state[message.chat.id] += 1
+    #         next_question(message)
+    #
+    #     elif state == len(questions) + 2:
+    #         user_state[message.chat.id] += 1
+    #         next_question(message)
+    #
+    #     elif state == len(questions) + 3:
+    #         user_state[message.chat.id] += 1
+    #         next_question(message)
+    #
+    #     elif state == len(questions) + 4:
+    #         user_state[message.chat.id] += 1
+    #         next_question(message)
+    #
+    #     elif state == len(questions) + 6:
+    #         user_state[message.chat.id] += 1
+    #         next_question(message)
+    #
+    #     elif state == len(questions) + 7:
+    #         user_state[message.chat.id] += 1
+    #         next_question(message)
+    #
+    #     elif state == len(questions) + 8:
+    #         user_state[message.chat.id] += 1
+    #         next_question(message)
+    #
+    #     elif state == len(questions) + 9:
+    #         user_state[message.chat.id] +=
+    #         next_question(message)
+    #
+    #     elif state == len(questions) + 10:
+    #         user_state[message.chat.id] += 1
+    #         next_question(message)
+    #
+    # @bot.message_handler(content_types=['voice'])
+    # def handle_audio(message):
+    #     bot.send_message(message.chat.id, "Спасибо за ваше аудиосообщение!")
+    #     user_state[message.chat.id] += 1
+    #     next_question(message)
+    #
+    # # Функция для перехода к следующему вопросу
+    # def next_question(message):
+    #
+    #     state = user_state.get(message.chat.id, 0)
+    #     logging.info(state)
+    #     if state < len(questions):
+    #         bot.send_message(message.chat.id, questions[state])
+    #     elif state == len(questions):
+    #         bot.send_message(message.chat.id, audio_task_1)
+    #
+    #     elif state == len(questions) + 1:
+    #         bot.send_message(message.chat.id,
+    #                          "Прямо сейчас выполните все упражнения по этому видео\n https://youtu.be/BaSK40u4Kq4")
+    #
+    #         markup = types.InlineKeyboardMarkup()  # Создаем разметку с кнопками
+    #         btn1 = types.InlineKeyboardButton("Проверочное задание 1", callback_data="button1")
+    #         markup.add(btn1)  # Добавляем кнопки в разметку
+    #         bot.send_message(message.chat.id, "После выполнения нажмите на кнопку", reply_markup=markup)
+    #
+    #         # handle_text(message)
+    #     elif state == len(questions) + 2:
+    #         bot.send_message(message.chat.id, audio_task_2)
+    #     elif state == len(questions) + 3:
+    #         bot.send_message(message.chat.id,
+    #                          "Послушайте предыдущее аудио. Напишите, есть ли изменения в вашей дикции.")
+    #
+    #     elif state == len(questions) + 4:
+    #         bot.send_message(message.chat.id, "Выполните все упражнения по этому видео https://youtu.be/VlbLHjPnQ3w")
+    #         markup = types.InlineKeyboardMarkup()  # Создаем разметку с кнопками
+    #         btn2 = types.InlineKeyboardButton("Проверочное задание 2", callback_data="button2")
+    #         markup.add(btn2)  # Добавляем кнопки в разметку
+    #         bot.send_message(message.chat.id, "После выполнения нажмите на кнопку", reply_markup=markup)
+    #
+    #     elif state == len(questions) + 5:
+    #         bot.send_message(message.chat.id, audio_task_3)
+    #     elif state == len(questions) + 6:
+    #         bot.send_message(message.chat.id, "Есть ли изменения в вашей дикции и голосе после двух уроков?")
+    #
+    #     elif state == len(questions) + 7:
+    #         bot.send_message(message.chat.id, final_message)
 
     bot.polling(none_stop=True)
 
