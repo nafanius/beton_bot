@@ -33,7 +33,7 @@ def weather_3day():
     for w in weather_3day[1:]:
         forecast = {'температура минимальная':w['main']['temp_min'],
                     'температура максимальная':w['main']['temp_max'],
-                    'темпраеура ощущение':w['main']['feels_like'],
+                    'temp':w['main']['feels_like'],
                     'облачность':w['weather'][0]['description'],
                     'ветер':w['wind']['speed']}
 
@@ -44,9 +44,9 @@ def weather_3day():
 
 
 
-
-
-print(weather_3day())
-
-print(weather_now())
-
+#
+#
+# print(weather_3day())
+#
+# print(weather_now())
+#

@@ -1,7 +1,12 @@
+import json
 import logging
+from time import daylight
+
+import weather
 import telebot
 from telebot import types
-import json
+from auth_data import token
+
 
 def telegram_bot(token):
     bot = telebot.TeleBot(token)
@@ -11,29 +16,6 @@ def telegram_bot(token):
 
     # Переменные для хранения состояний пользователя
     user_state = {}
-
-    # Список вопросов и сообщений
-    questions = [
-        "Где вы обо мне услышали и почему вас заинтересовала именно моя программа?",
-        "Чего вы ждете от курса и какая проблема с речью у вас на данный момент?",
-        "Где вы используете навык говорения? Это связано с вашей работой? Вы ведете блог или конференции, вы коуч или наставник?",
-        "Что вы уже пробовали? Может быть, брали уроки по речи или вокалу, или занимались по моим роликам на YouTube?"
-    ]
-
-    text = 'Маша Ромаше дала сыворотку из-под простокваши. Маша \
-    Ромаше дала сыворотку из-под простокваши. Маше дали кашу, а Саше простоквашу. Трудновыговариваемые слова назвали\
-     трудновыговариваемыми потому, что их трудно выговаривать. У человека с плохо скоординированной координацией плохо\
-      скоординированная походка. Трубач по улице идет, труба поет, труба ревет, труба трубит. Маланья-болтунья болтала,\
-      болтала, что 33 корабля лавировали, лавировали, лавировали, лавировали, лавировали, да не вылавировали'
-
-    audio_task_1 = f"Выполните первое задание: зачитайте как аудио сообщение следующий текст без репетиции: {text}"
-
-    audio_task_2 = f"Прочтите еще раз текст как аудио сообщение: {text}"
-
-    audio_task_3 = f"Зачитайте текст объемным низким голосом: {text}"
-
-    final_message = "Переходите по ссылке и ознакомьтесь с условиями полной программы для качественного\
-     изменения ГОЛОСА и РЕЧИ. https://elenaivankova.com/"
 
     @bot.message_handler(content_types=['new_chat_members'])
     def welcome_new_member(message):
@@ -49,13 +31,43 @@ def telegram_bot(token):
     @bot.callback_query_handler(func=lambda call: True)
     def handle_callback(call):
         if call.data == "button1":
-            user_state[call.message.chat.id] += 1
-            bot.send_message(call.message.chat.id, "НАЖАТА КНОПКА 1")
-            # как вызывать дочернюю функцию
-            # next_question(call.message)
+            bot.send_message(call.message.chat.id, "ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!")
 
         elif call.data == "button2":
-            user_state[call.message.chat.id] += 1
+            weather_day = weather.weather_now()
+            weather_2day = weather.weather_3day()
+            bot.send_message(call.message.chat.id, f"*Погода сейчас:*\n"
+                                                   f"Tемпература - {weather_day['температура']}\n"
+                                                   f"Oблачность  - {weather_day['облачность']}\n"
+                                                   f"Ветер  - {weather_day['ветер']}\n"
+                                                   f"Восход  - {weather_day['восход']}\n"
+                                                   f"Заход  - {weather_day['заход']}\n\n"
+                                                   f"*Погода завтра:*\n"
+                                                   f"Tемпература минимальная- {weather_2day[0]['температура минимальная']}\n"
+                                                   f"Tемпература максимальная - {weather_2day[0]['температура максимальная']}\n"
+                                                   f"Tемпература ощущение - {weather_2day[0]['temp']}\n"
+                                                   f"Oблачность  - {weather_2day[0]['облачность']}\n"
+                                                   f"Ветер  - {weather_2day[0]['ветер']}\n\n"
+                                                   f"*Погода послезавтра:*\n"
+                                                   f"Tемпература минимальная- {weather_2day[1]['температура минимальная']}\n"
+                                                   f"Tемпература максимальная - {weather_2day[1]['температура максимальная']}\n"
+                                                   f"Tемпература ощущения - {weather_2day[1]['temp']}\n"
+                                                   f"Oблачность  - {weather_2day[1]['облачность']}\n"
+                                                   f"Ветер  - {weather_2day[1]['ветер']}\n\n",
+                             parse_mode='Markdown')
+        elif call.data == "button3":
+            bot.send_message(call.message.chat.id, "ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!")
+        elif call.data == "button4":
+            bot.send_message(call.message.chat.id, "ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!")
+        elif call.data == "button5":
+            bot.send_message(call.message.chat.id, "*MD BETON:*\n", parse_mode='Markdown')
+            bot.send_message(call.message.chat.id, f'<a href="tel:+48602593954">+48602593954</a>', parse_mode='HTML')
+            bot.send_location(call.message.chat.id, 52.192, 20.779)
+
+        elif call.data == "button6":
+            bot.send_message(call.message.chat.id, "ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!")
+
+
 
     # Приветствие
     @bot.message_handler(commands=['s'])
@@ -70,9 +82,7 @@ def telegram_bot(token):
         btn5 = types.InlineKeyboardButton("ГДЕ ПРОДАТЬ БЕТОН", callback_data="button5")
         btn6 = types.InlineKeyboardButton("ПОСМОТРЕТЬ ГДЕ, КТО СЕЙЧАС НАХОДИТЬСЯ", callback_data="button6")
         markup.add(btn1, btn2, btn3, btn4, btn5, btn6)  # Добавляем кнопки в разметку
-        bot.send_message(message.chat.id, "ЧЕМ Я МОГУ ПОМОЧЬ:", reply_markup=markup)
-
-
+        bot.send_message(message.chat.id, "*ЧЕМ Я МОГУ ПОМОЧЬ*:", reply_markup=markup, parse_mode='Markdown')
 
     # help
     @bot.message_handler(commands=['h'])
@@ -82,7 +92,6 @@ def telegram_bot(token):
                                           f"Hабери '/h' - и я тебе расскажу что я умею\n"
                                           f"'/s' -  функции которые я могу выполнять \n")
         user_state[message.chat.id] = 0  # Устанавливаем начальное состояние пользователя
-
 
     @bot.message_handler(commands=['add'])
     def add_message(message):
@@ -99,34 +108,12 @@ def telegram_bot(token):
 
         dic_bud = load_dict_from_file("dic_bud.json")
 
-
         """добавляем будову"""
         bot.send_message(message.chat.id, f"{message.from_user.first_name}\n"
                                           f"Я бот помогающий дать всю необходимую информацию для начинающих и продвинутых бетономешальщиков\n"
                                           f"Hабери '/h' - и я тебе расскажу что я умею\n"
                                           f"'/s' -  функции которые я могу выполнять \n")
         user_state[message.chat.id] = 0  # Устанавливаем начальное состояние пользователя
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     #
     # # Обработка текстовых ответов
