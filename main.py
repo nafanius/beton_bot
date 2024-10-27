@@ -19,9 +19,23 @@ def telegram_bot(token):
 
     # Переменные для хранения состояний пользователя
     user_state = {}
+    STATE_WAITING_FOR_FIRST_ANSWER = 1
+    STATE_WAITING_FOR_SECOND_ANSWER = 2
+    name_bud = ""
+
+    # Функция для записи словаря в файл
+    def save_dict_to_file(dictionary, filename):
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(dictionary, f, ensure_ascii=False, indent=4)
+
+    # Функция для загрузки словаря из файла
+    def load_dict_from_file(filename):
+        with open(filename, 'r', encoding='utf-8') as f:
+            return json.load(f)
 
 
     def send_scheduled_message():
+        """функция отсыла сообщений по утрам"""
         while True:
             now = datetime.now()
             if now.weekday() >= 5:
@@ -29,7 +43,7 @@ def telegram_bot(token):
                 continue
 
             # Проверьте если текущее время совпадает с запланированным (например, 9:00)
-            if now.hour == 8 and now.minute == 32:
+            if now.hour == 6 and now.minute == 30:
                 weather_3day = weather.weather_3day()
                 bot.send_message(id_group, f"*Добрейшее утро господа!*\n\n"
                                            f"*Сегодня запланировано отгрузить*  - _ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!_\n\n"
@@ -140,26 +154,63 @@ def telegram_bot(token):
         user_state[message.chat.id] = 0  # Устанавливаем начальное состояние пользователя
 
     @bot.message_handler(commands=['add'])
-    def add_message(message):
+    def add_budowa(message):
+        """записываем адрес и локализацию будовы"""
+        bot.send_message(message.chat.id, "Введите название")
+        user_state[message.chat.id] = STATE_WAITING_FOR_FIRST_ANSWER
 
-        # Функция для записи словаря в файл
-        def save_dict_to_file(dictionary, filename):
-            with open(filename, 'w', encoding='utf-8') as f:
-                json.dump(dictionary, f, ensure_ascii=False, indent=4)
 
-        # Функция для загрузки словаря из файла
-        def load_dict_from_file(filename):
-            with open(filename, 'r', encoding='utf-8') as f:
-                return json.load(f)
+    # Обработчик для геолокации
+    @bot.message_handler(content_types=['location'])
+    def handle_location(message):
+        print(message)
+        user_id = message.chat.id
 
-        dic_bud = load_dict_from_file("dic_bud.json")
+        if user_id not in user_state:
+            return
 
-        """добавляем будову"""
-        bot.send_message(message.chat.id, f"{message.from_user.first_name}\n"
-                                          f"Я бот помогающий дать всю необходимую информацию для начинающих и продвинутых бетономешальщиков\n"
-                                          f"Hабери '/h' - и я тебе расскажу что я умею\n"
-                                          f"'/s' -  функции которые я могу выполнять \n")
-        user_state[message.chat.id] = 0  # Устанавливаем начальное состояние пользователя
+        if user_state[user_id] == STATE_WAITING_FOR_SECOND_ANSWER:
+            global name_bud
+            lat = message.location.latitude
+            lon = message.location.longitude
+            # После получения второго ответа можем очистить состояние.
+            del user_state[user_id]
+            dic_bud = load_dict_from_file("dic_bud.json")
+            dic_bud[name_bud] = [lat, lon]
+            print(dic_bud)
+            save_dict_to_file(dic_bud, "dic_bud.json")
+
+
+
+
+    # Обработчик текстовых сообщений
+    @bot.message_handler(func=lambda message: True)
+    def handle_all_messages(message):
+        print(message)
+        user_id = message.chat.id
+        # Игнорируем сообщения от пользователей, которые не находятся в состоянии ожидания ответа
+        if user_id not in user_state:
+            return
+
+        # Обработка первого ответа
+        if user_state[user_id] == STATE_WAITING_FOR_FIRST_ANSWER:
+            if message.content_type == 'text':
+                bot.send_message(user_id, "Укажите свою геолокацию")
+                global name_bud
+                name_bud = message.text
+                user_state[user_id] = STATE_WAITING_FOR_SECOND_ANSWER
+            else:
+                bot.send_message(user_id, "ВЫШЛИ НАЗВАНИЕ БУДОВЫ!")
+                return
+
+        # Обработка второго ответа
+        elif user_state[user_id] == STATE_WAITING_FOR_SECOND_ANSWER:
+            if message.content_type == 'location':
+                bot.send_message(user_id, "hhhhhhhh")
+
+            else:
+                bot.send_message(user_id, "ВЫШЛИ СВОЮ ГЕОЛОКАЦИЮ!")
+                return
 
     #
     # # Обработка текстовых ответов
