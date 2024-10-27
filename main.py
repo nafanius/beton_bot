@@ -60,9 +60,13 @@ def telegram_bot(token):
         elif call.data == "button4":
             bot.send_message(call.message.chat.id, "ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!")
         elif call.data == "button5":
-            bot.send_message(call.message.chat.id, "*MD BETON:*\n", parse_mode='Markdown')
-            bot.send_message(call.message.chat.id, f'<a href="tel:+48602593954">+48602593954</a>', parse_mode='HTML')
-            bot.send_location(call.message.chat.id, 52.192, 20.779)
+            bot.send_message(call.message.chat.id, f'<a href="https://www.google.pl/maps/place/MD+Beton+Marek+D%C4%'
+                                                   f'85browski/@52.1922286,20.7767505,17z/data=!3m1!4b1!4m6!3m5!1s0x4719'
+                                                   f'352a34873e2b:0xc1fcd68e6bb8d915!8m2!3d52.1922253!4d20.7793254!16s%2'
+                                                   f'Fg%2F1tf9l_k3?entry=ttu&g_ep=EgoyMDI0MTAyMy4wIKXMDSoASAFQAw%3D%3D">'
+                                                   f'*MD BETON:*</a>', parse_mode='HTML')
+            bot.send_message(call.message.chat.id, f'ТЕЛЕФОН: <a href="tel:+48602593954">+48602593954</a>',
+                             parse_mode='HTML')
 
         elif call.data == "button6":
             bot.send_message(call.message.chat.id, "ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!")
@@ -88,7 +92,8 @@ def telegram_bot(token):
     @bot.message_handler(commands=['h'])
     def help_message(message):
         bot.send_message(message.chat.id, f"{message.from_user.first_name}\n"
-                                          f"Я бот помогающий дать всю необходимую информацию для начинающих и продвинутых бетономешальщиков\n"
+                                          f"Я бот помогающий дать всю необходимую информацию для начинающих и"
+                                          f" продвинутых бетономешальщиков\n"
                                           f"Hабери '/h' - и я тебе расскажу что я умею\n"
                                           f"'/s' -  функции которые я могу выполнять \n")
         user_state[message.chat.id] = 0  # Устанавливаем начальное состояние пользователя

@@ -43,10 +43,19 @@ def weather_3day():
     return forecast_3day
 
 
-
+url_3days = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&cnt={cnt}&lang=ru&appid={APPID}&units=metric"
+response_3day = requests.get(url_3days)
+response_3day.raise_for_status()
+weather_3day = json.loads(response_3day.text)['list']
+print(weather_3day[0])
 #
 #
 # print(weather_3day())
 #
 # print(weather_now())
 #
+url = f"http://www.7timer.info/bin/api.pl?lon={lon}.17&lat={lat}&product=astro&output=json"
+response = requests.get(url)
+response.raise_for_status()
+weather = json.loads(response.text)
+print(weather)
