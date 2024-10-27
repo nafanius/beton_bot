@@ -12,7 +12,7 @@ from auth_data import token
 id_group = "1276025555"
 
 def telegram_bot(token):
-    """"""
+    """основной цикл следящий за состоянием"""
     bot = telebot.TeleBot(token)
 
     # Логирование ошибок
@@ -23,6 +23,8 @@ def telegram_bot(token):
     STATE_WAITING_FOR_FIRST_ANSWER = 1
     STATE_WAITING_FOR_SECOND_ANSWER = 2
     name_bud = ""
+
+    dict_contacts = {}
 
     # Функция для записи словаря в файл
     def save_dict_to_file(dictionary, filename):
@@ -65,6 +67,7 @@ def telegram_bot(token):
 
     @bot.message_handler(content_types=['new_chat_members'])
     def welcome_new_member(message):
+        """запуск при входе нового пользователя"""
         global id_group
         id_group = message.chat.id
         for new_member in message.new_chat_members:
@@ -80,6 +83,7 @@ def telegram_bot(token):
 
     @bot.callback_query_handler(func=lambda call: True)
     def handle_callback(call):
+        """"оброботка сробатывания кнопок"""
         global id_group
         id_group = call.message.chat.id
         if call.data == "button1":
@@ -134,6 +138,7 @@ def telegram_bot(token):
     # Приветствие
     @bot.message_handler(commands=['s'])
     def start_message(message):
+        """сробатывание на команду слэш с"""
         global id_group
         id_group = message.chat.id
         print(id_group)
@@ -151,6 +156,7 @@ def telegram_bot(token):
     # help
     @bot.message_handler(commands=['h'])
     def help_message(message):
+        """сробатывание на команду слэш аш"""""
         global id_group
         id_group = message.chat.id
         bot.send_message(message.chat.id, f"{message.from_user.first_name}\n"
@@ -170,6 +176,7 @@ def telegram_bot(token):
     # Обработчик для геолокации
     @bot.message_handler(content_types=['location'])
     def handle_location(message):
+        """обрабатывает получение геолокации для команды add"""
         user_id = message.chat.id
 
         if user_id not in user_state:
@@ -187,11 +194,10 @@ def telegram_bot(token):
             save_dict_to_file(dic_bud, "dic_bud.json")
 
 
-
-
     # Обработчик текстовых сообщений
     @bot.message_handler(func=lambda message: True)
     def handle_all_messages(message):
+        """дополнение к заполнени будовы запрашивает название и следит чтобы отправили геолокацию"""
         print(message)
         user_id = message.chat.id
         # Игнорируем сообщения от пользователей, которые не находятся в состоянии ожидания ответа
