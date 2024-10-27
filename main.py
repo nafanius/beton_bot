@@ -24,7 +24,14 @@ def telegram_bot(token):
     STATE_WAITING_FOR_SECOND_ANSWER = 2
     name_bud = ""
 
-    dict_contacts = {}
+    dict_contacts = {"Пальцастый":"+48570315464",
+                     "Игорь":"+48572989696",
+                     "Макс":"+48536519415",
+                     "Олег":"+48791192036",
+                     "Руслан":"+48513368948",
+                     "Виталил":"+48576704688",
+                     "Войтек":"+48517457662",
+                     "HOLCIM":"+48519537060"}
 
     # Функция для записи словаря в файл
     def save_dict_to_file(dictionary, filename):
@@ -120,7 +127,10 @@ def telegram_bot(token):
                                                    f'*{key}*</a>', parse_mode='HTML')
 
         elif call.data == "button4":
-            bot.send_message(call.message.chat.id, "ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!")
+            for key in dict_contacts.keys():
+                bot.send_message(call.message.chat.id, f'{key} <a href="tel:{dict_contacts[key]}">{dict_contacts[key]}</a>',
+                                 parse_mode='HTML')
+
         elif call.data == "button5":
             bot.send_message(call.message.chat.id, f'<a href="https://www.google.pl/maps/place/MD+Beton+Marek+D%C4%'
                                                    f'85browski/@52.1922286,20.7767505,17z/data=!3m1!4b1!4m6!3m5!1s0x4719'
