@@ -1,12 +1,15 @@
 import json
 import logging
-from time import daylight
+from threading import Thread
+import time
+from datetime import datetime
 
 import weather
 import telebot
 from telebot import types
 from auth_data import token
 
+id_group = "1276025555"
 
 def telegram_bot(token):
     bot = telebot.TeleBot(token)
@@ -17,25 +20,59 @@ def telegram_bot(token):
     # Переменные для хранения состояний пользователя
     user_state = {}
 
+
+    def send_scheduled_message():
+        while True:
+            now = datetime.now()
+            if now.weekday() >= 5:
+                time.sleep(500)  # Подождите 60 секунд перед следующей проверкой, если это выходной день
+                continue
+
+            # Проверьте если текущее время совпадает с запланированным (например, 9:00)
+            if now.hour == 8 and now.minute == 32:
+                weather_3day = weather.weather_3day()
+                bot.send_message(id_group, f"*Добрейшее утро господа!*\n\n"
+                                           f"*Сегодня запланировано отгрузить*  - _ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!_\n\n"
+                                           f"*Расписание на сегодня* - _ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!_\n\n"
+                                           f"*Cегодня нас ждёт такая погода:*\n"
+                                           f"Tемпература минимальная- {weather_3day[0]['температура минимальная']}\n"
+                                           f"Tемпература максимальная - {weather_3day[0]['температура максимальная']}\n"
+                                           f"Tемпература ощущение - {weather_3day[0]['temp']}\n"
+                                           f"Oблачность  - {weather_3day[0]['облачность']}\n"
+                                           f"Ветер  - {weather_3day[0]['ветер']}\n\n", parse_mode='Markdown')
+                time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
+            time.sleep(10)  # Проверка каждые 10 секунд
+
+    # Запускаем поток для выполнения запланированного задания
+    Thread(target=send_scheduled_message).start()
+
+
+
     @bot.message_handler(content_types=['new_chat_members'])
     def welcome_new_member(message):
+        global id_group
+        id_group = message.chat.id
         for new_member in message.new_chat_members:
             bot.send_message(message.chat.id,
-                             f"Добро пожаловать, {new_member.first_name}! Ты находишся в чатике CONCRETных мужиков,"
-                             f"льющих БЕТОН")
+                             f"Добро пожаловать, *{new_member.first_name}!*\n"
+                             f"Ты находишся в чатике CONCRETных мужиков, "
+                             f"льющих БЕТОН :)\n"
+                             f"/h - для справки что тут можно делать", parse_mode='Markdown')
 
             bot.send_message(message.chat.id,
-                             f"{new_member.first_name}\n:набери '/h' - и я тебе расскажу что я умею\n"
+                             f"{new_member.first_name}\n:Набери:\n00'/h' - и я тебе расскажу что я умею\n"
                              f"'/s' -  функции которые я могу выполнять \n")
 
     @bot.callback_query_handler(func=lambda call: True)
     def handle_callback(call):
+        global id_group
+        id_group = call.message.chat.id
         if call.data == "button1":
             bot.send_message(call.message.chat.id, "ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!")
 
         elif call.data == "button2":
             weather_day = weather.weather_now()
-            weather_2day = weather.weather_3day()
+            weather_3day = weather.weather_3day()
             bot.send_message(call.message.chat.id, f"*Погода сейчас:*\n"
                                                    f"Tемпература - {weather_day['температура']}\n"
                                                    f"Oблачность  - {weather_day['облачность']}\n"
@@ -43,17 +80,17 @@ def telegram_bot(token):
                                                    f"Восход  - {weather_day['восход']}\n"
                                                    f"Заход  - {weather_day['заход']}\n\n"
                                                    f"*Погода завтра:*\n"
-                                                   f"Tемпература минимальная- {weather_2day[0]['температура минимальная']}\n"
-                                                   f"Tемпература максимальная - {weather_2day[0]['температура максимальная']}\n"
-                                                   f"Tемпература ощущение - {weather_2day[0]['temp']}\n"
-                                                   f"Oблачность  - {weather_2day[0]['облачность']}\n"
-                                                   f"Ветер  - {weather_2day[0]['ветер']}\n\n"
+                                                   f"Tемпература минимальная- {weather_3day[1]['температура минимальная']}\n"
+                                                   f"Tемпература максимальная - {weather_3day[1]['температура максимальная']}\n"
+                                                   f"Tемпература ощущение - {weather_3day[1]['temp']}\n"
+                                                   f"Oблачность  - {weather_3day[1]['облачность']}\n"
+                                                   f"Ветер  - {weather_3day[1]['ветер']}\n\n"
                                                    f"*Погода послезавтра:*\n"
-                                                   f"Tемпература минимальная- {weather_2day[1]['температура минимальная']}\n"
-                                                   f"Tемпература максимальная - {weather_2day[1]['температура максимальная']}\n"
-                                                   f"Tемпература ощущения - {weather_2day[1]['temp']}\n"
-                                                   f"Oблачность  - {weather_2day[1]['облачность']}\n"
-                                                   f"Ветер  - {weather_2day[1]['ветер']}\n\n",
+                                                   f"Tемпература минимальная- {weather_3day[2]['температура минимальная']}\n"
+                                                   f"Tемпература максимальная - {weather_3day[2]['температура максимальная']}\n"
+                                                   f"Tемпература ощущения - {weather_3day[2]['temp']}\n"
+                                                   f"Oблачность  - {weather_3day[2]['облачность']}\n"
+                                                   f"Ветер  - {weather_3day[2]['ветер']}\n\n",
                              parse_mode='Markdown')
         elif call.data == "button3":
             bot.send_message(call.message.chat.id, "ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!")
@@ -76,7 +113,9 @@ def telegram_bot(token):
     # Приветствие
     @bot.message_handler(commands=['s'])
     def start_message(message):
-        # bot.send_message(message.chat.id, " ")
+        global id_group
+        id_group = message.chat.id
+        print(id_group)
         user_state[message.chat.id] = 0  # Устанавливаем начальное состояние пользователя
         markup = types.InlineKeyboardMarkup(row_width=1)  # Создаем разметку с кнопками
         btn1 = types.InlineKeyboardButton("ПОСМОТРЕТЬ РАСПИСАНИЕ НА СЕГОДНЯ", callback_data="button1")
@@ -91,10 +130,12 @@ def telegram_bot(token):
     # help
     @bot.message_handler(commands=['h'])
     def help_message(message):
+        global id_group
+        id_group = message.chat.id
         bot.send_message(message.chat.id, f"{message.from_user.first_name}\n"
                                           f"Я бот помогающий дать всю необходимую информацию для начинающих и"
                                           f" продвинутых бетономешальщиков\n"
-                                          f"Hабери '/h' - и я тебе расскажу что я умею\n"
+                                          f"Hабери:\n'/h' - и я тебе расскажу что я умею\n"
                                           f"'/s' -  функции которые я могу выполнять \n")
         user_state[message.chat.id] = 0  # Устанавливаем начальное состояние пользователя
 
