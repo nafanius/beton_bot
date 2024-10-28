@@ -9,7 +9,7 @@ import telebot
 from telebot import types
 from auth_data import token
 
-id_group = "1276025555"
+id_group = "-4533287060"
 
 def telegram_bot(token):
     """основной цикл следящий за состоянием"""
@@ -75,8 +75,6 @@ def telegram_bot(token):
     @bot.message_handler(content_types=['new_chat_members'])
     def welcome_new_member(message):
         """запуск при входе нового пользователя"""
-        global id_group
-        id_group = message.chat.id
         for new_member in message.new_chat_members:
             bot.send_message(message.chat.id,
                              f"Добро пожаловать, *{new_member.first_name}!*\n"
@@ -91,8 +89,6 @@ def telegram_bot(token):
     @bot.callback_query_handler(func=lambda call: True)
     def handle_callback(call):
         """"оброботка сробатывания кнопок"""
-        global id_group
-        id_group = call.message.chat.id
         if call.data == "button1":
             bot.send_message(call.message.chat.id, "ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!")
 
@@ -149,9 +145,6 @@ def telegram_bot(token):
     @bot.message_handler(commands=['s'])
     def start_message(message):
         """сробатывание на команду слэш с"""
-        global id_group
-        id_group = message.chat.id
-        print(id_group)
         user_state[message.chat.id] = 0  # Устанавливаем начальное состояние пользователя
         markup = types.InlineKeyboardMarkup(row_width=1)  # Создаем разметку с кнопками
         btn1 = types.InlineKeyboardButton("ПОСМОТРЕТЬ РАСПИСАНИЕ НА СЕГОДНЯ", callback_data="button1")
@@ -167,8 +160,6 @@ def telegram_bot(token):
     @bot.message_handler(commands=['h'])
     def help_message(message):
         """сробатывание на команду слэш аш"""""
-        global id_group
-        id_group = message.chat.id
         bot.send_message(message.chat.id, f"{message.from_user.first_name}\n"
                                           f"Я бот помогающий дать всю необходимую информацию для начинающих и"
                                           f" продвинутых бетономешальщиков\n"
