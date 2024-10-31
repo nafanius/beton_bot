@@ -8,8 +8,15 @@ import weather
 import telebot
 from telebot import types
 from auth_data import token
+from palec import name, prefix, conversation_history,ask_chatgpt, client
+
 
 id_group = "-4533287060"
+STATE_WAITING_FOR_FIRST_ANSWER = 1
+STATE_WAITING_FOR_SECOND_ANSWER = 2
+name_bud = ""
+user_state = {}
+
 
 def telegram_bot(token):
     """основной цикл следящий за состоянием"""
@@ -19,11 +26,6 @@ def telegram_bot(token):
     logging.basicConfig(level=logging.INFO)
 
     # Переменные для хранения состояний пользователя
-    user_state = {}
-    STATE_WAITING_FOR_FIRST_ANSWER = 1
-    STATE_WAITING_FOR_SECOND_ANSWER = 2
-    name_bud = ""
-
     dict_contacts = {"Пальцастый":"+48570315464",
                      "Игорь":"+48572989696",
                      "Макс":"+48536519415",
@@ -43,32 +45,32 @@ def telegram_bot(token):
         with open(filename, 'r', encoding='utf-8') as f:
             return json.load(f)
 
-
-    def send_scheduled_message():
-        """функция отсыла сообщений по утрам"""
-        while True:
-            now = datetime.now()
-            if now.weekday() >= 5:
-                time.sleep(500)  # Подождите 60 секунд перед следующей проверкой, если это выходной день
-                continue
-
-            # Проверьте если текущее время совпадает с запланированным (например, 9:00)
-            if now.hour == 6 and now.minute == 30:
-                weather_3day = weather.weather_3day()
-                bot.send_message(id_group, f"*Добрейшее утро господа!*\n\n"
-                                           f"*Сегодня запланировано отгрузить*  - _ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!_\n\n"
-                                           f"*Расписание на сегодня* - _ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!_\n\n"
-                                           f"*Cегодня нас ждёт такая погода:*\n"
-                                           f"Tемпература минимальная- {weather_3day[0]['температура минимальная']}\n"
-                                           f"Tемпература максимальная - {weather_3day[0]['температура максимальная']}\n"
-                                           f"Tемпература ощущение - {weather_3day[0]['temp']}\n"
-                                           f"Oблачность  - {weather_3day[0]['облачность']}\n"
-                                           f"Ветер  - {weather_3day[0]['ветер']}\n\n", parse_mode='Markdown')
-                time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
-            time.sleep(10)  # Проверка каждые 10 секунд
-
-    # Запускаем поток для выполнения запланированного задания
-    Thread(target=send_scheduled_message).start()
+    # todo отремонтипровать приветствие каждого дня из за неё зависает ресберн
+    # def send_scheduled_message():
+    #     """функция отсыла сообщений по утрам"""
+    #     while True:
+    #         now = datetime.now()
+    #         if now.weekday() >= 5:
+    #             time.sleep(500)  # Подождите 60 секунд перед следующей проверкой, если это выходной день
+    #             continue
+    #
+    #         # Проверьте если текущее время совпадает с запланированным (например, 9:00)
+    #         if now.hour == 6 and now.minute == 30:
+    #             weather_3day = weather.weather_3day()
+    #             bot.send_message(id_group, f"*Добрейшее утро господа!*\n\n"
+    #                                        f"*Сегодня запланировано отгрузить*  - _ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!_\n\n"
+    #                                        f"*Расписание на сегодня* - _ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!_\n\n"
+    #                                        f"*Cегодня нас ждёт такая погода:*\n"
+    #                                        f"Tемпература минимальная- {weather_3day[0]['температура минимальная']}\n"
+    #                                        f"Tемпература максимальная - {weather_3day[0]['температура максимальная']}\n"
+    #                                        f"Tемпература ощущение - {weather_3day[0]['temp']}\n"
+    #                                        f"Oблачность  - {weather_3day[0]['облачность']}\n"
+    #                                        f"Ветер  - {weather_3day[0]['ветер']}\n\n", parse_mode='Markdown')
+    #             time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
+    #         time.sleep(10)  # Проверка каждые 10 секунд
+    #
+    # # Запускаем поток для выполнения запланированного задания
+    # Thread(target=send_scheduled_message).start()
 
 
 
@@ -174,56 +176,46 @@ def telegram_bot(token):
         user_state[message.chat.id] = STATE_WAITING_FOR_FIRST_ANSWER
 
 
-    # Обработчик для геолокации
-    @bot.message_handler(content_types=['location'])
-    def handle_location(message):
-        """обрабатывает получение геолокации для команды add"""
+    # Обработчик текста и геолакации
+    @bot.message_handler(content_types=['text', 'location'])
+    def handle_text(message):
+        global name_bud
         user_id = message.chat.id
-
-        if user_id not in user_state:
-            return
-
-        if user_state[user_id] == STATE_WAITING_FOR_SECOND_ANSWER:
-            global name_bud
-            lat = message.location.latitude
-            lon = message.location.longitude
-            # После получения второго ответа можем очистить состояние.
-            del user_state[user_id]
-            dic_bud = load_dict_from_file("dic_bud.json")
-            dic_bud[name_bud] = [lat, lon]
-            print(dic_bud)
-            save_dict_to_file(dic_bud, "dic_bud.json")
-
-
-    # Обработчик текстовых сообщений
-    @bot.message_handler(func=lambda message: True)
-    def handle_all_messages(message):
-        """дополнение к заполнени будовы запрашивает название и следит чтобы отправили геолокацию"""
-        print(message)
-        user_id = message.chat.id
+        text_message = message.text
         # Игнорируем сообщения от пользователей, которые не находятся в состоянии ожидания ответа
-        if user_id not in user_state:
-            return
+        if message.content_type == 'text':
+            if text_message.split()[0].lower() in name:
+                split_text = text_message.split()
+                text_message = ' '.join(split_text[1:])
+                bot.reply_to(message, ask_chatgpt(text_message))
 
-        # Обработка первого ответа
-        if user_state[user_id] == STATE_WAITING_FOR_FIRST_ANSWER:
-            if message.content_type == 'text':
-                bot.send_message(user_id, "Укажите свою геолокацию")
-                global name_bud
-                name_bud = message.text
-                user_state[user_id] = STATE_WAITING_FOR_SECOND_ANSWER
-            else:
-                bot.send_message(user_id, "ВЫШЛИ НАЗВАНИЕ БУДОВЫ!")
+
+            if user_id not in user_state:
+                return
+            # Обработка первого ответа
+            if user_state[user_id] == STATE_WAITING_FOR_FIRST_ANSWER:
+                if message.content_type == 'text':
+                    bot.send_message(user_id, "Укажите свою геолокацию")
+                    name_bud = message.text
+                    user_state[user_id] = STATE_WAITING_FOR_SECOND_ANSWER
+                else:
+                    bot.send_message(user_id, "ВЫШЛИ НАЗВАНИЕ БУДОВЫ!")
+
+        elif message.content_type == 'location':
+            """обрабатывает получение геолокации для команды add"""
+            user_id = message.chat.id
+            if user_id not in user_state:
                 return
 
-        # Обработка второго ответа
-        elif user_state[user_id] == STATE_WAITING_FOR_SECOND_ANSWER:
-            if message.content_type == 'location':
-                bot.send_message(user_id, "hhhhhhhh")
-
-            else:
-                bot.send_message(user_id, "ВЫШЛИ СВОЮ ГЕОЛОКАЦИЮ!")
-                return
+            if user_state[user_id] == STATE_WAITING_FOR_SECOND_ANSWER:
+                lat = message.location.latitude
+                lon = message.location.longitude
+                # После получения второго ответа можем очистить состояние.
+                del user_state[user_id]
+                dic_bud = load_dict_from_file("dic_bud.json")
+                dic_bud[name_bud] = [lat, lon]
+                print(dic_bud)
+                save_dict_to_file(dic_bud, "dic_bud.json")
 
 
     bot.polling(none_stop=True)
