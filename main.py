@@ -19,7 +19,7 @@ request_lista = 4
 name_bud = ""
 user_state = {}
 message_without_bot = "Чёто ты меня притомил, давай ка помолчим kurwa"
-how_much_m = 0
+how_much_m = 860
 lista = ""
 
 def telegram_bot(token):
@@ -94,34 +94,33 @@ def telegram_bot(token):
 
     @bot.callback_query_handler(func=lambda call: True)
     def handle_callback(call):
+        answer_text = ""
         """"оброботка сробатывания кнопок"""
         if call.data == "button1":
-            bot.send_message(call.message.chat.id, f"Cегодня запланировано отгрузить - {how_much_m}m3\n"
-                                                   f"{lista}")
+            answer_text = f"Cегодня запланировано отгрузить - {how_much_m}m3\n{lista}"
 
         elif call.data == "button2":
             try:
                 weather_day = weather.weather_now()
                 weather_3day = weather.weather_3day()
-                bot.send_message(call.message.chat.id, f"*Погода сейчас:*\n"
-                                                       f"Tемпература - {weather_day['температура']}\n"
-                                                       f"Oблачность  - {weather_day['облачность']}\n"
-                                                       f"Ветер  - {weather_day['ветер']}\n"
-                                                       f"Восход  - {weather_day['восход']}\n"
-                                                       f"Заход  - {weather_day['заход']}\n\n"
-                                                       f"*Погода завтра:*\n"
-                                                       f"Tемпература минимальная- {weather_3day[1]['температура минимальная']}\n"
-                                                       f"Tемпература максимальная - {weather_3day[1]['температура максимальная']}\n"
-                                                       f"Tемпература ощущение - {weather_3day[1]['temp']}\n"
-                                                       f"Oблачность  - {weather_3day[1]['облачность']}\n"
-                                                       f"Ветер  - {weather_3day[1]['ветер']}\n\n"
-                                                       f"*Погода послезавтра:*\n"
-                                                       f"Tемпература минимальная- {weather_3day[2]['температура минимальная']}\n"
-                                                       f"Tемпература максимальная - {weather_3day[2]['температура максимальная']}\n"
-                                                       f"Tемпература ощущения - {weather_3day[2]['temp']}\n"
-                                                       f"Oблачность  - {weather_3day[2]['облачность']}\n"
-                                                       f"Ветер  - {weather_3day[2]['ветер']}\n\n",
-                                 parse_mode='Markdown')
+                answer_text =  (f"*Погода сейчас:*\n"
+                               f"Tемпература - {weather_day['температура']}\n"
+                               f"Oблачность  - {weather_day['облачность']}\n"
+                               f"Ветер  - {weather_day['ветер']}\n"
+                               f"Восход  - {weather_day['восход']}\n"
+                               f"Заход  - {weather_day['заход']}\n\n"
+                               f"*Погода завтра:*\n"
+                               f"Tемпература минимальная- {weather_3day[1]['температура минимальная']}\n"
+                               f"Tемпература максимальная - {weather_3day[1]['температура максимальная']}\n"
+                               f"Tемпература ощущение - {weather_3day[1]['temp']}\n"
+                               f"Oблачность  - {weather_3day[1]['облачность']}\n"
+                               f"Ветер  - {weather_3day[1]['ветер']}\n\n"
+                               f"*Погода послезавтра:*\n"
+                               f"Tемпература минимальная- {weather_3day[2]['температура минимальная']}\n"
+                               f"Tемпература максимальная - {weather_3day[2]['температура максимальная']}\n"
+                               f"Tемпература ощущения - {weather_3day[2]['temp']}\n"
+                               f"Oблачность  - {weather_3day[2]['облачность']}\n"
+                               f"Ветер  - {weather_3day[2]['ветер']}\n\n")
             except:
                 return
 
@@ -130,25 +129,29 @@ def telegram_bot(token):
             for key in dic_bud.keys():
 
 
-                 bot.send_message(call.message.chat.id, f'<a href="https://www.google.com/maps?q={dic_bud[key][0]},{dic_bud[key][1]}">'
-                                                   f'*{key}*</a>', parse_mode='HTML')
+                 answer_text = (f'<a href="https://www.google.com/maps?q={dic_bud[key][0]},{dic_bud[key][1]}">'
+                               f'*{key}*</a>')
 
         elif call.data == "button4":
+            list_of_phone =[]
             for key in dict_contacts.keys():
-                bot.send_message(call.message.chat.id, f'{key} <a href="tel:{dict_contacts[key]}">{dict_contacts[key]}</a>',
-                                 parse_mode='HTML')
-
+                list_of_phone.append(f'{key} <a href="tel:{dict_contacts[key]}">{dict_contacts[key]}</a>')
+            answer_text  = '\n'.join(list_of_phone)
         elif call.data == "button5":
-            bot.send_message(call.message.chat.id, f'<a href="https://www.google.pl/maps/place/MD+Beton+Marek+D%C4%'
-                                                   f'85browski/@52.1922286,20.7767505,17z/data=!3m1!4b1!4m6!3m5!1s0x4719'
-                                                   f'352a34873e2b:0xc1fcd68e6bb8d915!8m2!3d52.1922253!4d20.7793254!16s%2'
-                                                   f'Fg%2F1tf9l_k3?entry=ttu&g_ep=EgoyMDI0MTAyMy4wIKXMDSoASAFQAw%3D%3D">'
-                                                   f'*MD BETON:*</a>', parse_mode='HTML')
-            bot.send_message(call.message.chat.id, f'ТЕЛЕФОН: <a href="tel:+48602593954">+48602593954</a>',
-                             parse_mode='HTML')
+            answer_text = (f'<a href="https://www.google.pl/maps/place/MD+Beton+Marek+D%C4%'
+                           f'85browski/@52.1922286,20.7767505,17z/data=!3m1!4b1!4m6!3m5!1s0x4719'
+                           f'352a34873e2b:0xc1fcd68e6bb8d915!8m2!3d52.1922253!4d20.7793254!16s%2'
+                           f'Fg%2F1tf9l_k3?entry=ttu&g_ep=EgoyMDI0MTAyMy4wIKXMDSoASAFQAw%3D%3D">'
+                           f'*MD BETON:*</a>\n'
+                           f'ТЕЛЕФОН: <a href="tel:+48602593954">+48602593954</a>')
+            # bot.send_message(call.message.chat.id, f'ТЕЛЕФОН: <a href="tel:+48602593954">+48602593954</a>',
+            #                  parse_mode='HTML')
 
         elif call.data == "button6":
-            bot.send_message(call.message.chat.id, "ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!")
+            answer_text = "ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!"
+
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=answer_text,
+                              reply_markup=call.message.reply_markup, parse_mode='HTML')
 
 
 
