@@ -54,7 +54,7 @@ def ask_chatgpt(question):
 
     # Запрос к API ChatGPT с контекстом
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o",
         messages=conversation_history,
     )
 

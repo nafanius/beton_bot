@@ -12,11 +12,15 @@ from palec import name, ask_chatgpt
 
 
 id_group = "-4533287060"
-STATE_WAITING_FOR_FIRST_ANSWER = 1
-STATE_WAITING_FOR_SECOND_ANSWER = 2
+request_name_of_building = 1
+request_location_of_building = 2
+request_how_much_m = 3
+request_lista = 4
 name_bud = ""
 user_state = {}
 message_without_bot = "Чёто ты меня притомил, давай ка помолчим kurwa"
+how_much_m = 0
+lista = ""
 
 def telegram_bot(token):
     """основной цикл следящий за состоянием"""
@@ -46,31 +50,31 @@ def telegram_bot(token):
             return json.load(f)
 
     # todo отремонтипровать приветствие каждого дня из за неё зависает ресберн
-    # def send_scheduled_message():
-    #     """функция отсыла сообщений по утрам"""
-    #     while True:
-    #         now = datetime.now()
-    #         if now.weekday() >= 5:
-    #             time.sleep(500)  # Подождите 60 секунд перед следующей проверкой, если это выходной день
-    #             continue
-    #
-    #         # Проверьте если текущее время совпадает с запланированным (например, 9:00)
-    #         if now.hour == 6 and now.minute == 30:
-    #             weather_3day = weather.weather_3day()
-    #             bot.send_message(id_group, f"*Добрейшее утро господа!*\n\n"
-    #                                        f"*Сегодня запланировано отгрузить*  - _ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!_\n\n"
-    #                                        f"*Расписание на сегодня* - _ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!_\n\n"
-    #                                        f"*Cегодня нас ждёт такая погода:*\n"
-    #                                        f"Tемпература минимальная- {weather_3day[0]['температура минимальная']}\n"
-    #                                        f"Tемпература максимальная - {weather_3day[0]['температура максимальная']}\n"
-    #                                        f"Tемпература ощущение - {weather_3day[0]['temp']}\n"
-    #                                        f"Oблачность  - {weather_3day[0]['облачность']}\n"
-    #                                        f"Ветер  - {weather_3day[0]['ветер']}\n\n", parse_mode='Markdown')
-    #             time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
-    #         time.sleep(10)  # Проверка каждые 10 секунд
-    #
-    # # Запускаем поток для выполнения запланированного задания
-    # Thread(target=send_scheduled_message).start()
+    def send_scheduled_message():
+        """функция отсыла сообщений по утрам"""
+        while True:
+            now = datetime.now()
+            if now.weekday() >= 5:
+                time.sleep(500)  # Подождите 60 секунд перед следующей проверкой, если это выходной день
+                continue
+
+            # Проверьте если текущее время совпадает с запланированным (например, 9:00)
+            if now.hour == 6 and now.minute == 30:
+                weather_3day = weather.weather_3day()
+                bot.send_message(id_group, f"*Добрейшее утро господа!*\n\n"
+                                           f"*Сегодня запланировано отгрузить*  - _{how_much_m}m3_\n\n"
+                                           f"*Расписание на сегодня* - _{lista}_\n\n"
+                                           f"*Cегодня нас ждёт такая погода:*\n"
+                                           f"Tемпература минимальная- {weather_3day[0]['температура минимальная']}\n"
+                                           f"Tемпература максимальная - {weather_3day[0]['температура максимальная']}\n"
+                                           f"Tемпература ощущение - {weather_3day[0]['temp']}\n"
+                                           f"Oблачность  - {weather_3day[0]['облачность']}\n"
+                                           f"Ветер  - {weather_3day[0]['ветер']}\n\n", parse_mode='Markdown')
+                time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
+            time.sleep(10)  # Проверка каждые 10 секунд
+
+    # Запускаем поток для выполнения запланированного задания
+    Thread(target=send_scheduled_message).start()
 
 
 
@@ -92,7 +96,7 @@ def telegram_bot(token):
     def handle_callback(call):
         """"оброботка сробатывания кнопок"""
         if call.data == "button1":
-            bot.send_message(call.message.chat.id, "ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!")
+            bot.send_message(call.message.chat.id, f"сегодня запланировано отгрузить {how_much_m}m3")
 
         elif call.data == "button2":
             try:
@@ -153,12 +157,12 @@ def telegram_bot(token):
         """сробатывание на команду слэш с"""
         user_state[message.chat.id] = 0  # Устанавливаем начальное состояние пользователя
         markup = types.InlineKeyboardMarkup(row_width=1)  # Создаем разметку с кнопками
-        btn1 = types.InlineKeyboardButton("ПОСМОТРЕТЬ РАСПИСАНИЕ НА СЕГОДНЯ", callback_data="button1")
-        btn2 = types.InlineKeyboardButton("ПОСМОТРЕТЬ ТЕКУЩУЮ ПОГОДУ", callback_data="button2")
-        btn3 = types.InlineKeyboardButton("НАЙТИ ТОЧНЫЙ АДРЕС БУДОВЫ", callback_data="button3")
-        btn4 = types.InlineKeyboardButton("ТЕЛЕФОНЫ КОЛЛЕГ", callback_data="button4")
+        btn1 = types.InlineKeyboardButton("посмотреть расписание", callback_data="button1")
+        btn2 = types.InlineKeyboardButton("посмотреть погоду", callback_data="button2")
+        btn3 = types.InlineKeyboardButton("найти адрес будовы", callback_data="button3")
+        btn4 = types.InlineKeyboardButton("телефоны", callback_data="button4")
         btn5 = types.InlineKeyboardButton("ГДЕ ПРОДАТЬ БЕТОН", callback_data="button5")
-        btn6 = types.InlineKeyboardButton("ПОСМОТРЕТЬ ГДЕ, КТО СЕЙЧАС НАХОДИТЬСЯ", callback_data="button6")
+        btn6 = types.InlineKeyboardButton("посмотреть что сейчас на заводе", callback_data="button6")
         markup.add(btn1, btn2, btn3, btn4, btn5, btn6)  # Добавляем кнопки в разметку
         bot.send_message(message.chat.id, "*ЧЕМ Я МОГУ ПОМОЧЬ*:", reply_markup=markup, parse_mode='Markdown')
 
@@ -177,24 +181,32 @@ def telegram_bot(token):
     def add_budowa(message):
         """записываем адрес и локализацию будовы"""
         bot.send_message(message.chat.id, "Введите название")
-        user_state[message.chat.id] = STATE_WAITING_FOR_FIRST_ANSWER
+        user_state[message.chat.id] = request_name_of_building
+
+    @bot.message_handler(commands=['m'])
+    def how_much_m_message(message):
+        bot.send_message(message.chat.id, "введите метры")
+        user_state[message.chat.id] = request_how_much_m
+
+
 
 
     # Обработчик текста и геолакации
     @bot.message_handler(content_types=['text', 'location'])
     def handle_text(message):
         global name_bud
+        global how_much_m
         user_id = message.chat.id
         text_message = message.text
         # Игнорируем сообщения от пользователей, которые не находятся в состоянии ожидания ответа
         if message.content_type == 'text':
-            print(message.text)
+            print(message)
 
             conversation_history = load_dict_from_file('conversation_history.json')
             if len(conversation_history) > 1000:
                 conversation_history = conversation_history[-1000:]
 
-            conversation_history.append({"role": "user", "content": f"{message.from_user.username}: {message.text}"})
+            conversation_history.append({"role": "user", "content": f"{message.from_user.first_name}: {message.text}"})
 
             bot_name = text_message.split()[0].lower()[:5]
             if bot_name in name:
@@ -215,13 +227,23 @@ def telegram_bot(token):
             if user_id not in user_state:
                 return
             # Обработка первого ответа
-            if user_state[user_id] == STATE_WAITING_FOR_FIRST_ANSWER:
-                if message.content_type == 'text':
-                    bot.send_message(user_id, "Укажите свою геолокацию")
-                    name_bud = message.text
-                    user_state[user_id] = STATE_WAITING_FOR_SECOND_ANSWER
+            if user_state[user_id] == request_name_of_building:
+                bot.send_message(user_id, "Укажите свою геолокацию")
+                name_bud = message.text
+                user_state[user_id] = request_location_of_building
+            elif user_state[user_id] == request_how_much_m:
+                if message.text.isdigit():
+                    how_much_m = message.text
+                    del user_state[user_id]
                 else:
-                    bot.send_message(user_id, "ВЫШЛИ НАЗВАНИЕ БУДОВЫ!")
+                    bot.send_message(user_id, "ВВЕДИТЕ ЧИСЛО")
+
+
+
+
+
+
+
 
 
         elif message.content_type == 'location':
@@ -230,7 +252,7 @@ def telegram_bot(token):
             if user_id not in user_state:
                 return
 
-            if user_state[user_id] == STATE_WAITING_FOR_SECOND_ANSWER:
+            if user_state[user_id] == request_location_of_building:
                 lat = message.location.latitude
                 lon = message.location.longitude
                 # После получения второго ответа можем очистить состояние.
