@@ -96,7 +96,8 @@ def telegram_bot(token):
     def handle_callback(call):
         """"оброботка сробатывания кнопок"""
         if call.data == "button1":
-            bot.send_message(call.message.chat.id, f"сегодня запланировано отгрузить {how_much_m}m3")
+            bot.send_message(call.message.chat.id, f"Cегодня запланировано отгрузить - {how_much_m}m3\n"
+                                                   f"{lista}")
 
         elif call.data == "button2":
             try:
@@ -188,7 +189,10 @@ def telegram_bot(token):
         bot.send_message(message.chat.id, "введите метры")
         user_state[message.chat.id] = request_how_much_m
 
-
+    @bot.message_handler(commands=['l'])
+    def lista_message(message):
+        bot.send_message(message.chat.id, "введите listu")
+        user_state[message.chat.id] = request_lista
 
 
     # Обработчик текста и геолакации
@@ -196,6 +200,7 @@ def telegram_bot(token):
     def handle_text(message):
         global name_bud
         global how_much_m
+        global lista
         user_id = message.chat.id
         text_message = message.text
         # Игнорируем сообщения от пользователей, которые не находятся в состоянии ожидания ответа
@@ -238,12 +243,9 @@ def telegram_bot(token):
                 else:
                     bot.send_message(user_id, "ВВЕДИТЕ ЧИСЛО")
 
-
-
-
-
-
-
+            elif user_state[user_id] == request_lista:
+                lista = message.text
+                del user_state[user_id]
 
 
         elif message.content_type == 'location':
