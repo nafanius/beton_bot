@@ -8,7 +8,7 @@ import weather
 import telebot
 from telebot import types
 from auth_data import token
-from palec import name, prefix, conversation_history,ask_chatgpt, client
+from palec import name, ask_chatgpt
 
 
 id_group = "-4533287060"
@@ -16,7 +16,7 @@ STATE_WAITING_FOR_FIRST_ANSWER = 1
 STATE_WAITING_FOR_SECOND_ANSWER = 2
 name_bud = ""
 user_state = {}
-
+message_without_bot = "Чёто ты меня притомил, давай ка помолчим kurwa"
 
 def telegram_bot(token):
     """основной цикл следящий за состоянием"""
@@ -85,7 +85,7 @@ def telegram_bot(token):
                              f"/h - для справки что тут можно делать", parse_mode='Markdown')
 
             bot.send_message(message.chat.id,
-                             f"{new_member.first_name}\n:Набери:\n00'/h' - и я тебе расскажу что я умею\n"
+                             f"{new_member.first_name}\n:Набери:\n'/h' - и я тебе расскажу что я умею\n"
                              f"'/s' -  функции которые я могу выполнять \n")
 
     @bot.callback_query_handler(func=lambda call: True)
@@ -95,27 +95,31 @@ def telegram_bot(token):
             bot.send_message(call.message.chat.id, "ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!")
 
         elif call.data == "button2":
-            weather_day = weather.weather_now()
-            weather_3day = weather.weather_3day()
-            bot.send_message(call.message.chat.id, f"*Погода сейчас:*\n"
-                                                   f"Tемпература - {weather_day['температура']}\n"
-                                                   f"Oблачность  - {weather_day['облачность']}\n"
-                                                   f"Ветер  - {weather_day['ветер']}\n"
-                                                   f"Восход  - {weather_day['восход']}\n"
-                                                   f"Заход  - {weather_day['заход']}\n\n"
-                                                   f"*Погода завтра:*\n"
-                                                   f"Tемпература минимальная- {weather_3day[1]['температура минимальная']}\n"
-                                                   f"Tемпература максимальная - {weather_3day[1]['температура максимальная']}\n"
-                                                   f"Tемпература ощущение - {weather_3day[1]['temp']}\n"
-                                                   f"Oблачность  - {weather_3day[1]['облачность']}\n"
-                                                   f"Ветер  - {weather_3day[1]['ветер']}\n\n"
-                                                   f"*Погода послезавтра:*\n"
-                                                   f"Tемпература минимальная- {weather_3day[2]['температура минимальная']}\n"
-                                                   f"Tемпература максимальная - {weather_3day[2]['температура максимальная']}\n"
-                                                   f"Tемпература ощущения - {weather_3day[2]['temp']}\n"
-                                                   f"Oблачность  - {weather_3day[2]['облачность']}\n"
-                                                   f"Ветер  - {weather_3day[2]['ветер']}\n\n",
-                             parse_mode='Markdown')
+            try:
+                weather_day = weather.weather_now()
+                weather_3day = weather.weather_3day()
+                bot.send_message(call.message.chat.id, f"*Погода сейчас:*\n"
+                                                       f"Tемпература - {weather_day['температура']}\n"
+                                                       f"Oблачность  - {weather_day['облачность']}\n"
+                                                       f"Ветер  - {weather_day['ветер']}\n"
+                                                       f"Восход  - {weather_day['восход']}\n"
+                                                       f"Заход  - {weather_day['заход']}\n\n"
+                                                       f"*Погода завтра:*\n"
+                                                       f"Tемпература минимальная- {weather_3day[1]['температура минимальная']}\n"
+                                                       f"Tемпература максимальная - {weather_3day[1]['температура максимальная']}\n"
+                                                       f"Tемпература ощущение - {weather_3day[1]['temp']}\n"
+                                                       f"Oблачность  - {weather_3day[1]['облачность']}\n"
+                                                       f"Ветер  - {weather_3day[1]['ветер']}\n\n"
+                                                       f"*Погода послезавтра:*\n"
+                                                       f"Tемпература минимальная- {weather_3day[2]['температура минимальная']}\n"
+                                                       f"Tемпература максимальная - {weather_3day[2]['температура максимальная']}\n"
+                                                       f"Tемпература ощущения - {weather_3day[2]['temp']}\n"
+                                                       f"Oблачность  - {weather_3day[2]['облачность']}\n"
+                                                       f"Ветер  - {weather_3day[2]['ветер']}\n\n",
+                                 parse_mode='Markdown')
+            except:
+                return
+
         elif call.data == "button3":
             dic_bud = load_dict_from_file('dic_bud.json')
             for key in dic_bud.keys():
@@ -184,10 +188,28 @@ def telegram_bot(token):
         text_message = message.text
         # Игнорируем сообщения от пользователей, которые не находятся в состоянии ожидания ответа
         if message.content_type == 'text':
-            if text_message.split()[0].lower() in name:
+            print(message.text)
+
+            conversation_history = load_dict_from_file('conversation_history.json')
+            if len(conversation_history) > 1000:
+                conversation_history = conversation_history[-1000:]
+
+            conversation_history.append({"role": "user", "content": f"{message.from_user.username}: {message.text}"})
+
+            bot_name = text_message.split()[0].lower()[:5]
+            if bot_name in name:
+                conversation_history[-1] = {"role": "user", "content": f"{message.from_user.username} question: {message.text}"}
+                save_dict_to_file(conversation_history,'conversation_history.json')
+
                 split_text = text_message.split()
                 text_message = ' '.join(split_text[1:])
-                bot.reply_to(message, ask_chatgpt(text_message))
+                # пробуем получить ответ от чат бота
+                try:
+                    bot.reply_to(message, ask_chatgpt(text_message))
+                except:
+                    bot.reply_to(message, message_without_bot)
+            else:
+                save_dict_to_file(conversation_history,'conversation_history.json')
 
 
             if user_id not in user_state:
@@ -200,6 +222,7 @@ def telegram_bot(token):
                     user_state[user_id] = STATE_WAITING_FOR_SECOND_ANSWER
                 else:
                     bot.send_message(user_id, "ВЫШЛИ НАЗВАНИЕ БУДОВЫ!")
+
 
         elif message.content_type == 'location':
             """обрабатывает получение геолокации для команды add"""
