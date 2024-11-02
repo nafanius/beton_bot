@@ -164,14 +164,17 @@ def telegram_bot(token):
     def start_message(message):
         """сробатывание на команду слэш с"""
         user_state[message.chat.id] = 0  # Устанавливаем начальное состояние пользователя
-        markup = types.InlineKeyboardMarkup(row_width=1)  # Создаем разметку с кнопками
-        btn1 = types.InlineKeyboardButton("посмотреть расписание", callback_data="button1")
-        btn2 = types.InlineKeyboardButton("посмотреть погоду", callback_data="button2")
-        btn3 = types.InlineKeyboardButton("найти адрес будовы", callback_data="button3")
+        markup = types.InlineKeyboardMarkup()  # Создаем разметку с кнопками
+        btn1 = types.InlineKeyboardButton("расписание", callback_data="button1")
+        btn2 = types.InlineKeyboardButton("погоду", callback_data="button2")
+        btn3 = types.InlineKeyboardButton("будовы", callback_data="button3")
         btn4 = types.InlineKeyboardButton("телефоны", callback_data="button4")
         btn5 = types.InlineKeyboardButton("ГДЕ ПРОДАТЬ БЕТОН", callback_data="button5")
         btn6 = types.InlineKeyboardButton("посмотреть что сейчас на заводе", callback_data="button6")
-        markup.add(btn1, btn2, btn3, btn4, btn5, btn6)  # Добавляем кнопки в разметку
+        markup.row(btn1 ,btn2)
+        markup.row(btn3 ,btn4)
+        markup.add(btn5)  # Добавляем кнопки в разметку
+        markup.add(btn6)  # Добавляем кнопки в разметку
         bot.send_message(message.chat.id, "*ЧЕМ Я МОГУ ПОМОЧЬ*:", reply_markup=markup, parse_mode='Markdown')
 
     # help
