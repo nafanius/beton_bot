@@ -1,15 +1,16 @@
 import json
 import logging
-from threading import Thread
 import time
+import os
 from datetime import datetime
+from threading import Thread
 
-import weather
 import telebot
 from telebot import types
+
+import weather
 from auth_data import token
 from palec import name, ask_chatgpt
-
 
 id_group = "-4533287060"
 request_name_of_building = 1
@@ -19,8 +20,27 @@ request_lista = 4
 name_bud = ""
 user_state = {}
 message_without_bot = "Чёто ты меня притомил, давай ка помолчим kurwa"
-how_much_m = 860
+how_much_m = 0
 lista = ""
+
+
+# Функция для записи словаря в файл
+def save_dict_to_file(dictionary, filename):
+    with open(filename, 'w', encoding='utf-8') as f:
+        json.dump(dictionary, f, ensure_ascii=False, indent=4)
+
+
+# Функция для загрузки словаря из файла
+def load_dict_from_file(filename):
+    if os.path.isfile(filename):
+        with open(filename, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    else:
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump({}, f, ensure_ascii=False, indent=4)
+        with open(filename, 'r', encoding='utf-8') as f:
+            return json.load(f)
+
 
 def telegram_bot(token):
     """основной цикл следящий за состоянием"""
@@ -30,24 +50,14 @@ def telegram_bot(token):
     logging.basicConfig(level=logging.INFO)
 
     # Переменные для хранения состояний пользователя
-    dict_contacts = {"Пальцастый":"+48570315464",
-                     "Игорь":"+48572989696",
-                     "Макс":"+48536519415",
-                     "Олег":"+48791192036",
-                     "Руслан":"+48513368948",
-                     "Виталил":"+48576704688",
-                     "Войтек":"+48517457662",
-                     "HOLCIM":"+48519537060"}
-
-    # Функция для записи словаря в файл
-    def save_dict_to_file(dictionary, filename):
-        with open(filename, 'w', encoding='utf-8') as f:
-            json.dump(dictionary, f, ensure_ascii=False, indent=4)
-
-    # Функция для загрузки словаря из файла
-    def load_dict_from_file(filename):
-        with open(filename, 'r', encoding='utf-8') as f:
-            return json.load(f)
+    dict_contacts = {"Пальцастый": "+48570315464",
+                     "Игорь": "+48572989696",
+                     "Макс": "+48536519415",
+                     "Олег": "+48791192036",
+                     "Руслан": "+48513368948",
+                     "Виталил": "+48576704688",
+                     "Войтек": "+48517457662",
+                     "HOLCIM": "+48519537060"}
 
     # todo отремонтипровать приветствие каждого дня из за неё зависает ресберн
     def send_scheduled_message():
@@ -76,8 +86,6 @@ def telegram_bot(token):
     # Запускаем поток для выполнения запланированного задания
     Thread(target=send_scheduled_message).start()
 
-
-
     @bot.message_handler(content_types=['new_chat_members'])
     def welcome_new_member(message):
         """запуск при входе нового пользователя"""
@@ -103,7 +111,7 @@ def telegram_bot(token):
             try:
                 weather_day = weather.weather_now()
                 weather_3day = weather.weather_3day()
-                answer_text =  (f"*Погода сейчас:*\n"
+                answer_text = (f"*Погода сейчас:*\n"
                                f"Tемпература - {weather_day['температура']}\n"
                                f"Oблачность  - {weather_day['облачность']}\n"
                                f"Ветер  - {weather_day['ветер']}\n"
@@ -121,22 +129,20 @@ def telegram_bot(token):
                                f"Tемпература ощущения - {weather_3day[2]['temp']}\n"
                                f"Oблачность  - {weather_3day[2]['облачность']}\n"
                                f"Ветер  - {weather_3day[2]['ветер']}\n\n")
-            except:
+            except Exception:
                 return
 
         elif call.data == "button3":
             dic_bud = load_dict_from_file('dic_bud.json')
             for key in dic_bud.keys():
-
-
-                 answer_text = (f'<a href="https://www.google.com/maps?q={dic_bud[key][0]},{dic_bud[key][1]}">'
+                answer_text = (f'<a href="https://www.google.com/maps?q={dic_bud[key][0]},{dic_bud[key][1]}">'
                                f'*{key}*</a>')
 
         elif call.data == "button4":
-            list_of_phone =[]
+            list_of_phone = []
             for key in dict_contacts.keys():
                 list_of_phone.append(f'{key} <a href="tel:{dict_contacts[key]}">{dict_contacts[key]}</a>')
-            answer_text  = '\n'.join(list_of_phone)
+            answer_text = '\n'.join(list_of_phone)
         elif call.data == "button5":
             answer_text = (f'<a href="https://www.google.pl/maps/place/MD+Beton+Marek+D%C4%'
                            f'85browski/@52.1922286,20.7767505,17z/data=!3m1!4b1!4m6!3m5!1s0x4719'
@@ -152,8 +158,6 @@ def telegram_bot(token):
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=answer_text,
                               reply_markup=call.message.reply_markup, parse_mode='HTML')
-
-
 
     # Приветствие
     @bot.message_handler(commands=['s'])
@@ -197,7 +201,6 @@ def telegram_bot(token):
         bot.send_message(message.chat.id, "введите listu")
         user_state[message.chat.id] = request_lista
 
-
     # Обработчик текста и геолакации
     @bot.message_handler(content_types=['text', 'location'])
     def handle_text(message):
@@ -218,8 +221,9 @@ def telegram_bot(token):
 
             bot_name = text_message.split()[0].lower()[:5]
             if bot_name in name:
-                conversation_history[-1] = {"role": "user", "content": f"{message.from_user.username} question: {message.text}"}
-                save_dict_to_file(conversation_history,'conversation_history.json')
+                conversation_history[-1] = {"role": "user",
+                                            "content": f"{message.from_user.username} question: {message.text}"}
+                save_dict_to_file(conversation_history, 'conversation_history.json')
 
                 split_text = text_message.split()
                 text_message = ' '.join(split_text[1:])
@@ -229,8 +233,7 @@ def telegram_bot(token):
                 except:
                     bot.reply_to(message, message_without_bot)
             else:
-                save_dict_to_file(conversation_history,'conversation_history.json')
-
+                save_dict_to_file(conversation_history, 'conversation_history.json')
 
             if user_id not in user_state:
                 return
@@ -266,7 +269,6 @@ def telegram_bot(token):
                 dic_bud[name_bud] = [lat, lon]
                 print(dic_bud)
                 save_dict_to_file(dic_bud, "dic_bud.json")
-
 
     bot.polling(none_stop=True)
 
