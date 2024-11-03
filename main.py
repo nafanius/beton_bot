@@ -149,9 +149,14 @@ def telegram_bot(token):
                            f'352a34873e2b:0xc1fcd68e6bb8d915!8m2!3d52.1922253!4d20.7793254!16s%2'
                            f'Fg%2F1tf9l_k3?entry=ttu&g_ep=EgoyMDI0MTAyMy4wIKXMDSoASAFQAw%3D%3D">'
                            f'*MD BETON:*</a>\n'
-                           f'ТЕЛЕФОН: <a href="tel:+48602593954">+48602593954</a>')
-            # bot.send_message(call.message.chat.id, f'ТЕЛЕФОН: <a href="tel:+48602593954">+48602593954</a>',
-            #                  parse_mode='HTML')
+                           f'ТЕЛЕФОН: <a href="tel:+48602593954">+48602593954</a>\n\n'
+                           f'<a href="https://www.google.com/maps/place/Korzenna+3,+02-981+Warszawa'
+                           f'/@52.1946406,21.0970687,17z/data=!3m1!4b1!4m6!3m5!1s0x471ed2a36aa060c7:'
+                           f'0x714094a9a28101a0!8m2!3d52.1946406!4d21.099649!16s%2Fg%2F11c251zhvh?entry'
+                           f'=ttu&g_ep=EgoyMDI0MTAyOS4wIKXMDSoASAFQAw%3D%3D">'
+                           f'*Pawel:*</a>\n'
+                           f'ТЕЛЕФОН: <a href="tel:+48505966026">+48505966026</a>')
+
 
         elif call.data == "button6":
             answer_text = "ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!"
