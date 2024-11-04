@@ -57,7 +57,10 @@ def telegram_bot(token):
                      "Руслан": "+48513368948",
                      "Виталил": "+48576704688",
                      "Войтек": "+48517457662",
-                     "HOLCIM": "+48519537060"}
+                     "Гура кальвария вензел": "+48502700711",
+                     "Жерань вензел": "+48502786525",
+                     "HOLCIM вензел 2": "+48502786916",
+                     "HOLCIM вензел 1": "+48519537060"}
 
     # todo отремонтипровать приветствие каждого дня из за неё зависает ресберн
     def send_scheduled_message():
@@ -104,10 +107,10 @@ def telegram_bot(token):
     def handle_callback(call):
         answer_text = ""
         """"оброботка сробатывания кнопок"""
-        if call.data == "button1":
+        if call.data == "button1": # расписание
             answer_text = f"Cегодня запланировано отгрузить - {how_much_m}m3\n{lista}"
 
-        elif call.data == "button2":
+        elif call.data == "button2": # погода
             try:
                 weather_day = weather.weather_now()
                 weather_3day = weather.weather_3day()
@@ -132,7 +135,7 @@ def telegram_bot(token):
             except Exception:
                 return
 
-        elif call.data == "button3":
+        elif call.data == "button3": # будовы
             dic_bud = load_dict_from_file('dic_bud.json')
             for key in dic_bud.keys():
                 answer_text = (f'<a href="https://www.google.com/maps?q={dic_bud[key][0]},{dic_bud[key][1]}">'
