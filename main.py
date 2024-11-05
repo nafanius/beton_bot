@@ -12,16 +12,23 @@ import weather
 from auth_data import token
 from palec import name, ask_chatgpt
 
+# logging
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
+lg = logging.debug
+cr = logging.critical
+inf = logging.info
+exp = logging.exception
+# logging.disable(logging.DEBUG)
+# logging.disable(logging.INFO)
+# logging.disable(logging.CRITICAL)
+# logging_end
+
+
 id_group = "-4533287060"
-request_name_of_building = 1
-request_location_of_building = 2
-request_how_much_m = 3
-request_lista = 4
 name_bud = ""
-user_state = {}
 message_without_bot = "Чёто ты меня притомил, давай ка помолчим kurwa"
 how_much_m = 0
-lista = ""
+lista = " "
 
 
 # Функция для записи словаря в файл
@@ -55,7 +62,7 @@ def telegram_bot(token):
                      "Макс": "+48536519415",
                      "Олег": "+48791192036",
                      "Руслан": "+48513368948",
-                     "Виталил": "+48576704688",
+                     "Виталий": "+48576704688",
                      "Войтек": "+48517457662",
                      "Гура кальвария вензел": "+48502700711",
                      "Жерань вензел": "+48502786525",
@@ -136,10 +143,14 @@ def telegram_bot(token):
                 return
 
         elif call.data == "button3": # будовы
+            answer = []
             dic_bud = load_dict_from_file('dic_bud.json')
             for key in dic_bud.keys():
-                answer_text = (f'<a href="https://www.google.com/maps?q={dic_bud[key][0]},{dic_bud[key][1]}">'
+
+                answer.append(f'<a href="https://www.google.com/maps?q={dic_bud[key][0]},{dic_bud[key][1]}">'
                                f'*{key}*</a>')
+
+            answer_text = "Будовы:\nпо щелчку откроется геолокация\n" + "\n".join(answer)
 
         elif call.data == "button4":
             list_of_phone = []
@@ -163,15 +174,17 @@ def telegram_bot(token):
 
         elif call.data == "button6":
             answer_text = "ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!"
-
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=answer_text,
-                              reply_markup=call.message.reply_markup, parse_mode='HTML')
+        try:
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=answer_text,
+                                  reply_markup=call.message.reply_markup, parse_mode='HTML')
+        except Exception as error:
+            inf(error)
+            pass
 
     # Приветствие
     @bot.message_handler(commands=['s'])
     def start_message(message):
         """сробатывание на команду слэш с"""
-        user_state[message.chat.id] = 0  # Устанавливаем начальное состояние пользователя
         markup = types.InlineKeyboardMarkup()  # Создаем разметку с кнопками
         btn1 = types.InlineKeyboardButton("расписание", callback_data="button1")
         btn2 = types.InlineKeyboardButton("погоду", callback_data="button2")
@@ -194,31 +207,79 @@ def telegram_bot(token):
                                           f" продвинутых бетономешальщиков\n"
                                           f"Hабери:\n'/h' - и я тебе расскажу что я умею\n"
                                           f"'/s' -  функции которые я могу выполнять \n")
-        user_state[message.chat.id] = 0  # Устанавливаем начальное состояние пользователя
 
     @bot.message_handler(commands=['add'])
     def add_budowa(message):
         """записываем адрес и локализацию будовы"""
-        bot.send_message(message.chat.id, "Введите название")
-        user_state[message.chat.id] = request_name_of_building
+        msg = bot.send_message(message.chat.id, "Введите название", reply_markup=types.ForceReply())
+        bot.register_next_step_handler(msg, ask_name_budowy)
+
+    def ask_geolocation(message): # Ответ корректен, продолжаем
+        if message.content_type == 'location':
+            # Ответ корректен, продолжаем
+            global name_bud
+            lat = message.location.latitude
+            lon = message.location.longitude
+            dic_bud = load_dict_from_file("dic_bud.json")
+            dic_bud[name_bud] = [lat, lon]
+            save_dict_to_file(dic_bud, "dic_bud.json")
+            bot.send_message(message.chat.id, "ПРИНЯТО!")
+        else:
+            # Ответ некорректен, просим ввести снова
+            msg = bot.send_message(message.chat.id, "Вышлите геолокацию")
+            bot.register_next_step_handler(msg, ask_geolocation)
+
+    def ask_name_budowy(message) :# Ответ корректен, продолжаем
+        if message.content_type == 'text':
+            global name_bud
+            # Ответ корректен, продолжаем
+            name_bud = message.text
+            bot.send_message(message.chat.id, "Укажите свою геолокацию", reply_markup=types.ForceReply() )
+            bot.register_next_step_handler(message, ask_geolocation)
+        else:
+            # Ответ некорректен, просим ввести снова
+            msg = bot.send_message(message.chat.id, "ВВЕДИТЕ ТЕКСТ - Название будовы")
+            bot.register_next_step_handler(msg, ask_name_budowy)
 
     @bot.message_handler(commands=['m'])
     def how_much_m_message(message):
-        bot.send_message(message.chat.id, "введите метры")
-        user_state[message.chat.id] = request_how_much_m
+        msg = bot.send_message(message.chat.id, "введите метры", reply_markup=types.ForceReply())
+        bot.register_next_step_handler(msg, ask_how_much)
+
+    def ask_how_much(message):
+        if message.content_type == 'text':
+            global how_much_m
+            # Ответ корректен, продолжаем
+            how_much_m = message.text
+            bot.send_message(message.chat.id, "ПРИНЯТО")
+        else:
+            # Ответ некорректен, просим ввести снова
+            msg = bot.send_message(message.chat.id, "ВВЕДИТЕ ТЕКСТ - СКОЛЬКО МЕТРОВ ЗАПЛАНИРОВАНО")
+            bot.register_next_step_handler(msg, ask_how_much)
+
 
     @bot.message_handler(commands=['l'])
     def lista_message(message):
-        bot.send_message(message.chat.id, "введите listu")
-        user_state[message.chat.id] = request_lista
+        msg = bot.send_message(message.chat.id, "введите listu", reply_markup=types.ForceReply())
+        bot.register_next_step_handler(msg, ask_listu)
+
+    def ask_listu(message):
+        if message.content_type == 'text':
+            global lista
+            # Ответ корректен, продолжаем
+            lista = message.text
+            bot.send_message(message.chat.id, "ПРИНЯТО")
+        else:
+            # Ответ некорректен, просим ввести снова
+            msg = bot.send_message(message.chat.id, "ВВЕДИТЕ ТЕКСТ - СКОЛЬКО МЕТРОВ ЗАПЛАНИРОВАНО")
+            bot.register_next_step_handler(msg, ask_how_much)
 
     # Обработчик текста и геолакации
-    @bot.message_handler(content_types=['text', 'location'])
+    @bot.message_handler(content_types=['text'])
     def handle_text(message):
         global name_bud
         global how_much_m
         global lista
-        user_id = message.chat.id
         text_message = message.text
         # Игнорируем сообщения от пользователей, которые не находятся в состоянии ожидания ответа
         if message.content_type == 'text':
@@ -245,42 +306,6 @@ def telegram_bot(token):
                     bot.reply_to(message, message_without_bot)
             else:
                 save_dict_to_file(conversation_history, 'conversation_history.json')
-
-            if user_id not in user_state:
-                return
-            # Обработка первого ответа
-            if user_state[user_id] == request_name_of_building:
-                bot.send_message(user_id, "Укажите свою геолокацию")
-                name_bud = message.text
-                user_state[user_id] = request_location_of_building
-            elif user_state[user_id] == request_how_much_m:
-                if message.text.isdigit():
-                    how_much_m = message.text
-                    del user_state[user_id]
-                else:
-                    bot.send_message(user_id, "ВВЕДИТЕ ЧИСЛО")
-
-            elif user_state[user_id] == request_lista:
-                lista = message.text
-                del user_state[user_id]
-
-
-        elif message.content_type == 'location':
-            """обрабатывает получение геолокации для команды add"""
-            user_id = message.chat.id
-            if user_id not in user_state:
-                return
-
-            if user_state[user_id] == request_location_of_building:
-                lat = message.location.latitude
-                lon = message.location.longitude
-                # После получения второго ответа можем очистить состояние.
-                del user_state[user_id]
-                dic_bud = load_dict_from_file("dic_bud.json")
-                dic_bud[name_bud] = [lat, lon]
-                print(dic_bud)
-                save_dict_to_file(dic_bud, "dic_bud.json")
-
     bot.polling(none_stop=True)
 
 
