@@ -6,6 +6,13 @@ from datetime import datetime
 import threading
 import subprocess
 
+from aiohttp.web_fileresponse import content_type
+from wit import Wit
+import io
+from pydub import AudioSegment
+from gtts import gTTS
+
+
 
 import telebot
 from telebot import types
@@ -15,6 +22,7 @@ from auth_data import token
 from palec import name, ask_chatgpt
 
 # logging
+
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 lg = logging.debug
 cr = logging.critical
@@ -25,7 +33,7 @@ exp = logging.exception
 # logging.disable(logging.CRITICAL)
 # logging_end
 
-
+client = Wit('HZZJUIX7N6O7LJ2XNNSPN2ZTFGLWQCF6')
 id_group = "-4533287060"
 name_bud = ""
 message_without_bot = "Чёто ты меня притомил, давай ка помолчим kurwa"
@@ -295,9 +303,6 @@ def telegram_bot(token):
     # text
     @bot.message_handler(content_types=['text'])
     def handle_text(message):
-        global name_bud
-        global how_much_m
-        global lista
         text_message = message.text
         # Игнорируем сообщения от пользователей, которые не находятся в состоянии ожидания ответа
         if message.content_type == 'text':
@@ -324,6 +329,75 @@ def telegram_bot(token):
             else:
                 with db_lock:
                     save_dict_to_file(conversation_history, 'conversation_history.json')
+
+    @bot.message_handler(content_types=['voice'])
+    def handle_voice(message):
+        try:
+            # Получаем информацию о голосовом сообщении
+            file_info = bot.get_file(message.voice.file_id)
+            # Скачиваем файл
+            downloaded_file = bot.download_file(file_info.file_path)
+            ogg_audio = io.BytesIO(downloaded_file)
+            audio = AudioSegment.from_file(ogg_audio, format="ogg")
+            wav_audio_io = io.BytesIO()
+            audio.export(wav_audio_io, format="wav")
+            wav_audio_io.seek(0)
+            wav_binary_data = wav_audio_io.read()
+
+
+            resp = client.speech(wav_binary_data, {'Content-Type': 'audio/wav'})
+            print('Yay, got Wit.ai response: ' + str(resp["text"]))
+
+
+            text_message = resp['text']
+        except Exception as err:
+            inf(err)
+            return
+
+
+        # Игнорируем сообщения от пользователей, которые не находятся в состоянии ожидания ответа
+        conversation_history = load_dict_from_file('conversation_history.json')
+        if len(conversation_history) > 1000:
+            conversation_history = conversation_history[-1000:]
+
+        # conversation_history.append({"role": "user", "content": f"{message.from_user.first_name}: {text_message}"})
+
+        bot_name = text_message.split()[0].lower()[:5]
+
+
+        if bot_name in name:
+            conversation_history[-1] = {"role": "user",
+                                        "content": f"{message.from_user.username} question: {text_message}"}
+            with db_lock:
+                save_dict_to_file(conversation_history, 'conversation_history.json')
+
+            split_text = text_message.split()
+            text_message = ' '.join(split_text[1:])
+            # пробуем получить ответ от чат бота
+            print(text_message)
+            try:
+                tts = gTTS(ask_chatgpt(text_message), lang='ru')
+                # Создание объекта BytesIO
+                mp3_fp = io.BytesIO()
+                tts.write_to_fp(mp3_fp)
+                mp3_fp.seek(0)
+
+                # Конвертация MP3 в OGG
+                audio = AudioSegment.from_file(mp3_fp, format="mp3")
+                ogg_fp = io.BytesIO()
+                audio.export(ogg_fp, format="ogg", codec="libopus")
+                ogg_fp.seek(0)
+
+
+                bot.send_voice(message.chat.id, ogg_fp)
+
+            except Exception as err:
+                inf(err)
+                bot.reply_to(message, message_without_bot)
+        else:
+            with db_lock:
+                save_dict_to_file(conversation_history, 'conversation_history.json')
+
 
     retries = 5
     for i in range(retries):
