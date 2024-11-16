@@ -125,7 +125,7 @@ def telegram_bot(token):
         """"оброботка сробатывания кнопок"""
         if call.data == "button1": # расписание
             lista = load_dict_from_file('lista.json')
-            answer_text = f"Cегодня запланировано отгрузить - {lista["m"]}m3\n{lista['lista']}"
+            answer_text = f"Cегодня запланировано отгрузить - {lista['m']}m3\n{lista['lista']}"
 
         elif call.data == "button2": # погода
             try:
