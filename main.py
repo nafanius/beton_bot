@@ -3,7 +3,9 @@ import logging
 import time
 import os
 from datetime import datetime
-from threading import Thread
+import threading
+import subprocess
+
 
 import telebot
 from telebot import types
@@ -27,15 +29,18 @@ exp = logging.exception
 id_group = "-4533287060"
 name_bud = ""
 message_without_bot = "Чёто ты меня притомил, давай ка помолчим kurwa"
-how_much_m = 0
-lista = " "
+lista = {}
+db_lock = threading.Lock()
+
+def restart_service():
+    subprocess.run(['systemctl', 'restart', 'my_bot_bet.service'])
 
 
+#region  SAVE AND LOAD JSON
 # Функция для записи словаря в файл
 def save_dict_to_file(dictionary, filename):
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(dictionary, f, ensure_ascii=False, indent=4)
-
 
 # Функция для загрузки словаря из файла
 def load_dict_from_file(filename):
@@ -47,6 +52,7 @@ def load_dict_from_file(filename):
             json.dump({}, f, ensure_ascii=False, indent=4)
         with open(filename, 'r', encoding='utf-8') as f:
             return json.load(f)
+#endregion SAVE AND LOAD JSON
 
 
 def telegram_bot(token):
@@ -80,10 +86,12 @@ def telegram_bot(token):
 
             # Проверьте если текущее время совпадает с запланированным (например, 9:00)
             if now.hour == 6 and now.minute == 30:
+                global lista
+                lista = load_dict_from_file('lista.json')
                 weather_3day = weather.weather_3day()
                 bot.send_message(id_group, f"*Добрейшее утро господа!*\n\n"
-                                           f"*Сегодня запланировано отгрузить*  - _{how_much_m}m3_\n\n"
-                                           f"*Расписание на сегодня* - _{lista}_\n\n"
+                                           f"*Сегодня запланировано отгрузить*  - _{lista['m']}m3_\n\n"
+                                           f"*Расписание на сегодня* - _{lista['lista']}_\n\n"
                                            f"*Cегодня нас ждёт такая погода:*\n"
                                            f"Tемпература минимальная- {weather_3day[0]['температура минимальная']}\n"
                                            f"Tемпература максимальная - {weather_3day[0]['температура максимальная']}\n"
@@ -94,7 +102,7 @@ def telegram_bot(token):
             time.sleep(10)  # Проверка каждые 10 секунд
 
     # Запускаем поток для выполнения запланированного задания
-    Thread(target=send_scheduled_message).start()
+    threading.Thread(target=send_scheduled_message).start()
 
     @bot.message_handler(content_types=['new_chat_members'])
     def welcome_new_member(message):
@@ -112,10 +120,12 @@ def telegram_bot(token):
 
     @bot.callback_query_handler(func=lambda call: True)
     def handle_callback(call):
+        global lista
         answer_text = ""
         """"оброботка сробатывания кнопок"""
         if call.data == "button1": # расписание
-            answer_text = f"Cегодня запланировано отгрузить - {how_much_m}m3\n{lista}"
+            lista = load_dict_from_file('lista.json')
+            answer_text = f"Cегодня запланировано отгрузить - {lista["m"]}m3\n{lista['lista']}"
 
         elif call.data == "button2": # погода
             try:
@@ -141,7 +151,6 @@ def telegram_bot(token):
                                f"Ветер  - {weather_3day[2]['ветер']}\n\n")
             except Exception:
                 return
-
         elif call.data == "button3": # будовы
             answer = []
             dic_bud = load_dict_from_file('dic_bud.json')
@@ -151,7 +160,6 @@ def telegram_bot(token):
                                f'*{key}*</a>')
 
             answer_text = "Будовы:\nпо щелчку откроется геолокация\n" + "\n".join(answer)
-
         elif call.data == "button4":
             list_of_phone = []
             for key in dict_contacts.keys():
@@ -179,9 +187,9 @@ def telegram_bot(token):
                                   reply_markup=call.message.reply_markup, parse_mode='HTML')
         except Exception as error:
             inf(error)
-            pass
 
-    # Приветствие
+
+
     @bot.message_handler(commands=['s'])
     def start_message(message):
         """сробатывание на команду слэш с"""
@@ -208,6 +216,7 @@ def telegram_bot(token):
                                           f"Hабери:\n'/h' - и я тебе расскажу что я умею\n"
                                           f"'/s' -  функции которые я могу выполнять \n")
 
+#region ADD BUDOWA
     @bot.message_handler(commands=['add'])
     def add_budowa(message):
         """записываем адрес и локализацию будовы"""
@@ -222,7 +231,8 @@ def telegram_bot(token):
             lon = message.location.longitude
             dic_bud = load_dict_from_file("dic_bud.json")
             dic_bud[name_bud] = [lat, lon]
-            save_dict_to_file(dic_bud, "dic_bud.json")
+            with db_lock:
+                save_dict_to_file(dic_bud, "dic_bud.json")
             bot.send_message(message.chat.id, "ПРИНЯТО!")
         else:
             # Ответ некорректен, просим ввести снова
@@ -240,7 +250,9 @@ def telegram_bot(token):
             # Ответ некорректен, просим ввести снова
             msg = bot.send_message(message.chat.id, "ВВЕДИТЕ ТЕКСТ - Название будовы")
             bot.register_next_step_handler(msg, ask_name_budowy)
+#endregion ADD BUDOWA
 
+# region add plan meters
     @bot.message_handler(commands=['m'])
     def how_much_m_message(message):
         msg = bot.send_message(message.chat.id, "введите метры", reply_markup=types.ForceReply())
@@ -250,14 +262,17 @@ def telegram_bot(token):
         if message.content_type == 'text':
             global how_much_m
             # Ответ корректен, продолжаем
-            how_much_m = message.text
+            lista["m"] = message.text
+            with db_lock:
+                save_dict_to_file(lista, 'lista.json')
             bot.send_message(message.chat.id, "ПРИНЯТО")
         else:
             # Ответ некорректен, просим ввести снова
             msg = bot.send_message(message.chat.id, "ВВЕДИТЕ ТЕКСТ - СКОЛЬКО МЕТРОВ ЗАПЛАНИРОВАНО")
             bot.register_next_step_handler(msg, ask_how_much)
+# endregion add plan meters
 
-
+# region add list
     @bot.message_handler(commands=['l'])
     def lista_message(message):
         msg = bot.send_message(message.chat.id, "введите listu", reply_markup=types.ForceReply())
@@ -267,14 +282,17 @@ def telegram_bot(token):
         if message.content_type == 'text':
             global lista
             # Ответ корректен, продолжаем
-            lista = message.text
+            lista["lista"] = message.text
+            with db_lock:
+                save_dict_to_file(lista, 'lista.json')
             bot.send_message(message.chat.id, "ПРИНЯТО")
         else:
             # Ответ некорректен, просим ввести снова
             msg = bot.send_message(message.chat.id, "ВВЕДИТЕ ТЕКСТ - СКОЛЬКО МЕТРОВ ЗАПЛАНИРОВАНО")
             bot.register_next_step_handler(msg, ask_how_much)
+# endregion add list
 
-    # Обработчик текста и геолакации
+    # text
     @bot.message_handler(content_types=['text'])
     def handle_text(message):
         global name_bud
@@ -283,8 +301,6 @@ def telegram_bot(token):
         text_message = message.text
         # Игнорируем сообщения от пользователей, которые не находятся в состоянии ожидания ответа
         if message.content_type == 'text':
-            print(message)
-
             conversation_history = load_dict_from_file('conversation_history.json')
             if len(conversation_history) > 1000:
                 conversation_history = conversation_history[-1000:]
@@ -295,7 +311,8 @@ def telegram_bot(token):
             if bot_name in name:
                 conversation_history[-1] = {"role": "user",
                                             "content": f"{message.from_user.username} question: {message.text}"}
-                save_dict_to_file(conversation_history, 'conversation_history.json')
+                with db_lock:
+                    save_dict_to_file(conversation_history, 'conversation_history.json')
 
                 split_text = text_message.split()
                 text_message = ' '.join(split_text[1:])
@@ -305,8 +322,21 @@ def telegram_bot(token):
                 except:
                     bot.reply_to(message, message_without_bot)
             else:
-                save_dict_to_file(conversation_history, 'conversation_history.json')
-    bot.polling(none_stop=True)
+                with db_lock:
+                    save_dict_to_file(conversation_history, 'conversation_history.json')
+
+    retries = 5
+    for i in range(retries):
+        try:
+            bot.polling(none_stop=True)
+        except Exception as err:
+            inf(err)
+            if i < retries -1:
+                time.sleep(8)
+                continue
+            else:
+                restart_service()
+                break
 
 
 if __name__ == '__main__':
