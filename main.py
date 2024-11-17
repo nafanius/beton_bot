@@ -21,7 +21,7 @@ import weather
 from auth_data import token
 from palec import name, ask_chatgpt
 
-# logging
+#region logging
 
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 lg = logging.debug
@@ -32,6 +32,7 @@ exp = logging.exception
 # logging.disable(logging.INFO)
 # logging.disable(logging.CRITICAL)
 # logging_end
+# endregion
 
 client = Wit('HZZJUIX7N6O7LJ2XNNSPN2ZTFGLWQCF6')
 id_group = "-4533287060"
@@ -330,8 +331,8 @@ def telegram_bot(token):
                 with db_lock:
                     save_dict_to_file(conversation_history, 'conversation_history.json')
 
-    @bot.message_handler(content_types=['voice'])
-    def handle_voice(message):
+    def palec_voice(message):
+        """reply voice palcasty"""
         try:
             # Получаем информацию о голосовом сообщении
             file_info = bot.get_file(message.voice.file_id)
@@ -344,16 +345,13 @@ def telegram_bot(token):
             wav_audio_io.seek(0)
             wav_binary_data = wav_audio_io.read()
 
-
             resp = client.speech(wav_binary_data, {'Content-Type': 'audio/wav'})
-            print('Yay, got Wit.ai response: ' + str(resp["text"]))
-
 
             text_message = resp['text']
         except Exception as err:
             inf(err)
             return
-
+        pass
 
         # Игнорируем сообщения от пользователей, которые не находятся в состоянии ожидания ответа
         conversation_history = load_dict_from_file('conversation_history.json')
@@ -397,6 +395,12 @@ def telegram_bot(token):
         else:
             with db_lock:
                 save_dict_to_file(conversation_history, 'conversation_history.json')
+
+    @bot.message_handler(content_types=['voice'])
+    def handle_voice(message):
+        """cathe all voices and looking first world Palec, if it looks for then send answer"""
+
+        threading.Thread(target=palec_voice, args=(message,)).start()
 
 
     retries = 5
