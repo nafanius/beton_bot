@@ -45,7 +45,7 @@ def restart_service():
     subprocess.run(['systemctl', 'restart', 'my_bot_bet.service'])
 
 
-#region  SAVE AND LOAD JSON
+#region SAVE AND LOAD JSON
 # Функция для записи словаря в файл
 def save_dict_to_file(dictionary, filename):
     with open(filename, 'w', encoding='utf-8') as f:
@@ -127,6 +127,7 @@ def telegram_bot(token):
                              f"{new_member.first_name}\n:Набери:\n'/h' - и я тебе расскажу что я умею\n"
                              f"'/s' -  функции которые я могу выполнять \n")
 
+# region tap on Button
     @bot.callback_query_handler(func=lambda call: True)
     def handle_callback(call):
         global lista
@@ -197,6 +198,7 @@ def telegram_bot(token):
         except Exception as error:
             inf(error)
 
+# endregion tap on Button
 
 
     @bot.message_handler(commands=['s'])
@@ -387,7 +389,7 @@ def telegram_bot(token):
                 ogg_fp.seek(0)
 
 
-                bot.send_voice(message.chat.id, ogg_fp)
+                bot.send_voice(chat_id=message.chat.id, voice=ogg_fp, reply_to_message_id=message.message_id)
 
             except Exception as err:
                 inf(err)
