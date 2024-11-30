@@ -111,6 +111,8 @@ def combination_of_some_days_list(now=False):
         text_to_bot += f"**{date}**\n{lista_in_bot(form_lista(file, day))}\n\n"
     else:
         for day, file, date in find_day_request():
+            if not lista_in_bot(form_lista(file, day)):
+                continue
             text_to_bot += f"**{date}**\n{lista_in_bot(form_lista(file, day))}\n\n"
 
         return text_to_bot
