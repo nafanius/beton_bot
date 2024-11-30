@@ -97,14 +97,23 @@ def find_day_request():
 
     return list_of_days
 
-def combination_of_some_days_list():
+def combination_of_some_days_list(now=False):
     """формируем общий лист на несколько дней в зависимости от дня недели"""
     get_from_google_sheet()
     text_to_bot = ""
-    for day, file, date in find_day_request():
+    if now:
+        now = datetime.now()
+        day = now.weekday()
+        current_week_number = now.isocalendar()[1]
+        current_year = now.year
+        date = now.strftime('%d.%m.%Y')
+        file = f"./excel_files/Tydz {current_week_number}.{current_year}.xlsx"
         text_to_bot += f"**{date}**\n{lista_in_bot(form_lista(file, day))}\n\n"
+    else:
+        for day, file, date in find_day_request():
+            text_to_bot += f"**{date}**\n{lista_in_bot(form_lista(file, day))}\n\n"
 
-    return text_to_bot
+        return text_to_bot
 
 
 

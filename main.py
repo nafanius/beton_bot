@@ -70,9 +70,6 @@ def telegram_bot(token):
     """основной цикл следящий за состоянием"""
     bot = telebot.TeleBot(token)
 
-    # Логирование ошибок
-    logging.basicConfig(level=logging.INFO)
-
     # Переменные для хранения состояний пользователя
     dict_contacts = {"Пальцастый": "+48570315464",
                      "Игорь": "+48572989696",
@@ -101,8 +98,7 @@ def telegram_bot(token):
                 lista = load_dict_from_file('lista.json')
                 weather_3day = weather.weather_3day()
                 bot.send_message(id_group, f"*Добрейшее утро господа!*\n\n"
-                                           f"*Сегодня запланировано отгрузить*  - _{lista['m']}m3_\n\n"
-                                           f"*Расписание на сегодня* - _{lista['lista']}_\n\n"
+                                           f"*Расписание на сегодня* - \n {get_lista.combination_of_some_days_list(True)}"
                                            f"*Cегодня нас ждёт такая погода:*\n"
                                            f"Tемпература минимальная- {weather_3day[0]['температура минимальная']}\n"
                                            f"Tемпература максимальная - {weather_3day[0]['температура максимальная']}\n"

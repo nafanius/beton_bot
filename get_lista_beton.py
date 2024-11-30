@@ -7,7 +7,6 @@ import os
 import re
 
 
-
 def generate_name_of_file_google():
     """генерируем файлы для загрузки"""
     list_of_download_files = []
@@ -47,9 +46,9 @@ def form_lista(excel_file, day):
 
     def fill_list_beton(times_download, row, column, wenz):
         if isinstance(times_download, time):
-            lista_beton.append((str(sheet.cell(row=row, column=column + 4).value).strip(), times_download,
-                                str(sheet.cell(row=row, column=column + 2).value).strip(),
-                                str(sheet.cell(row=row, column=column + 10).value).strip(),
+            lista_beton.append((sheet.cell(row=row, column=column + 4).value, times_download,
+                                sheet.cell(row=row, column=column + 2).value,
+                                sheet.cell(row=row, column=column + 10).value,
                                 sheet.cell(row=row, column=column + 11).value, wenz))
 
     for row_in_file in range(1, sheet.max_row):
@@ -71,30 +70,51 @@ def form_lista(excel_file, day):
 
 def lista_in_bot(lista_beton):
     """"фотрмируем list в текстовый формат для высолки в бот """
+    def sum_of_metres(data):
+        sum_m = 0
+        try:
+            sum_m += float(data)
+        except (ValueError, TypeError):
+            # Игнорируем элементы, которые не являются числами
+            pass
+        return sum_m
+
+    def convert_to_string(data):
+        if not data:
+            return ""
+        try:
+            data = str(data)
+            data = data.strip()
+            data = re.sub(r'\s+', ' ', data)
+            return data
+        except (TypeError, ValueError):
+            return ""
 
     if not lista_beton:
         return ""
     lista_text = ""
+    sum_metres = 0
     for metres, times, name, uwagi, tel, wenz in lista_beton:
-        times= times.strftime('%H:%M')
-        name = name.strip()
-        uwagi = uwagi.strip()
+        times = times.strftime('%H:%M')
         if tel:
-            if  isinstance(tel, float):
+            if isinstance(tel, float):
                 tel = str(int(tel)).strip()
             elif isinstance(tel, str):
                 tel = tel.strip()
         else:
             tel = ""
 
-        name = re.sub(r'\s+', ' ', name)
-        tel = re.sub(r'\s+', ' ', tel)
+        name = convert_to_string(name)
+        tel = convert_to_string(tel)
+        uwagi = convert_to_string(uwagi)
+        sum_metres = sum_metres + sum_of_metres(metres)
+        metres = str(metres).strip()
+
 
         lista_text += (f"{times} {metres} węzel {wenz}\n"
                        f"{name} {uwagi} {tel}\n"
                        f"--------------------\n")
-
-    return lista_text
+    return lista_text, sum_metres
 
 
 def find_day_request():
@@ -130,13 +150,15 @@ def find_day_request():
     return list_of_days
 
 
-
 def combination_of_some_days_list_bet():
     """формируем общий лист на несколько дней в зависимости от дня недели"""
     get_from_google_sheet()
     text_to_bot = ""
     for day, file, date in find_day_request():
-        text_to_bot += f"**{date}**\n{lista_in_bot(form_lista(file, day))}\n\n"
+        if not lista_in_bot(form_lista(file, day)):
+            continue
+        lista, meter = lista_in_bot(form_lista(file, day))
+        text_to_bot += f"**{date}**\nMetres {meter}\n{lista}\n\n"
 
     return text_to_bot
 
