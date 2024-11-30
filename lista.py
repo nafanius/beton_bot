@@ -1,32 +1,46 @@
 import ezsheets
-import openpyxl
-import re
-from datetime import time
 
-# sheets = ezsheets.Spreadsheet('./credentials.json')
-# spreadsheets = sheets.listSpreadsheets()
-#
-# for spreadsheet in spreadsheets:
-#     print(spreadsheet)
+import openpyxl
+from datetime import time
+from datetime import datetime, timedelta
+import os
+
+
+
+def generate_name_of_file_google():
+    """генерируем файлы для загрузки"""
+    list_of_download_files = []
+
+    now = datetime.now()
+    # Извлекаем номер недели с помощью isocalendar
+    current_week_number = now.isocalendar()[1]
+    # day_of_week = now.weekday()
+    current_year = now.year
+    list_of_download_files.append(f"Tydz {current_week_number}.{current_year}")
+    list_of_download_files.append(f"Tydz {current_week_number + 1}.{current_year}")
+
+    return list_of_download_files
+
 
 
 def get_from_google_sheet():
-    ss = ezsheets.Spreadsheet('Tydz 49.2024')
-    print(ezsheets.listSpreadsheets())
-    ss.downloadAsExcel()
+    for file in generate_name_of_file_google():
+        try:
+            directory = 'excel_files'
+            ss = ezsheets.Spreadsheet(file)
+            ss_name = ss.title
+            file_path = os.path.join(directory, f'{ss_name}.xlsx')
+            ss.downloadAsExcel(file_path)
+        except:
+            print("ERRR")
+            continue
 
 
-
-
-wb = openpyxl.load_workbook('Tydz_49.2024.xlsx')
-print(wb.sheetnames)
-sheet = wb[wb.sheetnames[0]]
-print(sheet)
-
-
-
-def form_lista():
+def form_lista(excel_file, day):
+    '''дастоём расписание из файла'''
     lista = []
+    wb = openpyxl.load_workbook(excel_file)
+    sheet = wb[wb.sheetnames[day]]
 
     def fill_list(time_str, row, column):
         if isinstance(time_str, time):
@@ -45,5 +59,58 @@ def form_lista():
     return lista
 
 
+def lista_in_bot(lista):
+    """"фотрмируем list в текстовый формат для высолки в бот """
 
 
+    if not lista:
+        return ""
+    lista_text =""
+    for time, person in lista:
+        lista_text += f"{time.strftime('%H:%M')} {person}\n"
+
+    return lista_text
+
+def find_day_request():
+
+    list_of_days = []
+
+    now = datetime.now()
+    # Извлекаем номер недели с помощью isocalendar
+    current_week_number = now.isocalendar()[1]
+    day_of_week = now.weekday()
+    current_year = now.year
+    formatted_date = now.strftime('%d.%m.%Y')
+    if day_of_week in (0,1,2,3):
+        list_of_days.append((day_of_week, f"./excel_files/Tydz {current_week_number}.{current_year}.xlsx", now.strftime('%d.%m.%Y')))
+        list_of_days.append((day_of_week + 1, f"./excel_files/Tydz {current_week_number}.{current_year}.xlsx", (now + timedelta(days=1)).strftime('%d.%m.%Y')))
+    elif day_of_week == 4:
+        list_of_days.append((day_of_week, f"./excel_files/Tydz {current_week_number}.{current_year}.xlsx", now.strftime('%d.%m.%Y')))
+        list_of_days.append((day_of_week + 1, f"./excel_files/Tydz {current_week_number}.{current_year}.xlsx", (now + timedelta(days=1)).strftime('%d.%m.%Y')))
+        list_of_days.append((0, f"./excel_files/Tydz {current_week_number + 1}.{current_year}.xlsx", (now + timedelta(days=3)).strftime('%d.%m.%Y') ))
+    elif day_of_week == 5:
+        list_of_days.append((day_of_week, f"./excel_files/Tydz {current_week_number}.{current_year}.xlsx", now.strftime('%d.%m.%Y')))
+        list_of_days.append((0, f"./excel_files/Tydz {current_week_number + 1}.{current_year}.xlsx",(now + timedelta(days=2)).strftime('%d.%m.%Y')))
+    elif day_of_week == 6:
+        list_of_days.append((0, f"./excel_files/Tydz {current_week_number + 1}.{current_year}.xlsx", (now + timedelta(days=1)).strftime('%d.%m.%Y')))
+
+    return list_of_days
+
+def combination_of_some_days_list():
+    """формируем общий лис на несколько дней в зависимости от дня недели"""
+    text_to_bot = ""
+    for day, file, date in find_day_request():
+        text_to_bot += f"**{date}**\n{lista_in_bot(form_lista(file, day))}\n\n"
+
+    return text_to_bot
+
+
+
+
+
+
+
+
+get_from_google_sheet()
+print(combination_of_some_days_list())
+# print(form_lista("./excel_files/Tydz 48.2024.xlsx", 0))
