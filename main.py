@@ -5,6 +5,8 @@ import os
 from datetime import datetime
 import threading
 import subprocess
+import get_lista
+import get_lista_beton
 
 from aiohttp.web_fileresponse import content_type
 from wit import Wit
@@ -134,8 +136,9 @@ def telegram_bot(token):
         answer_text = ""
         """"оброботка сробатывания кнопок"""
         if call.data == "button1": # расписание
-            lista = load_dict_from_file('lista.json')
-            answer_text = f"Cегодня запланировано отгрузить - {lista['m']}m3\n{lista['lista']}"
+            answer_text =  get_lista.combination_of_some_days_list()
+            # lista = load_dict_from_file('lista.json')
+            # answer_text = f"Cегодня запланировано отгрузить - {lista['m']}m3\n{lista['lista']}"
 
         elif call.data == "button2": # погода
             try:
@@ -191,7 +194,8 @@ def telegram_bot(token):
 
 
         elif call.data == "button6":
-            answer_text = "ФУНКЦИЯ В РАЗРАБОТКЕ, НЕМНОГО ТЕРПЕНИЯ!"
+            answer_text =  get_lista_beton.combination_of_some_days_list_bet()
+
         try:
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=answer_text,
                                   reply_markup=call.message.reply_markup, parse_mode='HTML')
@@ -210,7 +214,7 @@ def telegram_bot(token):
         btn3 = types.InlineKeyboardButton("будовы", callback_data="button3")
         btn4 = types.InlineKeyboardButton("телефоны", callback_data="button4")
         btn5 = types.InlineKeyboardButton("ГДЕ ПРОДАТЬ БЕТОН", callback_data="button5")
-        btn6 = types.InlineKeyboardButton("посмотреть что сейчас на заводе", callback_data="button6")
+        btn6 = types.InlineKeyboardButton("РАСПИСАНИЕ ОТГРУЗОК", callback_data="button6")
         markup.row(btn1 ,btn2)
         markup.row(btn3 ,btn4)
         markup.add(btn5)  # Добавляем кнопки в разметку

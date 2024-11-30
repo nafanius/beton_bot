@@ -12,9 +12,7 @@ def generate_name_of_file_google():
     list_of_download_files = []
 
     now = datetime.now()
-    # Извлекаем номер недели с помощью isocalendar
     current_week_number = now.isocalendar()[1]
-    # day_of_week = now.weekday()
     current_year = now.year
     list_of_download_files.append(f"Tydz {current_week_number}.{current_year}")
     list_of_download_files.append(f"Tydz {current_week_number + 1}.{current_year}")
@@ -39,7 +37,11 @@ def get_from_google_sheet():
 def form_lista(excel_file, day):
     '''дастоём расписание из файла'''
     lista = []
-    wb = openpyxl.load_workbook(excel_file)
+    try:
+        wb = openpyxl.load_workbook(excel_file)
+    except:
+        print("такого файла нет " + excel_file)
+        return []
     sheet = wb[wb.sheetnames[day]]
 
     def fill_list(time_str, row, column):
@@ -61,7 +63,6 @@ def form_lista(excel_file, day):
 
 def lista_in_bot(lista):
     """"фотрмируем list в текстовый формат для высолки в бот """
-
 
     if not lista:
         return ""
@@ -97,7 +98,8 @@ def find_day_request():
     return list_of_days
 
 def combination_of_some_days_list():
-    """формируем общий лис на несколько дней в зависимости от дня недели"""
+    """формируем общий лист на несколько дней в зависимости от дня недели"""
+    get_from_google_sheet()
     text_to_bot = ""
     for day, file, date in find_day_request():
         text_to_bot += f"**{date}**\n{lista_in_bot(form_lista(file, day))}\n\n"
@@ -107,10 +109,6 @@ def combination_of_some_days_list():
 
 
 
+if __name__ == '__main__':
 
-
-
-
-get_from_google_sheet()
-print(combination_of_some_days_list())
-# print(form_lista("./excel_files/Tydz 48.2024.xlsx", 0))
+    print(combination_of_some_days_list())
