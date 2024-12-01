@@ -310,15 +310,15 @@ def telegram_bot(token):
         # Игнорируем сообщения от пользователей, которые не находятся в состоянии ожидания ответа
         if message.content_type == 'text':
             conversation_history = load_dict_from_file('conversation_history.json')
-            if len(conversation_history) > 1000:
-                conversation_history = conversation_history[-1000:]
-
+            if len(conversation_history) > 150:
+                conversation_history = conversation_history[-75:]
             conversation_history.append({"role": "user", "content": f"{message.from_user.first_name}: {message.text}"})
 
             bot_name = text_message.split()[0].lower()[:5]
             if bot_name in name:
                 conversation_history[-1] = {"role": "user",
                                             "content": f"{message.from_user.username} question: {message.text}"}
+
                 with db_lock:
                     save_dict_to_file(conversation_history, 'conversation_history.json')
 
