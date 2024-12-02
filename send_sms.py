@@ -17,3 +17,12 @@ def send_sms(to, message):
 
 # Пример отправки SMS
 send_sms('+48436519415', 'hello world')
+
+# import requests
+#
+# resp = requests.post('https://textbelt.com/text', {
+#   'phone': '48436519415',
+#   'message': 'Hello world',
+#   'key': 'textbelt',
+# })
+# print(resp.json())
