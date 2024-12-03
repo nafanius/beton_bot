@@ -125,9 +125,9 @@ def find_day_request():
     current_week_number = now.isocalendar()[1]
     day_of_week = now.weekday()
     current_year = now.year
-    time_after_16_00 = now.replace(hour=16, minute=0, second=0, microsecond=0)
+    time_after_18_00 = now.replace(hour=18, minute=0, second=0, microsecond=0)
     if day_of_week in (0, 1, 2, 3, 4, 5):
-        if now < time_after_16_00:
+        if now < time_after_18_00:
             list_of_days.append(
                 (day_of_week, f"./excel_files/Tydz {current_week_number}.{current_year}.xlsx", now.strftime('%d.%m.%Y')))
         else:
