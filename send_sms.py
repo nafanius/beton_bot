@@ -1,14 +1,14 @@
 from twilio.rest import Client
 
-account_sid = 'ACd86d53f26588561850a3a05e4d8a0b3f'
-auth_token = 'cf96bf053df18c82554813098b8d67e2'
+account_sid = 'AC7aefd964e013aa84e02dde068682ca23'
+auth_token = 'b78b21e2eaf5a7df2af171022a73f383'
 client = Client(account_sid, auth_token)
 
 def send_sms(to, message):
     try:
         message = client.messages.create(
             body=message,
-            from_='+17755877484',  # Замените вашим Twilio номером
+            from_='+16814484273',  # Замените вашим Twilio номером
             to=to
         )
         print(f"Сообщение отправлено! SID: {message.sid}")

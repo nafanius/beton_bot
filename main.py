@@ -8,7 +8,6 @@ import subprocess
 import get_lista
 import get_lista_beton
 
-from aiohttp.web_fileresponse import content_type
 from wit import Wit
 import io
 from pydub import AudioSegment
@@ -71,17 +70,17 @@ def telegram_bot(token):
     bot = telebot.TeleBot(token)
 
     # Переменные для хранения состояний пользователя
-    dict_contacts = {"Пальцастый": "+48570315464",
-                     "Игорь": "+48572989696",
-                     "Макс": "+48536519415",
-                     "Олег": "+48791192036",
-                     "Руслан": "+48513368948",
-                     "Виталий": "+48576704688",
-                     "Войтек": "+48517457662",
-                     "Гура кальвария вензел": "+48502700711",
-                     "Жерань вензел": "+48502786525",
-                     "HOLCIM вензел 2": "+48502786916",
-                     "HOLCIM вензел 1": "+48519537060"}
+    dict_contacts = {"Palcasty": "+48570315464",
+                     "Ighor": "+48572989696",
+                     "Maks": "+48536519415",
+                     "Olech": "+48791192036",
+                     "Ruslan": "+48513368948",
+                     "Witalij": "+48576704688",
+                     "Wojtek": "+48517457662",
+                     "Gura Kalvaria węzeł": "+48502700711",
+                     "Żerań węzeł": "+48502786525",
+                     "HOLCIM węzeł 2": "+48502786916",
+                     "HOLCIM węzeł 1": "+48519537060"}
 
     # todo отремонтипровать приветствие каждого дня из за неё зависает ресберн
     def send_scheduled_message():
@@ -97,14 +96,14 @@ def telegram_bot(token):
                 global lista
                 lista = load_dict_from_file('lista.json')
                 weather_3day = weather.weather_3day()
-                bot.send_message(id_group, f"*Добрейшее утро господа!*\n\n"
-                                           f"*Расписание на сегодня* - \n {get_lista.combination_of_some_days_list(True)}"
-                                           f"*Cегодня нас ждёт такая погода:*\n"
-                                           f"Tемпература минимальная- {weather_3day[0]['температура минимальная']}\n"
-                                           f"Tемпература максимальная - {weather_3day[0]['температура максимальная']}\n"
-                                           f"Tемпература ощущение - {weather_3day[0]['temp']}\n"
-                                           f"Oблачность  - {weather_3day[0]['облачность']}\n"
-                                           f"Ветер  - {weather_3day[0]['ветер']}\n\n", parse_mode='Markdown')
+                bot.send_message(id_group, f"*Dzień dobry, panowie!\n\n"
+                                           f"*Harmonogram na dzisiaj* - \n {get_lista.combination_of_some_days_list(True)}"
+                                           f"*Dziś czeka nas taka pogoda:*\n"
+                                           f"Temperatura minimalna- {weather_3day[0]['температура минимальная']}\n"
+                                           f"Maksymalna temperatura - {weather_3day[0]['температура максимальная']}\n"
+                                           f"Temperatura odczuwalna - {weather_3day[0]['temp']}\n"
+                                           f"zachmurzenie  - {weather_3day[0]['облачность']}\n"
+                                           f"wiatr  - {weather_3day[0]['ветер']}\n\n", parse_mode='Markdown')
                 time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
             time.sleep(10)  # Проверка каждые 10 секунд
 
@@ -116,14 +115,14 @@ def telegram_bot(token):
         """запуск при входе нового пользователя"""
         for new_member in message.new_chat_members:
             bot.send_message(message.chat.id,
-                             f"Добро пожаловать, *{new_member.first_name}!*\n"
-                             f"Ты находишся в чатике CONCRETных мужиков, "
-                             f"льющих БЕТОН :)\n"
-                             f"/h - для справки что тут можно делать", parse_mode='Markdown')
+                             f"Witamy, *{new_member.first_name}!*\n"
+                             f"Jesteś na czacie CONCRETnych facetów, "
+                             f"lejących BETON :)\n"
+                             f"/h - dla informacji, co można tu robić", parse_mode='Markdown')
 
             bot.send_message(message.chat.id,
-                             f"{new_member.first_name}\n:Набери:\n'/h' - и я тебе расскажу что я умею\n"
-                             f"'/s' -  функции которые я могу выполнять \n")
+                             f"{new_member.first_name}\n:Wpisz:\n'/h' - a ja ci opowiem, co potrafię\n"
+                             f"'/s' -  funkcje, które mogę wykonywać\n")
 
 # region tap on Button
     @bot.callback_query_handler(func=lambda call: True)
@@ -140,24 +139,25 @@ def telegram_bot(token):
             try:
                 weather_day = weather.weather_now()
                 weather_3day = weather.weather_3day()
-                answer_text = (f"*Погода сейчас:*\n"
-                               f"Tемпература - {weather_day['температура']}\n"
-                               f"Oблачность  - {weather_day['облачность']}\n"
-                               f"Ветер  - {weather_day['ветер']}\n"
-                               f"Восход  - {weather_day['восход']}\n"
-                               f"Заход  - {weather_day['заход']}\n\n"
-                               f"*Погода завтра:*\n"
-                               f"Tемпература минимальная- {weather_3day[1]['температура минимальная']}\n"
-                               f"Tемпература максимальная - {weather_3day[1]['температура максимальная']}\n"
-                               f"Tемпература ощущение - {weather_3day[1]['temp']}\n"
-                               f"Oблачность  - {weather_3day[1]['облачность']}\n"
-                               f"Ветер  - {weather_3day[1]['ветер']}\n\n"
-                               f"*Погода послезавтра:*\n"
-                               f"Tемпература минимальная- {weather_3day[2]['температура минимальная']}\n"
-                               f"Tемпература максимальная - {weather_3day[2]['температура максимальная']}\n"
-                               f"Tемпература ощущения - {weather_3day[2]['temp']}\n"
-                               f"Oблачность  - {weather_3day[2]['облачность']}\n"
-                               f"Ветер  - {weather_3day[2]['ветер']}\n\n")
+                answer_text = (f"*Pogoda teraz:*\n"
+                               f"Temperatura - {weather_day['температура']}\n"
+                               f"Zachmurzenie - {weather_day['облачность']}\n"
+                               f"Wiatr - {weather_day['ветер']}\n"
+                               f"Wschód - {weather_day['восход']}\n"
+                               f"Zachód - {weather_day['заход']}\n\n"
+                               f"*Pogoda na jutro:*\n"
+                               f"Temperatura minimalna - {weather_3day[1]['температура минимальная']}\n"
+                               f"Temperatura maksymalna - {weather_3day[1]['температура максимальная']}\n"
+                               f"Temperatura odczuwalna - {weather_3day[1]['temp']}\n"
+                               f"Zachmurzenie - {weather_3day[1]['облачność']}\n"
+                               f"Wiatr - {weather_3day[1]['ветер']}\n\n"
+                               f"*Pogoda na pojutrze:*\n"
+                               f"Temperatura minimalna - {weather_3day[2]['температура минимальная']}\n"
+                               f"Temperatura maksymalna - {weather_3day[2]['температура максимальная']}\n"
+                               f"Temperatura odczuwalna - {weather_3day[2]['temp']}\n"
+                               f"Zachmurzenie - {weather_3day[2]['облачность']}\n"
+                               f"Wiatr - {weather_3day[2]['ветер']}\n\n")
+
             except Exception:
                 return
         elif call.data == "button3": # будовы
@@ -168,7 +168,7 @@ def telegram_bot(token):
                 answer.append(f'<a href="https://www.google.com/maps?q={dic_bud[key][0]},{dic_bud[key][1]}">'
                                f'*{key}*</a>')
 
-            answer_text = "Будовы:\nпо щелчку откроется геолокация\n" + "\n".join(answer)
+            answer_text = "Budowy:\npo kliknięciu otworzy się geolokalizacja\n" + "\n".join(answer)
         elif call.data == "button4":
             list_of_phone = []
             for key in dict_contacts.keys():
@@ -180,13 +180,14 @@ def telegram_bot(token):
                            f'352a34873e2b:0xc1fcd68e6bb8d915!8m2!3d52.1922253!4d20.7793254!16s%2'
                            f'Fg%2F1tf9l_k3?entry=ttu&g_ep=EgoyMDI0MTAyMy4wIKXMDSoASAFQAw%3D%3D">'
                            f'*MD BETON:*</a>\n'
-                           f'ТЕЛЕФОН: <a href="tel:+48602593954">+48602593954</a>\n\n'
-                           f'<a href="https://www.google.com/maps/place/Korzenna+3,+02-981+Warszawa'
-                           f'/@52.1946406,21.0970687,17z/data=!3m1!4b1!4m6!3m5!1s0x471ed2a36aa060c7:'
-                           f'0x714094a9a28101a0!8m2!3d52.1946406!4d21.099649!16s%2Fg%2F11c251zhvh?entry'
-                           f'=ttu&g_ep=EgoyMDI0MTAyOS4wIKXMDSoASAFQAw%3D%3D">'
-                           f'*Pawel:*</a>\n'
-                           f'ТЕЛЕФОН: <a href="tel:+48505966026">+48505966026</a>')
+                           f'ТЕЛЕФОН: <a href="tel:+48602593954">+48602593954</a>\n\n')
+
+                           # (f'<a href="https://www.google.com/maps/place/Korzenna+3,+02-981+Warszawa'
+                           # f'/@52.1946406,21.0970687,17z/data=!3m1!4b1!4m6!3m5!1s0x471ed2a36aa060c7:'
+                           # f'0x714094a9a28101a0!8m2!3d52.1946406!4d21.099649!16s%2Fg%2F11c251zhvh?entry'
+                           # f'=ttu&g_ep=EgoyMDI0MTAyOS4wIKXMDSoASAFQAw%3D%3D">'
+                           # f'*Pawel:*</a>\n'
+                           # f'ТЕЛЕФОН: <a href="tel:+48505966026">+48505966026</a>')
 
 
         elif call.data == "button6":
@@ -205,33 +206,33 @@ def telegram_bot(token):
     def start_message(message):
         """сробатывание на команду слэш с"""
         markup = types.InlineKeyboardMarkup()  # Создаем разметку с кнопками
-        btn1 = types.InlineKeyboardButton("расписание", callback_data="button1")
-        btn2 = types.InlineKeyboardButton("погоду", callback_data="button2")
-        btn3 = types.InlineKeyboardButton("будовы", callback_data="button3")
-        btn4 = types.InlineKeyboardButton("телефоны", callback_data="button4")
-        btn5 = types.InlineKeyboardButton("ГДЕ ПРОДАТЬ БЕТОН", callback_data="button5")
-        btn6 = types.InlineKeyboardButton("РАСПИСАНИЕ ОТГРУЗОК", callback_data="button6")
+        btn1 = types.InlineKeyboardButton("rozkład", callback_data="button1")
+        btn2 = types.InlineKeyboardButton("pogodę", callback_data="button2")
+        btn3 = types.InlineKeyboardButton("budowy", callback_data="button3")
+        btn4 = types.InlineKeyboardButton("telefony", callback_data="button4")
+        btn5 = types.InlineKeyboardButton("gdzie sprzedać beton", callback_data="button5")
+        btn6 = types.InlineKeyboardButton("harmonogram załadunków", callback_data="button6")
         markup.row(btn1 ,btn2)
         markup.row(btn3 ,btn4)
         markup.add(btn5)  # Добавляем кнопки в разметку
         markup.add(btn6)  # Добавляем кнопки в разметку
-        bot.send_message(message.chat.id, "*ЧЕМ Я МОГУ ПОМОЧЬ*:", reply_markup=markup, parse_mode='Markdown')
+        bot.send_message(message.chat.id, "*Czym mogę pomóc?*:", reply_markup=markup, parse_mode='Markdown')
 
     # help
     @bot.message_handler(commands=['h'])
     def help_message(message):
         """сробатывание на команду слэш аш"""""
         bot.send_message(message.chat.id, f"{message.from_user.first_name}\n"
-                                          f"Я бот помогающий дать всю необходимую информацию для начинающих и"
-                                          f" продвинутых бетономешальщиков\n"
-                                          f"Hабери:\n'/h' - и я тебе расскажу что я умею\n"
-                                          f"'/s' -  функции которые я могу выполнять \n")
+                                          f"Jestem botem, który pomaga dostarczyć wszystkie niezbędne informacje dla początkujących i"
+                                          f" zaawansowanych operatorów betoniarekв\n"
+                                          f"Wpisz:\n'/h' - i powiem ci, co potrafię\n"
+                                          f"'/s' -  Funkcje, które mogę wykonywać\n")
 
 #region ADD BUDOWA
     @bot.message_handler(commands=['add'])
     def add_budowa(message):
         """записываем адрес и локализацию будовы"""
-        msg = bot.send_message(message.chat.id, "Введите название", reply_markup=types.ForceReply())
+        msg = bot.send_message(message.chat.id, "Wprowadź nazwę", reply_markup=types.ForceReply())
         bot.register_next_step_handler(msg, ask_name_budowy)
 
     def ask_geolocation(message): # Ответ корректен, продолжаем
@@ -244,10 +245,10 @@ def telegram_bot(token):
             dic_bud[name_bud] = [lat, lon]
             with db_lock:
                 save_dict_to_file(dic_bud, "dic_bud.json")
-            bot.send_message(message.chat.id, "ПРИНЯТО!")
+            bot.send_message(message.chat.id, "Przyjęto!", reply_markup=None)
         else:
             # Ответ некорректен, просим ввести снова
-            msg = bot.send_message(message.chat.id, "Вышлите геолокацию")
+            msg = bot.send_message(message.chat.id, "Wyślij lokalizację")
             bot.register_next_step_handler(msg, ask_geolocation)
 
     def ask_name_budowy(message) :# Ответ корректен, продолжаем
@@ -255,11 +256,11 @@ def telegram_bot(token):
             global name_bud
             # Ответ корректен, продолжаем
             name_bud = message.text
-            bot.send_message(message.chat.id, "Укажите свою геолокацию", reply_markup=types.ForceReply() )
+            bot.send_message(message.chat.id, "Podaj swoją lokalizacjęУ", reply_markup=types.ForceReply())
             bot.register_next_step_handler(message, ask_geolocation)
         else:
             # Ответ некорректен, просим ввести снова
-            msg = bot.send_message(message.chat.id, "ВВЕДИТЕ ТЕКСТ - Название будовы")
+            msg = bot.send_message(message.chat.id, "Wprowadź tekst - Nazwa budowy")
             bot.register_next_step_handler(msg, ask_name_budowy)
 #endregion ADD BUDOWA
 
@@ -357,8 +358,8 @@ def telegram_bot(token):
 
         # Игнорируем сообщения от пользователей, которые не находятся в состоянии ожидания ответа
         conversation_history = load_dict_from_file('conversation_history.json')
-        if len(conversation_history) > 1000:
-            conversation_history = conversation_history[-1000:]
+        if len(conversation_history) > 300:
+            conversation_history = conversation_history[-150:]
 
         # conversation_history.append({"role": "user", "content": f"{message.from_user.first_name}: {text_message}"})
 
