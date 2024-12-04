@@ -202,7 +202,7 @@ def telegram_bot(token):
 # endregion tap on Button
 
 
-    @bot.message_handler(commands=['s'])
+    @bot.message_handler(commands=['start'])
     def start_message(message):
         """сробатывание на команду слэш с"""
         markup = types.InlineKeyboardMarkup()  # Создаем разметку с кнопками
@@ -224,7 +224,7 @@ def telegram_bot(token):
         """сробатывание на команду слэш аш"""""
         bot.send_message(message.chat.id, f"{message.from_user.first_name}\n"
                                           f"Jestem botem, który pomaga dostarczyć wszystkie niezbędne informacje dla początkujących i"
-                                          f" zaawansowanych operatorów betoniarekв\n"
+                                          f" zaawansowanych operatorów betonomeszarek\n"
                                           f"Wpisz:\n'/h' - i powiem ci, co potrafię\n"
                                           f"'/s' -  Funkcje, które mogę wykonywać\n")
 

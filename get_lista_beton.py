@@ -111,7 +111,7 @@ def lista_in_bot(lista_beton):
         metres = str(metres).strip()
 
 
-        lista_text += (f"{times} {metres} węzel {wenz}\n"
+        lista_text += (f"{times} {metres} węzeł {wenz}\n"
                        f"{name} {uwagi} {tel}\n"
                        f"--------------------\n")
     return lista_text, sum_metres
