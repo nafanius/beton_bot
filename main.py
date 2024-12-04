@@ -149,7 +149,7 @@ def telegram_bot(token):
                                f"Temperatura minimalna - {weather_3day[1]['температура минимальная']}\n"
                                f"Temperatura maksymalna - {weather_3day[1]['температура максимальная']}\n"
                                f"Temperatura odczuwalna - {weather_3day[1]['temp']}\n"
-                               f"Zachmurzenie - {weather_3day[1]['облачność']}\n"
+                               f"Zachmurzenie - {weather_3day[1]['облачность']}\n"
                                f"Wiatr - {weather_3day[1]['ветер']}\n\n"
                                f"*Pogoda na pojutrze:*\n"
                                f"Temperatura minimalna - {weather_3day[2]['температура минимальная']}\n"
@@ -158,7 +158,8 @@ def telegram_bot(token):
                                f"Zachmurzenie - {weather_3day[2]['облачность']}\n"
                                f"Wiatr - {weather_3day[2]['ветер']}\n\n")
 
-            except Exception:
+            except Exception as err:
+                print(err)
                 return
         elif call.data == "button3": # будовы
             answer = []
