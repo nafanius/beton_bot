@@ -122,7 +122,7 @@ def telegram_bot(token):
 
             bot.send_message(message.chat.id,
                              f"{new_member.first_name}\n:Wpisz:\n'/h' - a ja ci opowiem, co potrafię\n"
-                             f"'/s' -  funkcje, które mogę wykonywać\n")
+                             f"'/start' -  funkcje, które mogę wykonywać\n")
 
 # region tap on Button
     @bot.callback_query_handler(func=lambda call: True)
@@ -227,7 +227,7 @@ def telegram_bot(token):
                                           f"Jestem botem, który pomaga dostarczyć wszystkie niezbędne informacje dla początkujących i"
                                           f" zaawansowanych operatorów betonomeszarek\n"
                                           f"Wpisz:\n'/h' - i powiem ci, co potrafię\n"
-                                          f"'/s' -  Funkcje, które mogę wykonywać\n")
+                                          f"'/start' -  Funkcje, które mogę wykonywać\n")
 
 #region ADD BUDOWA
     @bot.message_handler(commands=['add'])
