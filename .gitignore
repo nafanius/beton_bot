@@ -7,3 +7,5 @@ try_send.py
 client_secret_155862096178-ea212r8qqlerg30i05gpvk6hgpn3jcff.apps.googleusercontent.com (1).json
 __pycache__/
 <_io.BytesIO*
+conversation_history.json
+dic_bud.json

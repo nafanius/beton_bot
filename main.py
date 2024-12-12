@@ -229,6 +229,11 @@ def telegram_bot(token):
                                           f"Wpisz:\n'/h' - i powiem ci, co potrafię\n"
                                           f"'/start' -  Funkcje, które mogę wykonywać\n")
 
+    @bot.message_handler(commands=["lista"])
+    def send_lista(message):
+        bot.send_message(message.chat.id, "Oto ci, kurwa, rozkład: https://bit.ly/holcim_lista")
+
+
 #region ADD BUDOWA
     @bot.message_handler(commands=['add'])
     def add_budowa(message):
