@@ -130,8 +130,6 @@ def telegram_bot(token):
         """"оброботка сробатывания кнопок"""
         if call.data == "button1": # расписание
             answer_text =  get_lista.combination_of_some_days_list()
-            # lista = load_dict_from_file('lista.json')
-            # answer_text = f"Cегодня запланировано отгрузить - {lista['m']}m3\n{lista['lista']}"
 
         elif call.data == "button2": # погода
             try:
@@ -179,14 +177,14 @@ def telegram_bot(token):
                            f'352a34873e2b:0xc1fcd68e6bb8d915!8m2!3d52.1922253!4d20.7793254!16s%2'
                            f'Fg%2F1tf9l_k3?entry=ttu&g_ep=EgoyMDI0MTAyMy4wIKXMDSoASAFQAw%3D%3D">'
                            f'*MD BETON:*</a>\n'
-                           f'ТЕЛЕФОН: <a href="tel:+48602593954">+48602593954</a>\n\n')
-
-                           # (f'<a href="https://www.google.com/maps/place/Korzenna+3,+02-981+Warszawa'
-                           # f'/@52.1946406,21.0970687,17z/data=!3m1!4b1!4m6!3m5!1s0x471ed2a36aa060c7:'
-                           # f'0x714094a9a28101a0!8m2!3d52.1946406!4d21.099649!16s%2Fg%2F11c251zhvh?entry'
-                           # f'=ttu&g_ep=EgoyMDI0MTAyOS4wIKXMDSoASAFQAw%3D%3D">'
-                           # f'*Pawel:*</a>\n'
-                           # f'ТЕЛЕФОН: <a href="tel:+48505966026">+48505966026</a>')
+                           f'ТЕЛЕФОН: <a href="tel:+48602593954">+48602593954</a>\n\n'
+                           
+                           f'<a href="https://www.google.com/maps/place/Korzenna+3,+02-981+Warszawa'
+                           f'/@52.1946406,21.0970687,17z/data=!3m1!4b1!4m6!3m5!1s0x471ed2a36aa060c7:'
+                           f'0x714094a9a28101a0!8m2!3d52.1946406!4d21.099649!16s%2Fg%2F11c251zhvh?entry'
+                           f'=ttu&g_ep=EgoyMDI0MTAyOS4wIKXMDSoASAFQAw%3D%3D">'
+                           f'*Pawel:*</a>\n'
+                           f'ТЕЛЕФОН: <a href="tel:+48505966026">+48505966026</a>\n\n')
 
 
         elif call.data == "button6":
@@ -225,13 +223,14 @@ def telegram_bot(token):
                                           f"Jestem botem, który pomaga dostarczyć wszystkie niezbędne informacje dla początkujących i"
                                           f" zaawansowanych operatorów betonomeszarek\n"
                                           f"Wpisz:\n'/h' - i powiem ci, co potrafię\n"
-                                          f"'/start' -  Funkcje, które mogę wykonywać\n")
+                                          f"'/start' -  Funkcje, które mogę wykonywać\n"
+                                          f"'/lista' - Wyświetlić rozkład\n")
 
     @bot.message_handler(commands=["lista"])
     def send_lista(message):
         bot.send_message(message.chat.id, "Oto ci, kurwa, rozkład: https://bit.ly/holcim_lista")
 
-
+#todo сделать стройки в виде базы данных
 #region ADD BUDOWA
     @bot.message_handler(commands=['add'])
     def add_budowa(message):
