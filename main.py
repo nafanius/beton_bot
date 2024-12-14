@@ -39,7 +39,6 @@ client = Wit('HZZJUIX7N6O7LJ2XNNSPN2ZTFGLWQCF6')
 id_group = "-4533287060"
 name_bud = ""
 message_without_bot = "Чёто ты меня притомил, давай ка помолчим kurwa"
-lista = {}
 db_lock = threading.Lock()
 
 def restart_service():
@@ -93,11 +92,10 @@ def telegram_bot(token):
 
             # Проверьте если текущее время совпадает с запланированным (например, 9:00)
             if now.hour == 6 and now.minute == 30:
-                global lista
-                lista = load_dict_from_file('lista.json')
+                text_list = get_lista.combination_of_some_days_list(True)
                 weather_3day = weather.weather_3day()
-                bot.send_message(id_group, f"*Dzień dobry, panowie!\n\n"
-                                           f"*Harmonogram na dzisiaj* - \n {get_lista.combination_of_some_days_list(True)}"
+                bot.send_message(id_group, f"*Dzień dobry, panowie!*\n\n"
+                                           f"*Harmonogram na dzisiaj* - \n {text_list}"
                                            f"*Dziś czeka nas taka pogoda:*\n"
                                            f"Temperatura minimalna- {weather_3day[0]['температура минимальная']}\n"
                                            f"Maksymalna temperatura - {weather_3day[0]['температура максимальная']}\n"
@@ -270,45 +268,6 @@ def telegram_bot(token):
             bot.register_next_step_handler(msg, ask_name_budowy)
 #endregion ADD BUDOWA
 
-# region add plan meters
-    @bot.message_handler(commands=['m'])
-    def how_much_m_message(message):
-        msg = bot.send_message(message.chat.id, "введите метры", reply_markup=types.ForceReply())
-        bot.register_next_step_handler(msg, ask_how_much)
-
-    def ask_how_much(message):
-        if message.content_type == 'text':
-            global how_much_m
-            # Ответ корректен, продолжаем
-            lista["m"] = message.text
-            with db_lock:
-                save_dict_to_file(lista, 'lista.json')
-            bot.send_message(message.chat.id, "ПРИНЯТО")
-        else:
-            # Ответ некорректен, просим ввести снова
-            msg = bot.send_message(message.chat.id, "ВВЕДИТЕ ТЕКСТ - СКОЛЬКО МЕТРОВ ЗАПЛАНИРОВАНО")
-            bot.register_next_step_handler(msg, ask_how_much)
-# endregion add plan meters
-
-# region add list
-    @bot.message_handler(commands=['l'])
-    def lista_message(message):
-        msg = bot.send_message(message.chat.id, "введите listu", reply_markup=types.ForceReply())
-        bot.register_next_step_handler(msg, ask_listu)
-
-    def ask_listu(message):
-        if message.content_type == 'text':
-            global lista
-            # Ответ корректен, продолжаем
-            lista["lista"] = message.text
-            with db_lock:
-                save_dict_to_file(lista, 'lista.json')
-            bot.send_message(message.chat.id, "ПРИНЯТО")
-        else:
-            # Ответ некорректен, просим ввести снова
-            msg = bot.send_message(message.chat.id, "ВВЕДИТЕ ТЕКСТ - СКОЛЬКО МЕТРОВ ЗАПЛАНИРОВАНО")
-            bot.register_next_step_handler(msg, ask_how_much)
-# endregion add list
 
     # text
     @bot.message_handler(content_types=['text'])
