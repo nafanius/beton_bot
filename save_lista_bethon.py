@@ -147,7 +147,7 @@ def lista_in_text_beton():
         metres = str(metres).strip()
         if sort == 1:
             lista_text += (
-                f'*To kurwa dyspozytor usunął:\n'
+                f'*To kurwa dyspozytor usunął:*\n'
                 f'~~{times} {metres} węzeł {wenz}~~\n'
                 f'~~{firm}~~\n'
                 f'~~{name} {uwagi + " " + przebieg}~~\n'
