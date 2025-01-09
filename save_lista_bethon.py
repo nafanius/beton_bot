@@ -148,10 +148,10 @@ def lista_in_text_beton():
         if sort == 1:
             lista_text += (
                 f'*To kurwa dyspozytor usunął:*\n'
-                f'~{times} {metres} węzeł {wenz}~\n'
-                f'~{firm}~\n'
-                f'~{name} {uwagi + " " + przebieg}~\n'
-                f'{tel}~\n'
+                f'__{times} {metres} węzeł {wenz}__\n'
+                f'__{firm}__\n'
+                f'__{name} {uwagi + " " + przebieg}__\n'
+                f'__{tel}__\n'
                 f'--------------------\n')
 
         elif sort == 2:

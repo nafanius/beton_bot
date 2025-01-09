@@ -107,13 +107,13 @@ def telegram_bot(token):
                                            f"Maksymalna temperatura - {weather_3day[0]['температура максимальная']}\n"
                                            f"Temperatura odczuwalna - {weather_3day[0]['temp']}\n"
                                            f"zachmurzenie  - {weather_3day[0]['облачность']}\n"
-                                           f"wiatr  - {weather_3day[0]['ветер']}\n\n", parse_mode='MarkdownV2')
+                                           f"wiatr  - {weather_3day[0]['ветер']}\n\n", parse_mode='Markdown')
                 time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
 
             if now.minute in [3, 23, 43] :
                 text_list = lista_in_text_beton()
                 if text_list:
-                    bot.send_message(id_group, text_list, parse_mode='MarkdownV2')
+                    bot.send_message(id_group, text_list, parse_mode='Markdown')
 
                 time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
             time.sleep(10)  # Проверка каждые 10 секунд
