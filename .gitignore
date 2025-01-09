@@ -9,3 +9,4 @@ __pycache__/
 <_io.BytesIO*
 conversation_history.json
 dic_bud.json
+save_old_lists

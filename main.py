@@ -13,8 +13,6 @@ import io
 from pydub import AudioSegment
 from gtts import gTTS
 
-
-
 import telebot
 from telebot import types
 
@@ -22,7 +20,7 @@ import weather
 from auth_data import token
 from palec import name, ask_chatgpt
 
-#region logging
+# region logging
 
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 lg = logging.debug
@@ -41,15 +39,17 @@ name_bud = ""
 message_without_bot = "Чёто ты меня притомил, давай ка помолчим kurwa"
 db_lock = threading.Lock()
 
+
 def restart_service():
     subprocess.run(['systemctl', 'restart', 'my_bot_bet.service'])
 
 
-#region SAVE AND LOAD JSON
+# region SAVE AND LOAD JSON
 # Функция для записи словаря в файл
 def save_dict_to_file(dictionary, filename):
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(dictionary, f, ensure_ascii=False, indent=4)
+
 
 # Функция для загрузки словаря из файла
 def load_dict_from_file(filename):
@@ -61,7 +61,9 @@ def load_dict_from_file(filename):
             json.dump({}, f, ensure_ascii=False, indent=4)
         with open(filename, 'r', encoding='utf-8') as f:
             return json.load(f)
-#endregion SAVE AND LOAD JSON
+
+
+# endregion SAVE AND LOAD JSON
 
 
 def telegram_bot(token):
@@ -122,16 +124,16 @@ def telegram_bot(token):
                              f"{new_member.first_name}\n:Wpisz:\n'/h' - a ja ci opowiem, co potrafię\n"
                              f"'/start' -  funkcje, które mogę wykonywać\n")
 
-# region tap on Button
+    # region tap on Button
     @bot.callback_query_handler(func=lambda call: True)
     def handle_callback(call):
         global lista
         answer_text = ""
         """"оброботка сробатывания кнопок"""
-        if call.data == "button1": # расписание
-            answer_text =  get_lista.combination_of_some_days_list()
+        if call.data == "button1":  # расписание
+            answer_text = get_lista.combination_of_some_days_list()
 
-        elif call.data == "button2": # погода
+        elif call.data == "button2":  # погода
             try:
                 weather_day = weather.weather_now()
                 weather_3day = weather.weather_3day()
@@ -157,13 +159,12 @@ def telegram_bot(token):
             except Exception as err:
                 print(err)
                 return
-        elif call.data == "button3": # будовы
+        elif call.data == "button3":  # будовы
             answer = []
             dic_bud = load_dict_from_file('dic_bud.json')
             for key in dic_bud.keys():
-
                 answer.append(f'<a href="https://www.google.com/maps?q={dic_bud[key][0]},{dic_bud[key][1]}">'
-                               f'*{key}*</a>')
+                              f'*{key}*</a>')
 
             answer_text = "Budowy:\npo kliknięciu otworzy się geolokalizacja\n" + "\n".join(answer)
         elif call.data == "button4":
@@ -178,7 +179,7 @@ def telegram_bot(token):
                            f'Fg%2F1tf9l_k3?entry=ttu&g_ep=EgoyMDI0MTAyMy4wIKXMDSoASAFQAw%3D%3D">'
                            f'*MD BETON:*</a>\n'
                            f'ТЕЛЕФОН: <a href="tel:+48602593954">+48602593954</a>\n\n'
-                           
+
                            f'<a href="https://www.google.com/maps/place/Korzenna+3,+02-981+Warszawa'
                            f'/@52.1946406,21.0970687,17z/data=!3m1!4b1!4m6!3m5!1s0x471ed2a36aa060c7:'
                            f'0x714094a9a28101a0!8m2!3d52.1946406!4d21.099649!16s%2Fg%2F11c251zhvh?entry'
@@ -188,7 +189,7 @@ def telegram_bot(token):
 
 
         elif call.data == "button6":
-            answer_text =  get_lista_beton.combination_of_some_days_list_bet()
+            answer_text = get_lista_beton.combination_of_some_days_list_bet()
 
         try:
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=answer_text,
@@ -196,8 +197,7 @@ def telegram_bot(token):
         except Exception as error:
             inf(error)
 
-# endregion tap on Button
-
+    # endregion tap on Button
 
     @bot.message_handler(commands=['start'])
     def start_message(message):
@@ -209,8 +209,8 @@ def telegram_bot(token):
         btn4 = types.InlineKeyboardButton("telefony", callback_data="button4")
         btn5 = types.InlineKeyboardButton("gdzie sprzedać beton", callback_data="button5")
         btn6 = types.InlineKeyboardButton("harmonogram załadunków", callback_data="button6")
-        markup.row(btn1 ,btn2)
-        markup.row(btn3 ,btn4)
+        markup.row(btn1, btn2)
+        markup.row(btn3, btn4)
         markup.add(btn5)  # Добавляем кнопки в разметку
         markup.add(btn6)  # Добавляем кнопки в разметку
         bot.send_message(message.chat.id, "*Czym mogę pomóc?*:", reply_markup=markup, parse_mode='Markdown')
@@ -230,15 +230,15 @@ def telegram_bot(token):
     def send_lista(message):
         bot.send_message(message.chat.id, "Oto ci, kurwa, rozkład: https://bit.ly/holcim_lista")
 
-#todo сделать стройки в виде базы данных
-#region ADD BUDOWA
+    # todo сделать стройки в виде базы данных
+    # region ADD BUDOWA
     @bot.message_handler(commands=['add'])
     def add_budowa(message):
         """записываем адрес и локализацию будовы"""
         msg = bot.send_message(message.chat.id, "Wprowadź nazwę", reply_markup=types.ForceReply())
         bot.register_next_step_handler(msg, ask_name_budowy)
 
-    def ask_geolocation(message): # Ответ корректен, продолжаем
+    def ask_geolocation(message):  # Ответ корректен, продолжаем
         if message.content_type == 'location':
             # Ответ корректен, продолжаем
             global name_bud
@@ -254,7 +254,7 @@ def telegram_bot(token):
             msg = bot.send_message(message.chat.id, "Wyślij lokalizację")
             bot.register_next_step_handler(msg, ask_geolocation)
 
-    def ask_name_budowy(message) :# Ответ корректен, продолжаем
+    def ask_name_budowy(message):  # Ответ корректен, продолжаем
         if message.content_type == 'text':
             global name_bud
             # Ответ корректен, продолжаем
@@ -265,8 +265,8 @@ def telegram_bot(token):
             # Ответ некорректен, просим ввести снова
             msg = bot.send_message(message.chat.id, "Wprowadź tekst - Nazwa budowy")
             bot.register_next_step_handler(msg, ask_name_budowy)
-#endregion ADD BUDOWA
 
+    # endregion ADD BUDOWA
 
     # text
     @bot.message_handler(content_types=['text'])
@@ -329,7 +329,6 @@ def telegram_bot(token):
 
         bot_name = text_message.split()[0].lower()[:5]
 
-
         if bot_name in name:
             conversation_history[-1] = {"role": "user",
                                         "content": f"{message.from_user.username} question: {text_message}"}
@@ -353,7 +352,6 @@ def telegram_bot(token):
                 audio.export(ogg_fp, format="ogg", codec="libopus")
                 ogg_fp.seek(0)
 
-
                 bot.send_voice(chat_id=message.chat.id, voice=ogg_fp, reply_to_message_id=message.message_id)
 
             except Exception as err:
@@ -369,14 +367,13 @@ def telegram_bot(token):
 
         threading.Thread(target=palec_voice, args=(message,)).start()
 
-
     retries = 5
     for i in range(retries):
         try:
             bot.polling(none_stop=True)
         except Exception as err:
             inf(err)
-            if i < retries -1:
+            if i < retries - 1:
                 time.sleep(8)
                 continue
             else:
