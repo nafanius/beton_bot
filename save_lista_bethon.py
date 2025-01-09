@@ -1,6 +1,6 @@
 import pickle
 import logging
-import os
+import os, re
 from datetime import datetime
 
 # region logging
@@ -101,8 +101,73 @@ def check_del_add_lista():
     # add_lista = add_lista + currant_list_beton[0:2]
 
     save_dic_to_pickle({date_of_lista:currant_list_beton})
-    return del_lista, add_lista
+
+
+    del_lista = [tup + (1,) for tup in del_lista]
+    add_lista = [tup + (2,) for tup in add_lista]
+    return del_lista + add_lista
+
+
+def lista_in_text_beton():
+    """ "фотрмируем list в текстовый формат для высолки в бот"""
+    lista_beton = check_del_add_lista()
+
+    def convert_to_string(data):
+        if not data:
+            return ""
+        try:
+            data = str(data)
+            data = data.strip()
+            data = re.sub(r"\s+", " ", data)
+            return data
+        except (TypeError, ValueError):
+            return ""
+
+    if not lista_beton:
+        return ""
+    lista_text = ''
+
+
+
+    for metres, times, firm, name, uwagi, przebieg, tel, wenz, sort in lista_beton:
+        times = times.strftime("%H:%M")
+        if tel:
+            if isinstance(tel, float):
+                tel = str(int(tel)).strip()
+            elif isinstance(tel, str):
+                tel = tel.strip()
+        else:
+            tel = ""
+
+        przebieg = convert_to_string(przebieg)
+        firm = convert_to_string(firm)
+        name = convert_to_string(name)
+        tel = convert_to_string(tel)
+        uwagi = convert_to_string(uwagi)
+        metres = str(metres).strip()
+        if sort == 1:
+            lista_text += (
+                f'*To kurwa dyspozytor usunął:\n'
+                f'~~{times} {metres} węzeł {wenz}~~\n'
+                f'~~{firm}~~\n'
+                f'~~{name} {uwagi + " " + przebieg}~~\n'
+                f'~~{tel}~~\n'
+                f'--------------------\n')
+
+        elif sort == 2:
+            lista_text += (
+                f'*To kurwa dyspozytor dodał:*\n'
+                f'{times} {metres} węzeł {wenz}\n'
+                f'{firm}\n'
+                f'{name} {uwagi + " " + przebieg}\n'
+                f'{tel}\n'
+                f'--------------------\n')
+        else:
+            lista_text =  ''
+
+    return lista_text
 
 
 if __name__ == '__main__':
     print(check_del_add_lista())
+    print(lista_in_text_beton())
