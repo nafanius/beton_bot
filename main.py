@@ -42,7 +42,11 @@ db_lock = threading.Lock()
 
 
 def restart_service():
-    subprocess.run(['systemctl', 'restart', 'my_bot_bet.service'])
+    try:
+        subprocess.run(['sudo','systemctl', 'restart', 'my_bot_bet.service'])
+        lg("Service restarted successfully.")
+    except subprocess.CalledProcessError as e:
+        lg(f"Failed to restart service: {e}")
 
 
 # region SAVE AND LOAD JSON
@@ -95,10 +99,9 @@ def telegram_bot(token):
 
             # Проверьте если текущее время совпадает с запланированным (например, 9:00)
             if now.hour == 6 and now.minute == 30:
-                text_list = get_lista.combination_of_some_days_list(True)
                 weather_3day = weather.weather_3day()
                 bot.send_message(id_group, f"*Dzień dobry, panowie!*\n\n"
-                                           f"*Harmonogram na dzisiaj* - \n {text_list}"
+                                           f"*Harmonogram na dzisiaj* - \n {get_lista.combination_of_some_days_list(True)}"
                                            f"*Dziś czeka nas taka pogoda:*\n"
                                            f"Temperatura minimalna- {weather_3day[0]['температура минимальная']}\n"
                                            f"Maksymalna temperatura - {weather_3day[0]['температура максимальная']}\n"
