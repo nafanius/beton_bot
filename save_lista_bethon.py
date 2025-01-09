@@ -36,7 +36,7 @@ def save_dic_to_pickle(lists, directory ="save_old_lists"):
 
 
 
-def load_dict_from_pickle(directory = "save_old_dict"):
+def load_dict_from_pickle(directory = "/home/user/pythonProject/list_holcim/save_old_dict"):
     """
     Загружает список из файла формата pickle.
 
@@ -148,10 +148,10 @@ def lista_in_text_beton():
         if sort == 1:
             lista_text += (
                 f'*To kurwa dyspozytor usunął:*\n'
-                f'~~{times} {metres} węzeł {wenz}~~\n'
-                f'~~{firm}~~\n'
-                f'~~{name} {uwagi + " " + przebieg}~~\n'
-                f'~~{tel}~~\n'
+                f'~{times} {metres} węzeł {wenz}~\n'
+                f'~{firm}~\n'
+                f'~{name} {uwagi + " " + przebieg}~\n'
+                f'{tel}~\n'
                 f'--------------------\n')
 
         elif sort == 2:
