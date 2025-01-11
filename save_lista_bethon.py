@@ -84,7 +84,7 @@ def check_del_add_lista():
     add_lista = []
     now = datetime.now()
     date_of_lista = now.strftime('%d.%m.%Y')
-    currant_list_beton = load_dict_from_pickle('../weblista/save_old_dict').get(date_of_lista, [])
+    currant_list_beton = load_dict_from_pickle().get(date_of_lista, [])
     old_stan_lista_beton = get_list_of_beton().get(date_of_lista, [])
     if not old_stan_lista_beton:
         old_stan_lista_beton = currant_list_beton
@@ -105,7 +105,11 @@ def check_del_add_lista():
 
     del_lista = [tup + (1,) for tup in del_lista]
     add_lista = [tup + (2,) for tup in add_lista]
-    return del_lista + add_lista
+    del_add =  del_lista + add_lista
+
+    del_add = sorted(del_add, key=lambda event: (event[1], event[2], event[3]))
+
+    return del_add
 
 
 def lista_in_text_beton():
@@ -126,8 +130,6 @@ def lista_in_text_beton():
     if not lista_beton:
         return ""
     lista_text = ''
-
-
 
     for metres, times, firm, name, uwagi, przebieg, tel, wenz, sort in lista_beton:
         times = times.strftime("%H:%M")

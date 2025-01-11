@@ -93,8 +93,8 @@ def telegram_bot(token):
         """функция отсыла сообщений по утрам"""
         while True:
             now = datetime.now()
-            if now.weekday() >= 5:
-                time.sleep(500)  # Подождите 60 секунд перед следующей проверкой, если это выходной день
+            if now.weekday() > 5:
+                time.sleep(10800)  # Подождите 3 часа  перед следующей проверкой, если это выходной день
                 continue
 
             # Проверьте если текущее время совпадает с запланированным (например, 9:00)
@@ -116,7 +116,7 @@ def telegram_bot(token):
                     bot.send_message(id_group, text_list, parse_mode='HTML')
 
                 time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
-            time.sleep(10)  # Проверка каждые 10 секунд
+            time.sleep(20)  # Проверка каждые 20 секунд
 
     # Запускаем поток для выполнения запланированного задания
     threading.Thread(target=send_scheduled_message).start()
@@ -138,7 +138,6 @@ def telegram_bot(token):
     # region tap on Button
     @bot.callback_query_handler(func=lambda call: True)
     def handle_callback(call):
-        global lista
         answer_text = ""
         """"оброботка сробатывания кнопок"""
         if call.data == "button1":  # расписание
