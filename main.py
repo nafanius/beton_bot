@@ -110,9 +110,13 @@ def telegram_bot(token):
                 time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
 
             if now.minute in [3, 23, 43] :
-                text_list = lista_in_text_beton()
-                if text_list:
-                    bot.send_message(id_group, text_list, parse_mode='HTML')
+                text_list_beton = lista_in_text_beton()
+                if text_list_beton:
+                    bot.send_message(id_group, text_list_beton, parse_mode='HTML')
+                
+                text_lista = get_lista.combination_of_some_days_list()
+                if text_lista:
+                    bot.send_message(id_group, text_lista, parse_mode='HTML')
 
                 time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
             time.sleep(20)  # Проверка каждые 20 секунд

@@ -29,7 +29,7 @@ def combination_of_some_days_list(today=False):
     text_to_bot = ""
     if today:
         now = datetime.now()
-        
+
         if now.weekday() > 5:
             now = now + timedelta(days=1) # если воскресенье давай инащкьацию понедельника
 
@@ -50,7 +50,28 @@ def combination_of_some_days_list(today=False):
  
     else:
     #    todo сделать тут обработку при подачи false которая будет выдавть листв зависимости от появления записикаждые 20 мин
-       pass
+        now = datetime.now()
+        check_day = datetime.now() + timedelta(days=1)
+       
+        if now.weekday() == 5:
+            check_day = check_day + timedelta(days=1)
+        
+        date = check_day.strftime('%d.%m.%Y')
+
+        with db_lock:
+            currant_lista,  id_event_time, status = data_sql_list.get_newest_list_beton_or_lista('lista', date, 0)
+        with db_lock:
+            old_stan_lista = data_sql_list.get_newest_list_beton_or_lista('lista', date, 1)[0]
+
+        if old_stan_lista != currant_lista:
+            if status == 0:
+                text_to_bot = f"**{date}**\nDyspozytor kurwa dodał rozklad, on jeszcze może się zmienić. Jeśli się zmieni, dam znać\n{lista_in_bot(currant_lista)}\n\n"
+        
+        if id_event_time:
+            with db_lock:
+                data_sql_list.update_status('lista', id_event_time)
+
+       
 
     return text_to_bot
 

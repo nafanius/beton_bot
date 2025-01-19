@@ -24,7 +24,7 @@ def check_del_add_lista():
     del_lista = []
     add_lista = []
     now = datetime.now()
-    
+
     if now.weekday() > 5: 
         now = now + timedelta(days=1) # если воскресенье давай инащкьацию понедельника
 
@@ -131,7 +131,7 @@ def lista_in_text_beton(del_add_lista=True):
         return lista_text
     
     else:
-         for metres, times, firm, name, uwagi, przebieg, tel, wenz in lista_beton:
+        for metres, times, firm, name, uwagi, przebieg, tel, wenz in lista_beton:
             times = times.strftime("%H:%M")
             if tel:
                 if isinstance(tel, float):
@@ -154,7 +154,7 @@ def lista_in_text_beton(del_add_lista=True):
                            f'{tel}\n'
                            f"--------------------\n")
             
-         return lista_text
+        return lista_text
 
 
 if __name__ == '__main__':
