@@ -35,6 +35,7 @@ exp = logging.exception
 
 client = Wit('HZZJUIX7N6O7LJ2XNNSPN2ZTFGLWQCF6')
 id_group = "-4533287060"
+woit_id = "-4768722432"
 name_bud = ""
 message_without_bot = "Чёто ты меня притомил, давай ка помолчим kurwa"
 db_lock = threading.Lock()
@@ -113,10 +114,13 @@ def telegram_bot(token):
                 text_list_beton = lista_in_text_beton()
                 if text_list_beton:
                     bot.send_message(id_group, text_list_beton, parse_mode='HTML')
+                    bot.send_message(woit_id, text_list_beton, parse_mode='HTML')
+
                 
                 text_lista = get_lista.combination_of_some_days_list()
                 if text_lista:
                     bot.send_message(id_group, text_lista, parse_mode='HTML')
+                    bot.send_message(woit_id, text_lista, parse_mode='HTML')
 
                 time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
             time.sleep(20)  # Проверка каждые 20 секунд
@@ -213,6 +217,7 @@ def telegram_bot(token):
     @bot.message_handler(commands=['start'])
     def start_message(message):
         """сробатывание на команду слэш с"""
+        print(message.chat.id)
         markup = types.InlineKeyboardMarkup()  # Создаем разметку с кнопками
         btn1 = types.InlineKeyboardButton("rozkład", callback_data="button1")
         btn2 = types.InlineKeyboardButton("pogodę", callback_data="button2")
