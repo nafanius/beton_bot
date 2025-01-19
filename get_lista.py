@@ -29,6 +29,10 @@ def combination_of_some_days_list(today=False):
     text_to_bot = ""
     if today:
         now = datetime.now()
+        
+        if now.weekday() > 5:
+            now = now + timedelta(days=1) # если воскресенье давай инащкьацию понедельника
+
         date = now.strftime('%d.%m.%Y')
 
         threshold = time.time() - Settings.time_of_compare  * 3600

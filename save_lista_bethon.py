@@ -24,7 +24,10 @@ def check_del_add_lista():
     del_lista = []
     add_lista = []
     now = datetime.now()
-    # now = now+timedelta(days=1) # for check
+    
+    if now.weekday() > 5: 
+        now = now + timedelta(days=1) # если воскресенье давай инащкьацию понедельника
+
     date_of_lista = now.strftime('%d.%m.%Y')
 
     with db_lock:
