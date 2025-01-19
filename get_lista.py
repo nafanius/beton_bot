@@ -15,8 +15,8 @@ def lista_in_bot(lista):
     if not lista:
         return ""
     lista_text = ""
-    for time_from_datatime, person in lista:
-        lista_text += f"{time_from_datatime.strftime('%H:%M')} {person}\n"
+    for time_send, person in lista:
+        lista_text += f"{time_send.strftime('%H:%M')} {person}\n"
 
     return lista_text
 
@@ -36,10 +36,16 @@ def combination_of_some_days_list(today=False):
         with db_lock:
             data_sql_list.delete_records_below_threshold(threshold, "list")
 
-        with db_lock:   
-            text_to_bot += f"**{date}**\n{lista_in_bot(data_sql_list.get_newest_list_beton_or_lista("lista", date, 0)[0])}\n\n"
+        with db_lock:
+            list_of_send_from_base = data_sql_list.get_newest_list_beton_or_lista("lista", date, 0)[0]
+
+        if list_of_send_from_base:
+            text_to_bot = f"**{date}**\n{lista_in_bot(list_of_send_from_base)}\n\n"
+        else:
+            text_to_bot = "Brak danych"
  
     else:
+    #    todo сделать тут обработку при подачи false которая будет выдавть листв зависимости от появления записикаждые 20 мин
        pass
 
     return text_to_bot

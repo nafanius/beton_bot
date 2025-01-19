@@ -141,7 +141,7 @@ def telegram_bot(token):
         answer_text = ""
         """"оброботка сробатывания кнопок"""
         if call.data == "button1":  # расписание
-            answer_text = get_lista.combination_of_some_days_list()
+            answer_text = get_lista.combination_of_some_days_list(True)
 
         elif call.data == "button2":  # погода
             try:
@@ -196,8 +196,6 @@ def telegram_bot(token):
                            f'=ttu&g_ep=EgoyMDI0MTAyOS4wIKXMDSoASAFQAw%3D%3D">'
                            f'*Pawel:*</a>\n'
                            f'ТЕЛЕФОН: <a href="tel:+48505966026">+48505966026</a>\n\n')
-
-
         elif call.data == "button6":
             answer_text = get_lista_beton.combination_of_some_days_list_bet()
 
