@@ -113,18 +113,14 @@ def lista_in_text_beton(del_add_lista=True):
                 lista_text += (
                     f'<b>To kurwa dyspozytor usunął:</b>\n'
                     f'<s>{times} {metres} węzeł {wenz}</s>\n'
-                    f'<s>{firm}</s>\n'
                     f'<s>{name} {uwagi + " " + przebieg}</s>\n'
-                    f'<s>{tel}</s>\n'
                     f'--------------------\n')
 
             elif sort == 2:
                 lista_text += (
                     f'<b>To kurwa dyspozytor dodał:</b>\n'
                     f'{times} {metres} węzeł {wenz}\n'
-                    f'{firm}\n'
                     f'{name} {uwagi + " " + przebieg}\n'
-                    f'{tel}\n'
                     f'--------------------\n')
             else:
                 lista_text =  ''
@@ -150,8 +146,10 @@ def lista_in_text_beton(del_add_lista=True):
             metres = str(metres).strip()
 
             lista_text += (f"{times} {metres} węzeł {wenz}\n"
-                       f"{name} {uwagi} {tel}\n"
-                       f"--------------------\n")
+                           f'{firm}\n'
+                           f'{name} {uwagi + " " + przebieg}\n'
+                           f'{tel}\n'
+                           f"--------------------\n")
             
          return lista_text
 

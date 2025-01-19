@@ -6,7 +6,6 @@ from datetime import datetime
 import threading
 import subprocess
 import get_lista
-import get_lista_beton
 
 from wit import Wit
 import io
