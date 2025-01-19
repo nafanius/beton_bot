@@ -197,7 +197,7 @@ def telegram_bot(token):
                            f'*Pawel:*</a>\n'
                            f'ТЕЛЕФОН: <a href="tel:+48505966026">+48505966026</a>\n\n')
         elif call.data == "button6":
-            answer_text = get_lista_beton.combination_of_some_days_list_bet()
+            answer_text = lista_in_text_beton(False)
 
         try:
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=answer_text,
