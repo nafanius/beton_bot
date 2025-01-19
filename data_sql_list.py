@@ -170,7 +170,7 @@ def get_oldest_list_beton_or_lista(base, date_of_lista):
     
 
 
-def get_newest_list_beton_or_lista(base, date_of_lista):
+def get_newest_list_beton_or_lista(base, date_of_lista, step):
     
     if base == "beton":
         base_name = Beton
@@ -180,38 +180,57 @@ def get_newest_list_beton_or_lista(base, date_of_lista):
     session = Session()
 
     try:
-        result = session.query(base_name.list_data).filter(base_name.date_text == date_of_lista).order_by(base_name.id_event_time.desc()).first()
+        if step:
+            result = session.query(base_name.list_data, base_name.id_event_time, base_name.status).filter(base_name.date_text == date_of_lista).order_by(base_name.id_event_time.desc()).offset(1).first()
+        else:
+            result = session.query(base_name.list_data, base_name.id_event_time, base_name.status).filter(base_name.date_text == date_of_lista).order_by(base_name.id_event_time.desc()).first()
         
         if result:
             if base == "beton":
                 deserialized_list = json.loads(result[0])
-                result_list = [(item[0], time_from_datatime.fromisoformat(item[1]), *item[2:]) for item in deserialized_list]
+                result_list = [[(item[0], time_from_datatime.fromisoformat(item[1]), *item[2:]) for item in deserialized_list], result[1], result[2]]
                 return result_list
             
             elif base == "lista":
                 deserialized_list = json.loads(result[0])
-                result_list = [(time_from_datatime.fromisoformat(item[0]), item[1]) for item in deserialized_list]
+                result_list = [[(time_from_datatime.fromisoformat(item[0]), item[1]) for item in deserialized_list], result[1], result[2]]
                 return result_list
 
-                pass
-           
-        return []
+        return [[], None, 1]
     
     finally:
         session.close()
 
 
+def update_status(base, id_event_time):
 
+    if base == "beton":
+        base_name = Beton
+    elif base == "lista":
+        base_name = Lista
 
+    session = Session()
+    
+    try:
+        record = session.query(base_name).get(id_event_time)
+        
+        # Проверяем, существует ли запись
+        if record is not None:
+            # Обновляем указанное поле
+            record.status = 1
+            
+            # Фиксируем изменения в базе данных
+            session.commit()
+    except IntegrityError as e:
+        print("Ошибка целостности данных: возможно, дубликат ключа")
+        session.rollback()  # Отмена всех изменений в текущей транзакции
 
-
-
-
-
-
-
-
-
+    except Exception as e:
+        print("Ошибка при добавлении данных:", e)
+        session.rollback()
+    finally:
+        session.close()
+        
 
 
 

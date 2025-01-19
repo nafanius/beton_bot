@@ -35,7 +35,9 @@ def combination_of_some_days_list(today=False):
 
         with db_lock:
             data_sql_list.delete_records_below_threshold(threshold, "list")
-        text_to_bot += f"**{date}**\n{lista_in_bot(data_sql_list.get_newest_list_beton_or_lista("lista", date))}\n\n"
+
+        with db_lock:   
+            text_to_bot += f"**{date}**\n{lista_in_bot(data_sql_list.get_newest_list_beton_or_lista("lista", date, 0)[0])}\n\n"
  
     else:
        pass

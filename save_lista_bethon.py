@@ -1,7 +1,9 @@
-import pickle
 import logging
-import os, re
-from datetime import datetime
+import re
+from datetime import datetime, timedelta
+
+import threading
+import data_sql_list
 
 # region logging
 
@@ -16,92 +18,42 @@ exp = logging.exception
 # logging_end
 # endregion
 
-
-def save_dic_to_pickle(lists, directory ="save_old_lists"):
-    """
-    Сохраняет словарь в файл формата pickle.
-
-    :param directory:
-    :param lists: списков с текущим выводом del и add
-    """
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    # Генерация имени нового файла
-    new_filename = "last_lists.pkl"
-    filename = os.path.join(directory, new_filename)
-
-    with open(filename, 'wb') as f:
-        pickle.dump(lists, f)
-
-
-
-
-def load_dict_from_pickle(directory = "/home/user/pythonProject/list_holcim/save_old_dict"):
-    """
-    Загружает список из файла формата pickle.
-
-    :param filename: Имя файла, из которого нужно загрузить словарь.
-    :return: Загруженный словарь.
-    """
-
-    files = [
-        (file, os.path.getmtime(os.path.join(directory, file)))
-        for file in os.listdir(directory)
-        if os.path.isfile(os.path.join(directory, file))
-    ]
-
-    # Если есть файлы, ищем самый старый
-    if files:
-        newest_file = max(files, key=lambda f: f[1])[0]
-        filename = os.path.join(directory, newest_file)
-
-    try:
-        with open(filename, 'rb') as f:
-            return pickle.load(f)
-    except Exception as err:
-        print(err)
-        return {}
-
-def get_list_of_beton(directory = "save_old_lists"):
-    """
-    Загружает список из файла формата pickle.
-
-    :param filename: Имя файла, из которого нужно загрузить словарь.
-    :return: списки
-    """
-    filename = os.path.join(directory, "last_lists.pkl")
-    try:
-        with open(filename, 'rb') as f:
-            return pickle.load(f)
-    except Exception as err:
-        print(err)
-        return {}
-
-
+db_lock = threading.Lock()
 
 def check_del_add_lista():
     del_lista = []
     add_lista = []
     now = datetime.now()
     date_of_lista = now.strftime('%d.%m.%Y')
-    currant_list_beton = load_dict_from_pickle().get(date_of_lista, [])
-    old_stan_lista_beton = get_list_of_beton().get(date_of_lista, [])
+
+    with db_lock:
+        currant_list_beton,  id_event_time, status = data_sql_list.get_newest_list_beton_or_lista('beton', date_of_lista, 0)
+
+    with db_lock:
+        old_stan_lista_beton = data_sql_list.get_newest_list_beton_or_lista('beton', date_of_lista, 1)[0]
+    inf(status)
+    inf(id_event_time)
+
     if not old_stan_lista_beton:
         old_stan_lista_beton = currant_list_beton
 
-    for i in old_stan_lista_beton:
-        if i not in currant_list_beton:
-            del_lista.append(i)
-    for i in currant_list_beton:
-        if i not in old_stan_lista_beton:
-            add_lista.append(i)
+    if status == 0:
+        for i in old_stan_lista_beton:
+            if i not in currant_list_beton:
+                del_lista.append(i)
+        for i in currant_list_beton:
+            if i not in old_stan_lista_beton:
+                add_lista.append(i)
+    
 
     # для контроля отображения
     # del_lista = del_lista + currant_list_beton[2:3]
     # add_lista = add_lista + currant_list_beton[0:2]
 
-    save_dic_to_pickle({date_of_lista:currant_list_beton})
 
+    if id_event_time:
+        with db_lock:
+            data_sql_list.update_status('beton', id_event_time)
 
     del_lista = [tup + (1,) for tup in del_lista]
     add_lista = [tup + (2,) for tup in add_lista]
@@ -171,5 +123,5 @@ def lista_in_text_beton():
 
 
 if __name__ == '__main__':
-    print(check_del_add_lista())
+    # print(check_del_add_lista())
     print(lista_in_text_beton())
