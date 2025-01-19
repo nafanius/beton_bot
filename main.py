@@ -314,7 +314,7 @@ def telegram_bot(token):
             # Получаем информацию о голосовом сообщении
             file_info = bot.get_file(message.voice.file_id)
             # Скачиваем файл
-            downloaded_file = bot.download_file(file_info.file_path)
+            downloaded_file = bot.download_file(file_info.file_path) # type: ignore
             ogg_audio = io.BytesIO(downloaded_file)
             audio = AudioSegment.from_file(ogg_audio, format="ogg")
             wav_audio_io = io.BytesIO()
