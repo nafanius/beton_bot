@@ -15,9 +15,10 @@ def lista_in_bot(lista):
     if not lista:
         return ""
     lista_text = ""
+    number_of_item = 1
     for time_send, person in lista:
-        lista_text += f"{time_send.strftime('%H:%M')} {person}\n"
-
+        lista_text += f"{number_of_item}. {time_send.strftime('%H:%M')} {person}\n"
+        number_of_item +=1
     return lista_text
 
 
@@ -65,7 +66,7 @@ def combination_of_some_days_list(today=False):
 
         if old_stan_lista != currant_lista:
             if status == 0:
-                text_to_bot = f"**{date}**\nDyspozytor kurwa dodał rozklad, on jeszcze może się zmienić. Jeśli się zmieni, dam znać\n{lista_in_bot(currant_lista)}\n\n"
+                text_to_bot = f"<b>{date}\nDyspozytor kurwa dodał rozkład, on jeszcze może się zmienić. Jeśli się zmieni, dam znać\n</b>{lista_in_bot(currant_lista)}\n\n"
         
         if id_event_time:
             with db_lock:

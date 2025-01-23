@@ -20,7 +20,7 @@ exp = logging.exception
 
 db_lock = threading.Lock()
 
-def check_del_add_lista():
+def check_del_add_lista(change_status):
     del_lista = []
     add_lista = []
     now = datetime.now()
@@ -54,8 +54,8 @@ def check_del_add_lista():
     # del_lista = del_lista + currant_list_beton[2:3]
     # add_lista = add_lista + currant_list_beton[0:2]
 
-
-    if id_event_time:
+   
+    if id_event_time and change_status:
         with db_lock:
             data_sql_list.update_status('beton', id_event_time)
 
@@ -64,13 +64,13 @@ def check_del_add_lista():
     del_add =  del_lista + add_lista
 
     del_add = sorted(del_add, key=lambda event: (event[1], event[2], event[3]))
-
+    inf(f"________________{del_add}_____________")
     return del_add, currant_list_beton
 
 
 def lista_in_text_beton(del_add_lista=True):
     """ "фотрмируем list в текстовый формат для высолки в бот"""
-    lista_beton_del_add, lista_beton = check_del_add_lista()
+    lista_beton_del_add, lista_beton = check_del_add_lista(del_add_lista)
 
 
 
