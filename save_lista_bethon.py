@@ -1,9 +1,9 @@
 import logging
-import re
 from datetime import datetime, timedelta
 
 import threading
 import data_sql_list
+import form_lista_with_teg
 
 # region logging
 
@@ -51,16 +51,21 @@ def check_del_add_lista(change_status):
     
 
     # для контроля отображения
-    # del_lista = del_lista + currant_list_beton[2:3]
-    # add_lista = add_lista + currant_list_beton[0:2]
+    # del_lista = del_lista + currant_list_beton[2:5]
+    # add_lista = add_lista + currant_list_beton[0:3]
 
-   
+    # меняем статус
     if id_event_time and change_status:
         with db_lock:
             data_sql_list.update_status('beton', id_event_time)
+            
+    del_lista = list(map(form_lista_with_teg.converter, del_lista))
+    add_lista = list(map(form_lista_with_teg.converter, add_lista))
+    currant_list_beton = list(map(form_lista_with_teg.converter, currant_list_beton))
 
-    del_lista = [tup + (1,) for tup in del_lista]
-    add_lista = [tup + (2,) for tup in add_lista]
+    del_lista, add_lista = form_lista_with_teg.compare_lists_by_tuples(del_lista, add_lista)
+
+
     del_add =  del_lista + add_lista
 
     del_add = sorted(del_add, key=lambda event: (event[1], event[2], event[3]))
@@ -73,18 +78,6 @@ def lista_in_text_beton(del_add_lista=True):
     lista_beton_del_add, lista_beton = check_del_add_lista(del_add_lista)
 
 
-
-    def convert_to_string(data):
-        if not data:
-            return ""
-        try:
-            data = str(data)
-            data = data.strip()
-            data = re.sub(r"\s+", " ", data)
-            return data
-        except (TypeError, ValueError):
-            return ""
-
     if not lista_beton_del_add and del_add_lista:
         return ""
     
@@ -95,58 +88,19 @@ def lista_in_text_beton(del_add_lista=True):
 
     if del_add_lista:
 
-
-        for metres, times, firm, name, uwagi, przebieg, tel, wenz, sort in lista_beton_del_add:
-            times = times.strftime("%H:%M")
-            if tel:
-                if isinstance(tel, float):
-                    tel = str(int(tel)).strip()
-                elif isinstance(tel, str):
-                    tel = tel.strip()
-            else:
-                tel = ""
-
-            przebieg = convert_to_string(przebieg)
-            firm = convert_to_string(firm)
-            name = convert_to_string(name)
-            tel = convert_to_string(tel)
-            uwagi = convert_to_string(uwagi)
-            metres = str(metres).strip()
-            if sort == 1:
-                lista_text += (
-                    f'<b>To kurwa dyspozytor usunął:</b>\n'
-                    f'<s>{times} {metres} węzeł {wenz}</s>\n'
-                    f'<s>{name} {uwagi + " " + przebieg}</s>\n'
-                    f'--------------------\n')
-
-            elif sort == 2:
-                lista_text += (
-                    f'<b>To kurwa dyspozytor dodał:</b>\n'
-                    f'{times} {metres} węzeł {wenz}\n'
-                    f'{name} {uwagi + " " + przebieg}\n'
-                    f'--------------------\n')
-            else:
-                lista_text =  ''
+        for metres, times, firm, name, uwagi, przebieg, tel, wenz in lista_beton_del_add:
+        
+            lista_text += (
+                f'<b>To kurwa dyspozytor zmienił:</b>\n'
+                f'{firm}\n'
+                f'{times} {metres} węzeł {wenz}\n'
+                f'{name} {uwagi + " " + przebieg}\n'
+                f'--------------------\n')
 
         return lista_text
     
     else:
         for metres, times, firm, name, uwagi, przebieg, tel, wenz in lista_beton:
-            times = times.strftime("%H:%M")
-            if tel:
-                if isinstance(tel, float):
-                    tel = str(int(tel)).strip()
-                elif isinstance(tel, str):
-                    tel = tel.strip()
-            else:
-                tel = ""
-
-            przebieg = convert_to_string(przebieg)
-            firm = convert_to_string(firm)
-            name = convert_to_string(name)
-            tel = convert_to_string(tel)
-            uwagi = convert_to_string(uwagi)
-            metres = str(metres).strip()
 
             lista_text += (f"{times} {metres} węzeł {wenz}\n"
                            f'{firm}\n'
@@ -159,4 +113,4 @@ def lista_in_text_beton(del_add_lista=True):
 
 if __name__ == '__main__':
     # print(check_del_add_lista())
-    print(lista_in_text_beton(False))
+    print(lista_in_text_beton(True))

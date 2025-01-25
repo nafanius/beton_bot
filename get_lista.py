@@ -18,7 +18,7 @@ def lista_in_bot(lista):
     number_of_item = 1
     for time_send, person in lista:
         lista_text += f"{number_of_item}. {time_send.strftime('%H:%M')} {person}\n"
-        number_of_item +=1
+        number_of_item += 1
     return lista_text
 
 
