@@ -69,6 +69,7 @@ def check_del_add_lista(change_status):
     del_add =  del_lista + add_lista
 
     del_add = sorted(del_add, key=lambda event: (event[1], event[2], event[3]))
+    
     inf(f"________________{del_add}_____________")
     return del_add, currant_list_beton
 
@@ -102,11 +103,12 @@ def lista_in_text_beton(del_add_lista=True):
     else:
         for metres, times, firm, name, uwagi, przebieg, tel, wenz in lista_beton:
 
-            lista_text += (f"{times} {metres} węzeł {wenz}\n"
-                           f'{firm}\n'
-                           f'{name} {uwagi + " " + przebieg}\n'
-                           f'{tel}\n'
-                           f"--------------------\n")
+            lista_text += (
+                f"{times} {metres} węzeł {wenz}\n"
+                f'{firm}\n'
+                f'{name} {uwagi + " " + przebieg}\n'
+                f'{tel}\n'
+                f"--------------------\n")
             
         return lista_text
 

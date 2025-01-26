@@ -1,4 +1,3 @@
-import time
 from datetime import time as time_from_datatime
 import json
 from sqlalchemy import (
@@ -48,7 +47,7 @@ class Lista(Base):
 
 
 # Создание базы данных SQLite в файле
-engine = create_engine(Settings.data_base)
+engine = create_engine(Settings.data_base_lista)
 
 # Создание всех таблиц, которые еще не существуют
 Base.metadata.create_all(engine)

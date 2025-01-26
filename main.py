@@ -17,8 +17,10 @@ from telebot import types
 
 import weather
 from auth_data import token
+import auth_data
 from palec import name, ask_chatgpt
 from save_lista_bethon import lista_in_text_beton
+from setting import Settings
 
 # region logging
 
@@ -33,11 +35,8 @@ exp = logging.exception
 # logging_end
 # endregion
 
-client = Wit('HZZJUIX7N6O7LJ2XNNSPN2ZTFGLWQCF6')
-id_group = "-4533287060"
-woit_id = "-4768722432"
+client = Wit(auth_data.cod_wit)
 name_bud = ""
-message_without_bot = "Чёто ты меня притомил, давай ка помолчим kurwa"
 db_lock = threading.Lock()
 
 
@@ -88,7 +87,6 @@ def telegram_bot(token):
                      "HOLCIM węzeł 2": "+48502786916",
                      "HOLCIM węzeł 1": "+48519537060"}
 
-    # todo отремонтипровать приветствие каждого дня из за неё зависает ресберн
     def send_scheduled_message():
         """функция отсыла сообщений по утрам"""
         while True:
@@ -100,30 +98,30 @@ def telegram_bot(token):
             # Проверьте если текущее время совпадает с запланированным (например, 9:00)
             if now.hour == 6 and now.minute == 30:
                 weather_3day = weather.weather_3day()
-                bot.send_message(id_group, f"*Dzień dobry, panowie!*\n\n"
-                                           f"*Harmonogram na dzisiaj* - \n {get_lista.combination_of_some_days_list(True)}"
-                                           f"*Dziś czeka nas taka pogoda:*\n"
+                bot.send_message(Settings.ID_GROUPS[0], f"<b>Dzień dobry, panowie!</b>\n\n"
+                                           f"<b>Harmonogram na dzisiaj</b> - \n {get_lista.combination_of_some_days_list(True)}"
+                                           f"<b>Dziś czeka nas taka pogoda:</b>\n"
                                            f"Temperatura minimalna- {weather_3day[0]['температура минимальная']}\n"
                                            f"Maksymalna temperatura - {weather_3day[0]['температура максимальная']}\n"
                                            f"Temperatura odczuwalna - {weather_3day[0]['temp']}\n"
                                            f"zachmurzenie  - {weather_3day[0]['облачность']}\n"
-                                           f"wiatr  - {weather_3day[0]['ветер']}\n\n", parse_mode='Markdown')
+                                           f"wiatr  - {weather_3day[0]['ветер']}\n\n", parse_mode='HTML')
                 time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
 
             if now.minute in [3, 23, 43] :
                 inf("*************я сработал ***************************************************************")
                 text_list_beton = lista_in_text_beton()
-                if text_list_beton:
-                    bot.send_message(id_group, text_list_beton, parse_mode='HTML')
-                    time.sleep(2) 
-                    bot.send_message(woit_id, text_list_beton, parse_mode='HTML')
-
-                
                 text_lista = get_lista.combination_of_some_days_list()
+
+                if text_list_beton:
+                    for id in Settings.ID_GROUPS:
+                        bot.send_message(id, text_list_beton, parse_mode='HTML')
+                        time.sleep(2) 
+
                 if text_lista:
-                    bot.send_message(id_group, text_lista, parse_mode='HTML')
-                    time.sleep(2)
-                    bot.send_message(woit_id, text_lista, parse_mode='HTML')
+                    for id in Settings.ID_GROUPS:
+                        bot.send_message(id, text_lista, parse_mode='HTML')
+                        time.sleep(2)
 
                 time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
             time.sleep(20)  # Проверка каждые 20 секунд
@@ -312,7 +310,7 @@ def telegram_bot(token):
                 try:
                     bot.reply_to(message, ask_chatgpt(text_message))
                 except:
-                    bot.reply_to(message, message_without_bot)
+                    bot.reply_to(message, Settings.message_without_bot)
             else:
                 with db_lock:
                     save_dict_to_file(conversation_history, 'conversation_history.json')
@@ -375,7 +373,7 @@ def telegram_bot(token):
 
             except Exception as err:
                 inf(err)
-                bot.reply_to(message, message_without_bot)
+                bot.reply_to(message, Settings.message_without_bot)
         else:
             with db_lock:
                 save_dict_to_file(conversation_history, 'conversation_history.json')

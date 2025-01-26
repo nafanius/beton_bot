@@ -14,6 +14,7 @@ def converter(list_for_convert):
             return data
         except (TypeError, ValueError):
             return ""
+        
     
     metres, times, firm, name, uwagi, przebieg, tel, wenz = list_for_convert
 
@@ -41,7 +42,7 @@ def compare_lists_by_tuples(del_lista, add_lista):
     
     for index1, tuple1 in enumerate(del_lista):
         for index2, tuple2 in enumerate(add_lista):
-            if tuple1[:3] == tuple2[:3]:
+            if tuple1[:3] == tuple2[:3] and tuple1[6] == tuple2[6]:
                 matching_indices.append((index1, index2))
     del_lista, add_lista = make_list_with_teg(del_lista, add_lista, matching_indices)
     return del_lista, add_lista
@@ -59,7 +60,7 @@ def make_list_with_teg(del_lista, add_lista, matching_indices):
 
         for index, (elem1, elem2) in enumerate(zip(item_del, item_add)):
             if elem1 != elem2:
-                change_elem = f"<s>{elem1}</s><u>{elem2}</u>"
+                change_elem = f"<s>{elem1}</s> <u>{elem2}</u>"
                 del_lista_with_teg[matching[0][index]] =  change_elem
 
     
