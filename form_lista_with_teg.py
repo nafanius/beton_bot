@@ -61,7 +61,7 @@ def make_list_with_teg(del_lista, add_lista, matching_indices):
         for index, (elem1, elem2) in enumerate(zip(item_del, item_add)):
             if elem1 != elem2:
                 change_elem = f"<s>{elem1}</s> <u>{elem2}</u>"
-                del_lista_with_teg[matching[0][index]] =  change_elem
+                del_lista_with_teg[matching[0]][index] =  change_elem
 
     
     del_elem_from_add_lista.sort(reverse=True)
