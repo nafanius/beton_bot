@@ -107,14 +107,13 @@ def lista_in_text_beton(del_add_lista=True):
         ) in lista_beton_del_add:
 
             lista_text += (
-                f"<b>To kurwa dyspozytor zmienił:</b>\n"
                 f"{times} {metres} węzeł {wenz}\n"
                 f"{firm}\n"
                 f'{name} {uwagi + " " + przebieg}\n'
                 f"--------------------\n"
             )
 
-        return lista_text
+        return "<b>To kurwa dyspozytor zmienił:</b>\n" + lista_text
 
     else:
         for metres, times, firm, name, uwagi, przebieg, tel, wenz in lista_beton:

@@ -89,42 +89,47 @@ def telegram_bot(token):
 
     def send_scheduled_message():
         """функция отсыла сообщений по утрам"""
-        while True:
-            now = datetime.now()
-            if now.weekday() > 5:
-                time.sleep(10800)  # Подождите 3 часа  перед следующей проверкой, если это выходной день
-                continue
+        try:
+            while True:
+                now = datetime.now()
+                if now.weekday() > 5:
+                    time.sleep(10800)  # Подождите 3 часа  перед следующей проверкой, если это выходной день
+                    continue
 
-            # Проверьте если текущее время совпадает с запланированным (например, 9:00)
-            if now.hour == 6 and now.minute == 30:
-                weather_3day = weather.weather_3day()
-                bot.send_message(Settings.ID_GROUPS[0], f"<b>Dzień dobry, panowie!</b>\n\n"
-                                           f"<b>Harmonogram na dzisiaj</b> - \n {get_lista.combination_of_some_days_list(True)}"
-                                           f"<b>Dziś czeka nas taka pogoda:</b>\n"
-                                           f"Temperatura minimalna- {weather_3day[0]['температура минимальная']}\n"
-                                           f"Maksymalna temperatura - {weather_3day[0]['температура максимальная']}\n"
-                                           f"Temperatura odczuwalna - {weather_3day[0]['temp']}\n"
-                                           f"zachmurzenie  - {weather_3day[0]['облачность']}\n"
-                                           f"wiatr  - {weather_3day[0]['ветер']}\n\n", parse_mode='HTML')
-                time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
+                # Проверьте если текущее время совпадает с запланированным (например, 9:00)
+                if now.hour == 6 and now.minute == 30:
+                    weather_3day = weather.weather_3day()
+                    bot.send_message(Settings.ID_GROUPS[0], f"<b>Dzień dobry, panowie!</b>\n\n"
+                                            f"<b>Harmonogram na dzisiaj</b> - \n {get_lista.combination_of_some_days_list(True)}"
+                                            f"<b>Dziś czeka nas taka pogoda:</b>\n"
+                                            f"Temperatura minimalna- {weather_3day[0]['температура минимальная']}\n"
+                                            f"Maksymalna temperatura - {weather_3day[0]['температура максимальная']}\n"
+                                            f"Temperatura odczuwalna - {weather_3day[0]['temp']}\n"
+                                            f"zachmurzenie  - {weather_3day[0]['облачность']}\n"
+                                            f"wiatr  - {weather_3day[0]['ветер']}\n\n", parse_mode='HTML')
+                    time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
 
-            if now.minute in [3, 23, 43] :
-                inf("*************я сработал ***************************************************************")
-                text_list_beton = lista_in_text_beton()
-                text_lista = get_lista.combination_of_some_days_list()
+                if now.minute in [3, 23, 43] :
+                    inf("*************я сработал ***************************************************************")
+                    text_list_beton = lista_in_text_beton()
+                    text_lista = get_lista.combination_of_some_days_list()
 
-                if text_list_beton:
-                    for id in Settings.ID_GROUPS:
-                        bot.send_message(id, text_list_beton, parse_mode='HTML')
-                        time.sleep(2) 
+                    if text_list_beton:
+                        for id in Settings.ID_GROUPS:
+                            bot.send_message(id, text_list_beton, parse_mode='HTML')
+                            time.sleep(2) 
 
-                if text_lista:
-                    for id in Settings.ID_GROUPS:
-                        bot.send_message(id, text_lista, parse_mode='HTML')
-                        time.sleep(2)
+                    if text_lista:
+                        for id in Settings.ID_GROUPS:
+                            bot.send_message(id, text_lista, parse_mode='HTML')
+                            time.sleep(2)
 
-                time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
-            time.sleep(20)  # Проверка каждые 20 секунд
+                    time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
+                time.sleep(20)  # Проверка каждые 20 секунд
+        except Exception as err:
+            inf(err)
+            restart_service()
+                
 
     # Запускаем поток для выполнения запланированного задания
     threading.Thread(target=send_scheduled_message).start()
@@ -175,7 +180,7 @@ def telegram_bot(token):
                                f"Wiatr - {weather_3day[2]['ветер']}\n\n")
 
             except Exception as err:
-                print(err)
+                inf(err)
                 return
         elif call.data == "button3":  # будовы
             answer = []
@@ -355,7 +360,7 @@ def telegram_bot(token):
             split_text = text_message.split()
             text_message = ' '.join(split_text[1:])
             # пробуем получить ответ от чат бота
-            print(text_message)
+            inf(text_message)
             try:
                 tts = gTTS(ask_chatgpt(text_message), lang='ru')
                 # Создание объекта BytesIO
