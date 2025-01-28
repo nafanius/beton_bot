@@ -139,10 +139,10 @@ def telegram_bot(token):
         """запуск при входе нового пользователя"""
         for new_member in message.new_chat_members:
             bot.send_message(message.chat.id,
-                             f"Witamy, *{new_member.first_name}!*\n"
+                             f"Witamy, <b>{new_member.first_name}!</b>\n"
                              f"Jesteś na czacie CONCRETnych facetów, "
                              f"lejących BETON :)\n"
-                             f"/h - dla informacji, co można tu robić", parse_mode='Markdown')
+                             f"/h - dla informacji, co można tu robić", parse_mode='HTML')
 
             bot.send_message(message.chat.id,
                              f"{new_member.first_name}\n:Wpisz:\n'/h' - a ja ci opowiem, co potrafię\n"
@@ -160,19 +160,19 @@ def telegram_bot(token):
             try:
                 weather_day = weather.weather_now()
                 weather_3day = weather.weather_3day()
-                answer_text = (f"*Pogoda teraz:*\n"
+                answer_text = (f"<b>Pogoda teraz:</b>\n"
                                f"Temperatura - {weather_day['температура']}\n"
                                f"Zachmurzenie - {weather_day['облачность']}\n"
                                f"Wiatr - {weather_day['ветер']}\n"
                                f"Wschód - {weather_day['восход']}\n"
                                f"Zachód - {weather_day['заход']}\n\n"
-                               f"*Pogoda na jutro:*\n"
+                               f"<b>Pogoda na jutro:</b>\n"
                                f"Temperatura minimalna - {weather_3day[1]['температура минимальная']}\n"
                                f"Temperatura maksymalna - {weather_3day[1]['температура максимальная']}\n"
                                f"Temperatura odczuwalna - {weather_3day[1]['temp']}\n"
                                f"Zachmurzenie - {weather_3day[1]['облачность']}\n"
                                f"Wiatr - {weather_3day[1]['ветер']}\n\n"
-                               f"*Pogoda na pojutrze:*\n"
+                               f"<b>Pogoda na pojutrze:</b>\n"
                                f"Temperatura minimalna - {weather_3day[2]['температура минимальная']}\n"
                                f"Temperatura maksymalna - {weather_3day[2]['температура максимальная']}\n"
                                f"Temperatura odczuwalna - {weather_3day[2]['temp']}\n"
