@@ -74,7 +74,7 @@ def make_list_with_teg(del_lista, add_lista, matching_indices):
 
         for index, (elem1, elem2) in enumerate(zip(item_del, item_add)):
             if elem1 != elem2:
-                change_elem = f"<s>{elem1}</s> <u>{elem2}</u>"
+                change_elem = f"<b><s>{elem1}</s></b> <b><u>{elem2}</u></b>"
                 del_lista_with_teg[matching[0]][index] =  change_elem
 
     
@@ -87,7 +87,7 @@ def make_list_with_teg(del_lista, add_lista, matching_indices):
         if index not in crossed_out_elements_in_del_lista:
             new_item = []
             for elem in item:
-                change_elem = f"<s>{elem}</s>"
+                change_elem = f"<b><s>{elem}</s></b>"
                 new_item.append(change_elem)
 
             del_lista_with_teg[index] = new_item

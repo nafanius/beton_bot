@@ -100,13 +100,13 @@ def telegram_bot(token):
                 if now.hour == 6 and now.minute == 30:
                     weather_3day = weather.weather_3day()
                     bot.send_message(Settings.ID_GROUPS[0], f"<b>Dzień dobry, panowie!</b>\n\n"
-                                            f"<b>Harmonogram na dzisiaj</b> - \n {get_lista.combination_of_some_days_list(True)}"
+                                            f"<b>Harmonogram na dzisiaj</b>\n {get_lista.combination_of_some_days_list(True)}"
                                             f"<b>Dziś czeka nas taka pogoda:</b>\n"
-                                            f"Temperatura minimalna- {weather_3day[0]['температура минимальная']}\n"
-                                            f"Maksymalna temperatura - {weather_3day[0]['температура максимальная']}\n"
-                                            f"Temperatura odczuwalna - {weather_3day[0]['temp']}\n"
-                                            f"zachmurzenie  - {weather_3day[0]['облачность']}\n"
-                                            f"wiatr  - {weather_3day[0]['ветер']}\n\n", parse_mode='HTML')
+                                            f"Temperatura minimalna <b><u>{weather_3day[0]['температура минимальная']}</u></b>\n"
+                                            f"Maksymalna temperatura <b><u>{weather_3day[0]['температура максимальная']}/<u></b>\n"
+                                            f"Temperatura odczuwalna <b><u>{weather_3day[0]['temp']}</u></b>\n"
+                                            f"zachmurzenie <b><u>{weather_3day[0]['облачность']}</u></b>\n"
+                                            f"wiatr <b><u>{weather_3day[0]['ветер']}</u></b>\n", parse_mode='HTML')
                     time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
 
                 if now.minute in [3, 23, 43] :
@@ -161,23 +161,23 @@ def telegram_bot(token):
                 weather_day = weather.weather_now()
                 weather_3day = weather.weather_3day()
                 answer_text = (f"<b>Pogoda teraz:</b>\n"
-                               f"Temperatura - {weather_day['температура']}\n"
-                               f"Zachmurzenie - {weather_day['облачность']}\n"
-                               f"Wiatr - {weather_day['ветер']}\n"
-                               f"Wschód - {weather_day['восход']}\n"
-                               f"Zachód - {weather_day['заход']}\n\n"
+                               f"Temperatura <b><u>{weather_day['температура']}</u></b>\n"
+                               f"Zachmurzenie <b><u>{weather_day['облачность']}</u></b>\n"
+                               f"Wiatr <b><u>{weather_day['ветер']}</u></b>\n"
+                               f"Wschód <b><u>{weather_day['восход']}</u></b>\n"
+                               f"Zachód <b><u>{weather_day['заход']}</u></b>\n\n"
                                f"<b>Pogoda na jutro:</b>\n"
-                               f"Temperatura minimalna - {weather_3day[1]['температура минимальная']}\n"
-                               f"Temperatura maksymalna - {weather_3day[1]['температура максимальная']}\n"
-                               f"Temperatura odczuwalna - {weather_3day[1]['temp']}\n"
-                               f"Zachmurzenie - {weather_3day[1]['облачность']}\n"
-                               f"Wiatr - {weather_3day[1]['ветер']}\n\n"
+                               f"Temperatura minimalna <b><u>{weather_3day[1]['температура минимальная']}</u></b>\n"
+                               f"Temperatura maksymalna <b><u>{weather_3day[1]['температура максимальная']}</u></b>\n"
+                               f"Temperatura odczuwalna <b><u>{weather_3day[1]['temp']}</u></b>\n"
+                               f"Zachmurzenie <b><u>{weather_3day[1]['облачность']}</u></b>\n"
+                               f"Wiatr <b><u>{weather_3day[1]['ветер']}</u></b>\n\n"
                                f"<b>Pogoda na pojutrze:</b>\n"
-                               f"Temperatura minimalna - {weather_3day[2]['температура минимальная']}\n"
-                               f"Temperatura maksymalna - {weather_3day[2]['температура максимальная']}\n"
-                               f"Temperatura odczuwalna - {weather_3day[2]['temp']}\n"
-                               f"Zachmurzenie - {weather_3day[2]['облачность']}\n"
-                               f"Wiatr - {weather_3day[2]['ветер']}\n\n")
+                               f"Temperatura minimalna <b><u>{weather_3day[2]['температура минимальная']}</u></b>\n"
+                               f"Temperatura maksymalna <b><u>{weather_3day[2]['температура максимальная']}</u></b>\n"
+                               f"Temperatura odczuwalna <b><u>{weather_3day[2]['temp']}</u></b>\n"
+                               f"Zachmurzenie <b><u>{weather_3day[2]['облачность']}</u></b>\n"
+                               f"Wiatr <b><u>{weather_3day[2]['ветер']}</u></b>\n\n")
 
             except Exception as err:
                 inf(err)
