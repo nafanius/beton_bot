@@ -103,7 +103,7 @@ def telegram_bot(token):
                                             f"<b>Harmonogram na dzisiaj</b>\n {get_lista.combination_of_some_days_list(True)}"
                                             f"<b>Dziś czeka nas taka pogoda:</b>\n"
                                             f"Temperatura minimalna <b><u>{weather_3day[0]['температура минимальная']}</u></b>\n"
-                                            f"Maksymalna temperatura <b><u>{weather_3day[0]['температура максимальная']}/<u></b>\n"
+                                            f"Maksymalna temperatura <b><u>{weather_3day[0]['температура максимальная']}</u></b>\n"
                                             f"Temperatura odczuwalna <b><u>{weather_3day[0]['temp']}</u></b>\n"
                                             f"zachmurzenie <b><u>{weather_3day[0]['облачность']}</u></b>\n"
                                             f"wiatr <b><u>{weather_3day[0]['ветер']}</u></b>\n", parse_mode='HTML')

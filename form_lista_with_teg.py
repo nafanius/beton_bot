@@ -87,7 +87,7 @@ def make_list_with_teg(del_lista, add_lista, matching_indices):
         if index not in crossed_out_elements_in_del_lista:
             new_item = []
             for elem in item:
-                change_elem = f"<b><s>{elem}</s></b>"
+                change_elem = f"<s>{elem}</s>"
                 new_item.append(change_elem)
 
             del_lista_with_teg[index] = new_item
