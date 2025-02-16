@@ -29,13 +29,15 @@ def check_del_add_lista(change_status):
     now = datetime.now()
 
     if now.weekday() > 5:
-        now = now + timedelta(days=1)  # если воскресенье давай инащкьацию понедельника
+        # если воскресенье давай инащкьацию понедельника
+        now = now + timedelta(days=1)
 
     date_of_lista = now.strftime("%d.%m.%Y")
 
     with db_lock:
         currant_list_beton, id_event_time, status = (
-            data_sql_list.get_newest_list_beton_or_lista("beton", date_of_lista, 0)
+            data_sql_list.get_newest_list_beton_or_lista(
+                "beton", date_of_lista, 0)
         )
 
     with db_lock:
@@ -67,7 +69,8 @@ def check_del_add_lista(change_status):
 
     del_lista = list(map(form_lista_with_teg.converter, del_lista))
     add_lista = list(map(form_lista_with_teg.converter, add_lista))
-    currant_list_beton = list(map(form_lista_with_teg.converter, currant_list_beton))
+    currant_list_beton = list(
+        map(form_lista_with_teg.converter, currant_list_beton))
 
     del_lista, add_lista = form_lista_with_teg.compare_lists_by_tuples(
         del_lista, add_lista
@@ -104,6 +107,7 @@ def lista_in_text_beton(del_add_lista=True):
             przebieg,
             tel,
             wenz,
+            *_,
         ) in lista_beton_del_add:
 
             lista_text += (
@@ -116,7 +120,16 @@ def lista_in_text_beton(del_add_lista=True):
         return "<b>To kurwa dyspozytor zmienił:</b>\n" + lista_text
 
     else:
-        for metres, times, firm, name, uwagi, przebieg, tel, wenz in lista_beton:
+        for (metres,
+            times,
+            firm,
+            name,
+            uwagi,
+            przebieg,
+            tel,
+            wenz,
+            *_,
+            ) in lista_beton:
 
             lista_text += (
                 f"{times} {metres} węzeł {wenz}\n"

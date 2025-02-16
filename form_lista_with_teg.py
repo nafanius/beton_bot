@@ -30,7 +30,7 @@ def converter(list_for_convert):
             return ""
         
     
-    metres, times, firm, name, uwagi, przebieg, tel, wenz = list_for_convert
+    metres, times, firm, name, uwagi, przebieg, tel, wenz, *_ = list_for_convert
 
     times = times.strftime("%H:%M")
     if tel:

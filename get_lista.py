@@ -75,7 +75,7 @@ def combination_of_some_days_list(today=False):
         check_day = datetime.now() + timedelta(days=1)
 
         if now.weekday() == 4:
-            for i in range(1,3):
+            for i in [0,2]:
                 check_day = check_day + timedelta(days=i)
 
                 text_to_bot = get_text_lista(check_day, text_to_bot)
