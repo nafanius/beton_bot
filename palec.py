@@ -64,7 +64,7 @@ def ask_chatgpt(question):
     )
 
     # Получение ответа от модели
-    answer = response.choices[0].message.content.strip()
+    answer = str(response.choices[0].message.content).strip()
 
     # Добавление ответа модели в историю
     conversation_history[0] = {"role": "system", "content": prefix_system}

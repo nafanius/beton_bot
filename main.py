@@ -6,6 +6,8 @@ from datetime import datetime
 import threading
 import subprocess
 import get_lista
+import re
+import corect_courses
 
 from wit import Wit
 import io
@@ -302,6 +304,9 @@ def telegram_bot(token):
             conversation_history.append({"role": "user", "content": f"{message.from_user.first_name}: {message.text}"})
 
             bot_name = text_message.split()[0].lower()[:5]
+            pattern = r'хуй(\d{1,3})'
+            match = re.search(pattern, text_message)
+
             if bot_name in name:
                 conversation_history[-1] = {"role": "user",
                                             "content": f"{message.from_user.username} question: {message.text}"}
@@ -316,6 +321,15 @@ def telegram_bot(token):
                     bot.reply_to(message, ask_chatgpt(text_message))
                 except:
                     bot.reply_to(message, Settings.message_without_bot)
+            elif match:
+                number_course = match.group(1)
+                empty = corect_courses.save_corect_course(number_course, message.from_user.username)
+
+                if empty:
+                    bot.reply_to(message, "что-то ты дружёк попутал курва")
+                else:
+                    bot.reply_to(message, "всасал, учту!")
+
             else:
                 with db_lock:
                     save_dict_to_file(conversation_history, 'conversation_history.json')
