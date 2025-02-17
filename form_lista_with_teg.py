@@ -25,6 +25,7 @@ def converter(list_for_convert):
             data = str(data)
             data = data.strip()
             data = re.sub(r"\s+", " ", data)
+            data = re.sub(r"\s*\bNone\b", "", data)
             return data
         except (TypeError, ValueError):
             return ""
