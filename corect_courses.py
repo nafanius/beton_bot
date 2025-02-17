@@ -35,6 +35,7 @@ def save_corect_course(number, name_user, new_time=time.time()):
             df_restored_query = pd.read_sql_query(query, con=data_sql_list.engine)
     except Exception as error:
         inf(f"ошибка запроса из базы actual {error}")
+        return True
 
     if df_restored_query.empty:
         return True
@@ -43,7 +44,7 @@ def save_corect_course(number, name_user, new_time=time.time()):
         df_restored_query[['new_time', 'user']] = new_time, name_user
 
         with db_lock:
-            df_restored_query.to_sql('corects', con=data_sql_list.engine, if_exists='append', index=False)
+            df_restored_query.to_sql('corrects', con=data_sql_list.engine, if_exists='append', index=False)
 
         return False
 
