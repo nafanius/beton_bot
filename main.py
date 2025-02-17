@@ -304,8 +304,11 @@ def telegram_bot(token):
             conversation_history.append({"role": "user", "content": f"{message.from_user.first_name}: {message.text}"})
 
             bot_name = text_message.split()[0].lower()[:5]
+
+            request_corect_corse = text_message.lower()
             pattern = r'хуй(\d{1,3})'
-            match = re.search(pattern, text_message)
+
+            match = re.search(pattern, request_corect_corse)
 
             if bot_name in name:
                 conversation_history[-1] = {"role": "user",
