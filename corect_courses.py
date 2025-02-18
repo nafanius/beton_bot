@@ -35,10 +35,10 @@ def save_corect_course(number, name_user, new_time=time.time()):
             df_restored_query = pd.read_sql_query(query, con=data_sql_list.engine)
     except Exception as error:
         inf(f"ошибка запроса из базы actual {error}")
-        return True
+        return "Курва чё-то ты намутил с базой данных при получении данных"
 
     if df_restored_query.empty:
-        return True
+        return "Курва чё-то ты тупишь, и впариваешь мне какую то дичь"
     
     else:
         df_restored_query[['new_time', 'user']] = new_time, name_user
@@ -49,7 +49,12 @@ def save_corect_course(number, name_user, new_time=time.time()):
         
         except Exception as error:
             inf(f"ошибка запроса из базы actual {error}")
-            return True
+            return "Курва чё-то ты намутил с базой данных при записи данных"
         
-        return False
+        # todo сделать нормальный ответ на основе данных с df
+        current_time = datetime.fromtimestamp(new_time)
+        formatted_time = current_time.strftime("%H:%M")
+
+        return (f"{name_user} Измeнил {df_restored_query.loc[0,"budowa"]}\nкурс№ - {df_restored_query.loc[0,"k"]},\n 
+                было время отгрузки - {df_restored_query.loc[0,"time"]}\nстало - {formatted_time}")
 

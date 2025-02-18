@@ -326,13 +326,10 @@ def telegram_bot(token):
                     bot.reply_to(message, Settings.message_without_bot)
             elif match:
                 number_course = match.group(1)
-                empty = corect_courses.save_corect_course(number_course, message.from_user.username)
+                answer_from_lista = corect_courses.save_corect_course(number_course, message.from_user.username)
 
-                if empty:
-                    bot.reply_to(message, "что-то ты дружёк попутал курва")
-                else:
-                    bot.reply_to(message, "всасал, учту!")
-
+                bot.reply_to(message, answer_from_lista)
+                
             else:
                 with db_lock:
                     save_dict_to_file(conversation_history, 'conversation_history.json')
