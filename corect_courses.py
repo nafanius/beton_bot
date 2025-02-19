@@ -48,8 +48,10 @@ def save_corect_course(number, name_user, new_time=datetime.now()):
             inf(f"ошибка запроса из базы actual {error}")
             return "Курва чё-то ты намутил с базой данных при записи данных"
         
-        formatted_time = new_time.strftime("%H:%M")
+        formatted_time_new = new_time.strftime("%H:%M")
+        formatted_time_old = str(df_restored_query.loc[0,"time"])
+
 
         return (f"{name_user} Измeнил {df_restored_query.loc[0,"budowa"]}\nкурс№ - {df_restored_query.loc[0,"k"]},\n 
-                было время отгрузки - {df_restored_query.loc[0,"time"]}\nстало - {formatted_time}")
+                было время отгрузки - {formatted_time_old[10:16]}\nстало - {formatted_time_new}")
 
