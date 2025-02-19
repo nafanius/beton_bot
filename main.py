@@ -326,7 +326,7 @@ def telegram_bot(token):
                     bot.reply_to(message, Settings.message_without_bot)
             elif match:
                 number_course = match.group(1)
-                answer_from_lista = corect_courses.save_corect_course(number_course, message.from_user.username)
+                answer_from_lista = corect_courses.save_corect_course(number_course, message.from_user.username, datetime.now())
 
                 bot.reply_to(message, answer_from_lista)
                 

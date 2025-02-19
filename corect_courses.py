@@ -1,5 +1,4 @@
 from datetime import datetime
-import time
 import data_sql_list
 import pandas as pd
 import threading
@@ -22,12 +21,10 @@ exp = logging.exception
 
 
 
-
-
 db_lock = threading.Lock()
 
 
-def save_corect_course(number, name_user, new_time=time.time()):
+def save_corect_course(number, name_user, new_time=datetime.now()):
     query = f'SELECT * FROM actual WHERE "index" = {number}'
 
     try:
@@ -51,9 +48,7 @@ def save_corect_course(number, name_user, new_time=time.time()):
             inf(f"ошибка запроса из базы actual {error}")
             return "Курва чё-то ты намутил с базой данных при записи данных"
         
-        # todo сделать нормальный ответ на основе данных с df
-        current_time = datetime.fromtimestamp(new_time)
-        formatted_time = current_time.strftime("%H:%M")
+        formatted_time = new_time.strftime("%H:%M")
 
         return (f"{name_user} Измeнил {df_restored_query.loc[0,"budowa"]}\nкурс№ - {df_restored_query.loc[0,"k"]},\n 
                 было время отгрузки - {df_restored_query.loc[0,"time"]}\nстало - {formatted_time}")
