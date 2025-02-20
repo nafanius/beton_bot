@@ -25,7 +25,7 @@ db_lock = threading.Lock()
 
 
 def save_corect_course(number, name_user, new_time=datetime.now()):
-    query = f'SELECT * FROM actual WHERE "index" = {number}'
+    query = f'SELECT * FROM actual_after WHERE "index" = {number}'
 
     try:
         with db_lock:
@@ -52,6 +52,6 @@ def save_corect_course(number, name_user, new_time=datetime.now()):
         formatted_time_old = str(df_restored_query.loc[0,"time"])
 
 
-        return  f"{name_user}\nИзмeнил {df_restored_query.loc[0,"budowa"]}\nкурс№ - {df_restored_query.loc[0,"k"]},\n"\
+        return  f"{name_user}\nИзмeнил {df_restored_query.loc[0,'budowa']}\nкурс№ - {df_restored_query.loc[0,'k']},\n"\
                 f"было время отгрузки - {formatted_time_old[10:16]}\nстало - {formatted_time_new}"
 
