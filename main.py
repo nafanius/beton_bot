@@ -23,6 +23,7 @@ import auth_data
 from palec import name, ask_chatgpt
 from save_lista_bethon import lista_in_text_beton
 from setting import Settings
+from get_request import answer_to_request
 
 # region logging
 
@@ -253,6 +254,10 @@ def telegram_bot(token):
     @bot.message_handler(commands=["lista"])
     def send_lista(message):
         bot.send_message(message.chat.id, "Oto ci, kurwa, rozkład: https://bit.ly/holcim_lista")
+
+    @bot.message_handler(commands=["co"])
+    def send_answer(message):
+        bot.send_message(message.chat.id, answer_to_request())
 
     # todo сделать стройки в виде базы данных
     # region ADD BUDOWA

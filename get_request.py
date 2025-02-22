@@ -27,6 +27,8 @@ def answer_to_request():
         df_try = pd.read_sql_query(query_try, con=data_sql_list.engine)
 
     df_try['time'] = pd.to_datetime(df_try['time'])
+
+    # target_time = pd.Timestamp.now()- pd.Timedelta(hours=10) #for check
     target_time = pd.Timestamp.now()
 
     # todo remove minutes in setting
@@ -56,7 +58,7 @@ def answer_to_request():
     text = text.replace(":::", "\n")
     text = re.sub(r'[ \t]+', ' ', text).strip()
     text = f"<b>W ciągu najbliższych 45 minut to będą ładować:</b>\nDzisiaj pozostało do wysyłki: {reszta}m3\n"+text
-    
+
     return text
 
 
