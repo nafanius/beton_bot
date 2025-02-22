@@ -1,4 +1,3 @@
-from datetime import datetime
 import data_sql_list
 import pandas as pd
 import threading
@@ -49,7 +48,7 @@ def answer_to_request():
 
     df_now_loading['time'] = '<b>'+df_now_loading['time'].str.strip()+'</b>'
     df_now_loading['k'] = 'kurs - '+df_now_loading['k'].str.strip()
-    df_now_loading['wenz'] = 'wenz - '+df_now_loading['wenz'].str.strip()+':::'
+    df_now_loading['wenz'] = 'węnzeł - '+df_now_loading['wenz'].str.strip()+':::'
     df_now_loading['res'] = 'reszta - '+df_now_loading['res'].str.strip()
     df_now_loading['budowa'] = df_now_loading['budowa'].str.strip()+':::'
     df_now_loading['p/d'] = (df_now_loading['p/d'].str.strip()).replace({'d':'dzwig:::','p':'pompa:::'})

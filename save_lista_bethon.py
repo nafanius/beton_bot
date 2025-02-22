@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime, timedelta
-
+import re
+import pandas as pd
 import threading
 import data_sql_list
 import form_lista_with_teg
@@ -120,24 +121,32 @@ def lista_in_text_beton(del_add_lista=True):
         return "<b>To kurwa dyspozytor zmienił:</b>\n" + lista_text
 
     else:
-        for (metres,
-            times,
-            firm,
-            name,
-            uwagi,
-            przebieg,
-            tel,
-            wenz,
-            *_,
-            ) in lista_beton:
+        query_try = f'SELECT * FROM actual_after '
+    with db_lock:
+        df_try = pd.read_sql_query(query_try, con=data_sql_list.engine)
 
-            lista_text += (
-                f"{times} {metres} węzeł {wenz}\n"
-                f"{firm}\n"
-                f'{name} {uwagi + " " + przebieg}\n'
-                f"{tel}\n"
-                f"--------------------\n"
-            )
+        df_try['time'] = pd.to_datetime(df_try['time'])
+
+        if df_try.empty:
+            lista_text = 'dzisiaj nie ma wysyłek"'
+        else:
+            df_try = df_try.drop(['index', 'id', 'mat'], axis=1)
+            df_try['time'] = df_try['time'].dt.strftime("%H:%M")
+            df_try = df_try.astype(str)
+
+            df_try['time'] = '<b>'+df_try['time'].str.strip()+'</b>'
+            df_try['k'] = 'kurs - '+df_try['k'].str.strip()
+            df_try['wenz'] = 'węnzeł - '+df_try['wenz'].str.strip()+':::'
+            df_try['res'] = 'reszta - '+df_try['res'].str.strip()
+            df_try['budowa'] = df_try['budowa'].str.strip()+':::'
+            df_try['p/d'] = (df_try['p/d'].str.strip()).replace({'d':'dzwig:::','p':'pompa:::'})
+            df_try['split'] = '----------------'
+
+            df_try = df_try.reindex(['time', 'm3', 'k', 'wenz', 'budowa', 'res','p/d','split'], axis=1)
+
+            lista_text = df_try.to_string(header=False)
+            lista_text = lista_text.replace(":::", "\n")
+            lista_text = re.sub(r'[ \t]+', ' ', lista_text).strip()
 
         return lista_text
 
