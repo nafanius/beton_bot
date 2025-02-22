@@ -47,18 +47,21 @@ def answer_to_request():
     df_now_loading['time'] = df_now_loading['time'].dt.strftime("%H:%M")
     df_now_loading = df_now_loading.astype(str)
 
-    df_now_loading['time'] = '<b><u>'+df_now_loading['time'].str.strip()+'</u></b>'
-    df_now_loading['k'] = 'kurs - '+df_now_loading['k'].str.strip()+':::'
+    df_now_loading['time'] = '<b>'+df_now_loading['time'].str.strip()+'</b>'
+    df_now_loading['k'] = 'kurs - '+df_now_loading['k'].str.strip()
+    df_now_loading['wenz'] = 'wenz - '+df_now_loading['wenz'].str.strip()+':::'
     df_now_loading['res'] = 'reszta - '+df_now_loading['res'].str.strip()
     df_now_loading['budowa'] = df_now_loading['budowa'].str.strip()+':::'
     df_now_loading['p/d'] = (df_now_loading['p/d'].str.strip()).replace({'d':'dzwig:::','p':'pompa:::'})
     df_now_loading['split'] = '----------------'
 
+    df_now_loading = df_now_loading.reindex(['time', 'm3', 'k', 'wenz', 'budowa', 'res','p/d','split'], axis=1)
+
     text = df_now_loading.to_string(header=False)
     text = text.replace(":::", "\n")
     text = re.sub(r'[ \t]+', ' ', text).strip()
     text = f"<b>W ciągu najbliższych 45 minut to będą ładować:</b>\nDzisiaj pozostało do wysyłki <b><u>{reszta}"\
-           f"</u></b>m3\n\n{text}\n\n <u>если что не так не поленись кинь хуй с номером загрузки например 'хуй10'</u>"
+           f"</u></b>m3\n\n{text}\n\n <u>Eсли что не так, не поленись, кинь хуй с номером загрузки например: <b>'хуй10'</b></u>"
 
     return text
 
