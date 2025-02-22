@@ -10,3 +10,5 @@ __pycache__/
 conversation_history.json
 dic_bud.json
 save_old_lists
+*.ipunb
+.ipunb*

@@ -53,5 +53,13 @@ def save_corect_course(number, name_user, new_time=datetime.now()):
 
 
         return  f"{name_user}\nИзмeнил {df_restored_query.loc[0,'budowa']}\nкурс№ - {df_restored_query.loc[0,'k']},\n"\
-                f"было время отгрузки - {formatted_time_old[10:16]}\nстало - {formatted_time_new}"
+                f"Остаток - {df_restored_query.loc[0,'res']}\nбыло время отгрузки - {formatted_time_old[10:16]}\nстало - {formatted_time_new}"
+
+
+
+if __name__ == '__main__':
+
+    query_try = f'SELECT * FROM actual_after '
+    with db_lock:
+        df_try = pd.read_sql_query(query_try, con=data_sql_list.engine)
 
