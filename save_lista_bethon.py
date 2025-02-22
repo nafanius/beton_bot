@@ -130,7 +130,8 @@ def lista_in_text_beton(del_add_lista=True):
         if df_try.empty:
             lista_text = 'dzisiaj nie ma wysyłek"'
         else:
-            df_try = df_try.drop(['index', 'id', 'mat'], axis=1)
+            df_try.set_index('index', inplace=True)
+            df_try = df_try.drop(['id', 'mat'], axis=1)
             df_try['time'] = df_try['time'].dt.strftime("%H:%M")
             df_try = df_try.astype(str)
 

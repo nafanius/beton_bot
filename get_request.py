@@ -42,7 +42,8 @@ def answer_to_request():
     if df_now_loading.empty:
         return 'kolego, możesz być wolny jak wiatr kurwa'
 
-    df_now_loading = df_now_loading.drop(['index', 'id', 'mat'], axis=1)
+    df_now_loading.set_index('index', inplace=True)
+    df_now_loading = df_now_loading.drop(['id', 'mat'], axis=1)
     df_now_loading['time'] = df_now_loading['time'].dt.strftime("%H:%M")
     df_now_loading = df_now_loading.astype(str)
 
