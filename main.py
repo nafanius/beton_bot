@@ -257,7 +257,7 @@ def telegram_bot(token):
 
     @bot.message_handler(commands=["co"])
     def send_answer(message):
-        bot.send_message(message.chat.id, answer_to_request())
+        bot.send_message(message.chat.id, answer_to_request(), parse_mode='HTML')
 
     # todo сделать стройки в виде базы данных
     # region ADD BUDOWA
