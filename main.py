@@ -311,7 +311,7 @@ def telegram_bot(token):
             bot_name = text_message.split()[0].lower()[:5]
 
             request_corect_corse = text_message.lower()
-            pattern = r'хуй(\d{1,3})'
+            pattern = r'^хуй(\d{1,3})(?: (?:[01]?\d|2[0-3]):[0-5]\d)?$'
 
             match = re.search(pattern, request_corect_corse)
 
@@ -331,7 +331,17 @@ def telegram_bot(token):
                     bot.reply_to(message, Settings.message_without_bot)
             elif match:
                 number_course = match.group(1)
-                answer_from_lista = corect_courses.save_corect_course(number_course, message.from_user.username, datetime.now())
+                time_corse = match.group(2)
+
+                if not time_corse:
+                    answer_from_lista = corect_courses.save_corect_course(number_course, message.from_user.username, datetime.now())
+                else:
+                    today = datetime.today()
+                    time_parts = time_corse.split(':')
+                    hours = int(time_parts[0])
+                    minutes = int(time_parts[1])
+                    date_time_course = datetime(today.year, today.month, today.day, hours, minutes)
+                    answer_from_lista = corect_courses.save_corect_course(number_course, message.from_user.username, date_time_course)
 
                 bot.reply_to(message, answer_from_lista)
                 

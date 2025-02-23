@@ -92,8 +92,9 @@ def lista_in_text_beton(del_add_lista=True):
     if not lista_beton_del_add and del_add_lista:
         return ""
 
-    if not lista_beton and not del_add_lista:
-        return "Brak danych"
+    # todo del it if not be able any problems
+    # if not lista_beton and not del_add_lista:
+    #     return "Brak danych"
 
     lista_text = ""
 
@@ -128,7 +129,7 @@ def lista_in_text_beton(del_add_lista=True):
         df_try['time'] = pd.to_datetime(df_try['time'])
 
         if df_try.empty:
-            lista_text = 'dzisiaj nie ma wysyłek"'
+            lista_text = 'dzisiaj nie ma wysyłek kurwa'
         else:
             df_try.set_index('index', inplace=True)
             df_try = df_try.drop(['id', 'mat'], axis=1)

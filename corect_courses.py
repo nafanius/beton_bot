@@ -3,6 +3,7 @@ import data_sql_list
 import pandas as pd
 import threading
 import logging
+from sqlalchemy import text as text_sql_request
 
 
 # region logging
@@ -24,7 +25,18 @@ exp = logging.exception
 db_lock = threading.Lock()
 
 
-def save_corect_course(number, name_user, new_time=datetime.now()):
+def save_corect_course(number, name_user, new_time):
+
+    if number == '001':
+        delete_query = text_sql_request("DELETE FROM actual_after")
+
+        with db_lock:  
+            with data_sql_list.engine.connect() as connection:
+                connection.execute(delete_query)
+                connection.commit()  
+
+        return "я всё зачистил шеф!"
+
     query = f'SELECT * FROM actual_after WHERE "index" = {number}'
 
     try:

@@ -60,8 +60,9 @@ def answer_to_request():
     text = df_now_loading.to_string(header=False)
     text = text.replace(":::", "\n")
     text = re.sub(r'[ \t]+', ' ', text).strip()
-    text = f"<b>W ciągu najbliższych 45 minut to będą ładować:</b>\nDzisiaj pozostało do wysyłki <b><u>{reszta}"\
-           f"</u></b>m3\n\n{text}\n\n <u>Eсли что не так, не поленись, кинь хуй с номером загрузки например: <b>'хуй10'</b></u>"
+    text =  f"<b>W ciągu najbliższych 45 minut to będą ładować:</b>\nDzisiaj pozostało do wysyłki <b><u>{reszta}"\
+            f"</u></b>m3\n\n{text}\n\n <u>Eсли что не так, не поленись, кинь хуй с номером загрузки например:"\
+            f"<b>'хуй10'-если в этот момент грузит, либо 'хуй10 9:20'</b></u>"
 
     return text
 
