@@ -311,7 +311,7 @@ def telegram_bot(token):
             bot_name = text_message.split()[0].lower()[:5]
 
             request_corect_corse = text_message.lower()
-            pattern = r'^хуй(\d{1,3})(?: (?:[01]?\d|2[0-3]):[0-5]\d)?$'
+            pattern = r'^хуй(\d{1,3})\s*(?:((?:[01]?\d|2[0-3]):[0-5]\d))?$'
 
             match = re.search(pattern, request_corect_corse)
 
