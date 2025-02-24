@@ -167,7 +167,7 @@ def lista_in_text_beton(del_add_lista=True):
             df_try['res'] = 'reszta-'+df_try['res'].str.strip()
             df_try['budowa'] = df_try['budowa'].str.strip()+':::'
             df_try['p/d'] = (df_try['p/d'].str.strip()).replace({'d':'dzwig:::','p':'pompa:::'})
-            df_try['split'] = '---------ZZZ'
+            df_try['split'] = '------------ZZZ'
 
             df_try = df_try.reindex(['time', 'm3', 'k', 'wenz', 'budowa', 'res','p/d','split'], axis=1)
 

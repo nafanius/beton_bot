@@ -38,6 +38,7 @@ def answer_to_request():
 
     df_after_time = df_try[(df_try['time'] >= target_time)]
     reszta = df_after_time['m3'].sum()
+    resz_courses = df_after_time.shape[0]
 
     if df_now_loading.empty:
         return 'kolego, możesz być wolny jak wiatr kurwa'
@@ -60,8 +61,8 @@ def answer_to_request():
     text = df_now_loading.to_string(header=False)
     text = text.replace(":::", "\n")
     text = re.sub(r'[ \t]+', ' ', text).strip()
-    text =  f"<b>W ciągu najbliższych 45 minut to będą ładować:</b>\nDzisiaj pozostało do wysyłki <b><u>{reszta}"\
-            f"</u></b>m3\n\n{text}\n\n <u>Eсли что не так, не поленись, кинь хуй с номером загрузки например:"\
+    text =  f"<b>W ciągu najbliższych 45 minut to będą ładować:</b>\nDzisiaj pozostało <b><u>{reszta}m3,\n kursów - {resz_courses}"\
+            f"</u></b>\n\n{text}\n\n <u>Eсли что не так, не поленись, кинь хуй с номером загрузки например:"\
             f"<b>'хуй10'-если в этот момент грузит, либо 'хуй10 9:20'</b></u>"
 
     return text
