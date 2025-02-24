@@ -85,6 +85,29 @@ def check_del_add_lista(change_status):
     return del_add, currant_list_beton
 
 
+
+def split_string_by_newline(input_string, max_length=4095):
+
+    if len(input_string) <= max_length:
+        return [input_string]
+
+    parts = []
+    chank =''
+
+    list_string = input_string.split('ZZZ')
+
+    for number, i in enumerate(list_string):
+
+        if len(chank) < max_length:
+            chank = chank+i
+            if number == len(list_string)-1:
+                parts.append(chank)
+        else:
+            parts.append(chank)
+            chank = i
+    
+    return parts
+
 def lista_in_text_beton(del_add_lista=True):
     """ "фотрмируем list в текстовый формат для высолки в бот"""
     lista_beton_del_add, lista_beton = check_del_add_lista(del_add_lista)
@@ -142,13 +165,15 @@ def lista_in_text_beton(del_add_lista=True):
             df_try['res'] = 'reszta - '+df_try['res'].str.strip()
             df_try['budowa'] = df_try['budowa'].str.strip()+':::'
             df_try['p/d'] = (df_try['p/d'].str.strip()).replace({'d':'dzwig:::','p':'pompa:::'})
-            df_try['split'] = '----------------'
+            df_try['split'] = '----------------ZZZ'
 
             df_try = df_try.reindex(['time', 'm3', 'k', 'wenz', 'budowa', 'res','p/d','split'], axis=1)
 
             lista_text = df_try.to_string(header=False)
             lista_text = lista_text.replace(":::", "\n")
             lista_text = re.sub(r'[ \t]+', ' ', lista_text).strip()
+
+            lista_text = split_string_by_newline(lista_text)
 
         return lista_text
 

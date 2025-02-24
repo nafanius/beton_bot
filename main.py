@@ -154,16 +154,16 @@ def telegram_bot(token):
     # region tap on Button
     @bot.callback_query_handler(func=lambda call: True)
     def handle_callback(call):
-        answer_text = ""
+        answer_text = []
         """"оброботка сробатывания кнопок"""
         if call.data == "button1":  # расписание
-            answer_text = get_lista.combination_of_some_days_list(True)
+            answer_text.append(get_lista.combination_of_some_days_list(True))
 
         elif call.data == "button2":  # погода
             try:
                 weather_day = weather.weather_now()
                 weather_3day = weather.weather_3day()
-                answer_text = (f"<b>Pogoda teraz:</b>\n"
+                answer_text.append((f"<b>Pogoda teraz:</b>\n"
                                f"Temperatura <b><u>{weather_day['температура']}</u></b>\n"
                                f"Zachmurzenie <b><u>{weather_day['облачность']}</u></b>\n"
                                f"Wiatr <b><u>{weather_day['ветер']}</u></b>\n"
@@ -180,7 +180,7 @@ def telegram_bot(token):
                                f"Temperatura maksymalna <b><u>{weather_3day[2]['температура максимальная']}</u></b>\n"
                                f"Temperatura odczuwalna <b><u>{weather_3day[2]['temp']}</u></b>\n"
                                f"Zachmurzenie <b><u>{weather_3day[2]['облачность']}</u></b>\n"
-                               f"Wiatr <b><u>{weather_3day[2]['ветер']}</u></b>\n\n")
+                               f"Wiatr <b><u>{weather_3day[2]['ветер']}</u></b>\n\n"))
 
             except Exception as err:
                 inf(err)
@@ -192,14 +192,14 @@ def telegram_bot(token):
                 answer.append(f'<a href="https://www.google.com/maps?q={dic_bud[key][0]},{dic_bud[key][1]}">'
                               f'*{key}*</a>')
 
-            answer_text = "Budowy:\npo kliknięciu otworzy się geolokalizacja\n" + "\n".join(answer)
+            answer_text.append("Budowy:\npo kliknięciu otworzy się geolokalizacja\n" + "\n".join(answer))
         elif call.data == "button4":
             list_of_phone = []
             for key in dict_contacts.keys():
                 list_of_phone.append(f'{key} <a href="tel:{dict_contacts[key]}">{dict_contacts[key]}</a>')
-            answer_text = '\n'.join(list_of_phone)
+            answer_text.append('\n'.join(list_of_phone))
         elif call.data == "button5":
-            answer_text = (f'<a href="https://www.google.pl/maps/place/MD+Beton+Marek+D%C4%'
+            answer_text.append((f'<a href="https://www.google.pl/maps/place/MD+Beton+Marek+D%C4%'
                            f'85browski/@52.1922286,20.7767505,17z/data=!3m1!4b1!4m6!3m5!1s0x4719'
                            f'352a34873e2b:0xc1fcd68e6bb8d915!8m2!3d52.1922253!4d20.7793254!16s%2'
                            f'Fg%2F1tf9l_k3?entry=ttu&g_ep=EgoyMDI0MTAyMy4wIKXMDSoASAFQAw%3D%3D">'
@@ -211,13 +211,14 @@ def telegram_bot(token):
                            f'0x714094a9a28101a0!8m2!3d52.1946406!4d21.099649!16s%2Fg%2F11c251zhvh?entry'
                            f'=ttu&g_ep=EgoyMDI0MTAyOS4wIKXMDSoASAFQAw%3D%3D">'
                            f'*Pawel:*</a>\n'
-                           f'ТЕЛЕФОН: <a href="tel:+48505966026">+48505966026</a>\n\n')
+                           f'ТЕЛЕФОН: <a href="tel:+48505966026">+48505966026</a>\n\n'))
         elif call.data == "button6":
             answer_text = lista_in_text_beton(False)
 
         try:
-            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=answer_text,
-                                  reply_markup=call.message.reply_markup, parse_mode='HTML')
+            for mes in answer_text:
+                bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=mes,
+                                    reply_markup=call.message.reply_markup, parse_mode='HTML')
         except Exception as error:
             inf(error)
 
