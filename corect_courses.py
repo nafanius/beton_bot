@@ -28,7 +28,7 @@ db_lock = threading.Lock()
 def save_corect_course(number, name_user, new_time):
 
     if number == '001':
-        delete_query = text_sql_request("DELETE FROM actual_after")
+        delete_query = text_sql_request("DELETE FROM corrects")
 
         with db_lock:  
             with data_sql_list.engine.connect() as connection:
