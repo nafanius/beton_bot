@@ -159,8 +159,9 @@ def lista_in_text_beton(del_add_lista=True):
             df_try.set_index('index', inplace=True)
             df_try = df_try.drop(['id', 'mat'], axis=1)
             df_try['time'] = df_try['time'].dt.strftime("%H:%M")
-            df_try = df_try.astype(str)
             df_try['m3'] = df_try['m3'].round(1)
+            df_try['res'] = df_try['res'].round(1)
+            df_try = df_try.astype(str)
             df_try['time'] = '<b>'+df_try['time'].str.strip()+'</b>'
             df_try['k'] = 'kurs-'+df_try['k'].str.strip()
             df_try['wenz'] = 'węnz-'+df_try['wenz'].str.strip()+':::'

@@ -46,9 +46,9 @@ def answer_to_request():
     df_now_loading.set_index('index', inplace=True)
     df_now_loading = df_now_loading.drop(['id', 'mat'], axis=1)
     df_now_loading['time'] = df_now_loading['time'].dt.strftime("%H:%M")
-    df_now_loading = df_now_loading.astype(str)
     df_now_loading['m3'] = df_now_loading['m3'].round(1)
     df_now_loading['res'] = df_now_loading['res'].round(1)
+    df_now_loading = df_now_loading.astype(str)
     df_now_loading['time'] = '<b>'+df_now_loading['time'].str.strip()+'</b>'
     df_now_loading['k'] = 'kurs-'+df_now_loading['k'].str.strip()
     df_now_loading['wenz'] = 'węnz-'+df_now_loading['wenz'].str.strip()+':::'
