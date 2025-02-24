@@ -160,12 +160,12 @@ def lista_in_text_beton(del_add_lista=True):
             df_try = df_try.astype(str)
 
             df_try['time'] = '<b>'+df_try['time'].str.strip()+'</b>'
-            df_try['k'] = 'kurs - '+df_try['k'].str.strip()
-            df_try['wenz'] = 'węnzeł - '+df_try['wenz'].str.strip()+':::'
-            df_try['res'] = 'reszta - '+df_try['res'].str.strip()
-            df_try['budowa'] = df_try['budowa'].str.strip()+':::'
-            df_try['p/d'] = (df_try['p/d'].str.strip()).replace({'d':'dzwig:::','p':'pompa:::'})
-            df_try['split'] = '----------------ZZZ'
+            df_try['k'] = 'k-'+df_try['k'].str.strip()
+            df_try['wenz'] = 'w-'+df_try['wenz'].str.strip()+':::'
+            df_try['res'] = 'resz-'+df_try['res'].str.strip()
+            df_try['budowa'] = df_try['budowa'][:15].str.strip()+':::'
+            df_try['p/d'] = (df_try['p/d'].str.strip()).replace({'d':'dz:::','p':'po:::'})
+            df_try['split'] = 'ZZZ'
 
             df_try = df_try.reindex(['time', 'm3', 'k', 'wenz', 'budowa', 'res','p/d','split'], axis=1)
 

@@ -216,13 +216,24 @@ def telegram_bot(token):
             answer_text = lista_in_text_beton(False)
 
         try:
-            for mes in answer_text:
-                bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=mes,
-                                    reply_markup=call.message.reply_markup, parse_mode='HTML')
+            if len(answer_text) > 1:
+                send_long_message(call.message.chat.id, answer_text, parse_mode='HTML')
+            else:    
+                bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=answer_text[0],
+                                        reply_markup=call.message.reply_markup, parse_mode='HTML')
+            
         except Exception as error:
             inf(error)
 
     # endregion tap on Button
+
+
+
+    def send_long_message(chat_id, text, parse_mode='HTML'):
+        for mes in text:
+            bot.send_message(chat_id, text=mes, parse_mode=parse_mode)
+
+
 
     @bot.message_handler(commands=['start'])
     def start_message(message):
