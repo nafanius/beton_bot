@@ -20,8 +20,8 @@ Base = declarative_base()
 # Определение структуры таблицы через класс
 
 
-class Beton(Base):
-    __tablename__ = "beton"
+class Beton_zawod(Base):
+    __tablename__ = "beton_zawod"
 
     id_event_time = Column(Float, primary_key=True)
     date_text = Column(String)
@@ -33,8 +33,8 @@ class Beton(Base):
         return f"<User(user_id={self.id_event_time}, name ={self.list_data})>"
 
 
-class Lista(Base):
-    __tablename__ = "lista"
+class Lista_zawod(Base):
+    __tablename__ = "lista_zawod"
 
     id_event_time = Column(Float, primary_key=True)
     date_text = Column(String)
@@ -63,11 +63,11 @@ def delete_records_below_threshold(threshold, base):
         threshold (float): Time as a float from the beginning of the epoch
         base_name (str): base name
     """    
-    base_name = Beton
+    base_name = Beton_zawod
     if base == "beton":
-        base_name = Beton
+        base_name = Beton_zawod
     elif base == "lista":
-        base_name = Lista
+        base_name = Lista_zawod
 
     session = Session()
 
@@ -89,11 +89,11 @@ def delete_records_below_threshold(threshold, base):
 
 
 def get_oldest_list_beton_or_lista(base, date_of_lista):
-    base_name = Beton
+    base_name = Beton_zawod
     if base == "beton":
-        base_name = Beton
+        base_name = Beton_zawod
     elif base == "lista":
-        base_name = Lista
+        base_name = Lista_zawod
 
     session = Session()
 
@@ -117,11 +117,11 @@ def get_oldest_list_beton_or_lista(base, date_of_lista):
 
 
 def get_newest_list_beton_or_lista(base, date_of_lista, step):
-    base_name = Beton
+    base_name = Beton_zawod
     if base == "beton":
-        base_name = Beton
+        base_name = Beton_zawod
     elif base == "lista":
-        base_name = Lista
+        base_name = Lista_zawod
 
     session = Session()
 
@@ -149,11 +149,11 @@ def get_newest_list_beton_or_lista(base, date_of_lista, step):
 
 
 def update_status(base, id_event_time):
-    base_name = Beton
+    base_name = Beton_zawod
     if base == "beton":
-        base_name = Beton
+        base_name = Beton_zawod
     elif base == "lista":
-        base_name = Lista
+        base_name = Lista_zawod
 
     session = Session()
     
