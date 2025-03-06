@@ -112,14 +112,14 @@ def telegram_bot(token):
                                             f"wiatr <b><u>{weather_3day[0]['ветер']}</u></b>\n", parse_mode='HTML')
                     time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
 
-                if now.minute in [3, 23, 43] :
+                if now.minute in [5, 25, 45] :
                     inf("*************я сработал ***************************************************************")
                     text_list_beton = lista_in_text_beton()
                     text_lista = get_lista.combination_of_some_days_list()
 
                     if text_list_beton:
                         for id in Settings.ID_GROUPS:
-                            bot.send_message(id, text_list_beton, parse_mode='HTML')
+                            bot.send_message(id, str(text_list_beton), parse_mode='HTML')
                             time.sleep(2) 
 
                     if text_lista:
@@ -327,7 +327,7 @@ def telegram_bot(token):
 
             match = re.search(pattern, request_corect_corse)
 
-            if bot_name in name:
+            if bot_name in name and str(message.chat.id) in Settings.ID_SEND_BOT:
                 conversation_history[-1] = {"role": "user",
                                             "content": f"{message.from_user.username} question: {message.text}"}
 
@@ -392,7 +392,7 @@ def telegram_bot(token):
 
         bot_name = text_message.split()[0].lower()[:5]
 
-        if bot_name in name:
+        if bot_name in name and str(message.chat.id) in Settings.ID_SEND_BOT:
             conversation_history[-1] = {"role": "user",
                                         "content": f"{message.from_user.username} question: {text_message}"}
             with db_lock:

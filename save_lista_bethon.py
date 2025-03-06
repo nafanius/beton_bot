@@ -112,7 +112,7 @@ def split_string_by_newline(input_string, max_length=4095):
 
 def lista_in_text_beton(del_add_lista=True):
     """ "фотрмируем list в текстовый формат для высолки в бот"""
-    lista_beton_del_add, lista_beton = check_del_add_lista(del_add_lista)
+    lista_beton_del_add, _ = check_del_add_lista(del_add_lista)
 
     if not lista_beton_del_add and del_add_lista:
         return ""
