@@ -325,7 +325,7 @@ def telegram_bot(token):
 
             request_corect_corse = text_message.lower()
             pattern_huy = r'^хуй(\d{1,3})\s*(?:((?:[01]?\d|2[0-3]):[0-5]\d))?$'
-            pattern_question = r'^\?\s(.*)'
+            pattern_question = r'^\?\s*(\S*)\s*(\d*)'
 
             match_huy = re.search(pattern_huy, request_corect_corse)
             match_question = re.search(pattern_question, request_corect_corse)
@@ -362,8 +362,9 @@ def telegram_bot(token):
 
             elif match_question:
                 request = match_question.group(1)
+                request_kurs = match_question.group(2)
 
-                answer_from_request = get_answer.answer_to_request(request)
+                answer_from_request = get_answer.answer_to_request(request, request_kurs)
                 bot.reply_to(message, answer_from_request)
                 
             else:

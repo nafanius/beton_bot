@@ -20,12 +20,15 @@ exp = logging.exception
 
 db_lock = threading.Lock()
 
-def answer_to_request(request):
+def answer_to_request(request, request_kurs):
     query_try = f'SELECT * FROM actual_after'
     with db_lock:
         df_try = pd.read_sql_query(query_try, con=data_sql_list.engine)
 
     df_source  = df_try[df_try['budowa'].str.contains(request, case=False, na=False)]
+
+    if request_kurs:
+        df_source = df_source[df_source['k'] == request_kurs]
 
     if df_source.empty:
         return "Курва чё-то ты тупишь, и впариваешь мне какую то дичь"
