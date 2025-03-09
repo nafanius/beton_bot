@@ -148,8 +148,9 @@ def lista_in_text_beton(del_add_lista=True):
 
     else:
         query_try = f'SELECT * FROM actual_after '
-    with db_lock:
-        df_try = pd.read_sql_query(query_try, con=data_sql_list.engine)
+        
+        with db_lock:
+            df_try = pd.read_sql_query(query_try, con=data_sql_list.engine)
 
         df_try['time'] = pd.to_datetime(df_try['time'])
 

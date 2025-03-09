@@ -8,6 +8,7 @@ import subprocess
 import get_lista
 import re
 import corect_courses
+import get_answer
 
 from wit import Wit
 import io
@@ -112,7 +113,7 @@ def telegram_bot(token):
                                             f"wiatr <b><u>{weather_3day[0]['ветер']}</u></b>\n", parse_mode='HTML')
                     time.sleep(90)  # Пауза, чтобы избежать многократной отправки в течение той же минуты
 
-                if now.minute in [5, 25, 45] :
+                if now.minute in [7, 27, 47] :
                     inf("*************я сработал ***************************************************************")
                     text_list_beton = lista_in_text_beton()
                     text_lista = get_lista.combination_of_some_days_list()
@@ -323,9 +324,11 @@ def telegram_bot(token):
             bot_name = text_message.split()[0].lower()[:5]
 
             request_corect_corse = text_message.lower()
-            pattern = r'^хуй(\d{1,3})\s*(?:((?:[01]?\d|2[0-3]):[0-5]\d))?$'
+            pattern_huy = r'^хуй(\d{1,3})\s*(?:((?:[01]?\d|2[0-3]):[0-5]\d))?$'
+            pattern_question = r'^\?\s(.*)'
 
-            match = re.search(pattern, request_corect_corse)
+            match_huy = re.search(pattern_huy, request_corect_corse)
+            match_question = re.search(pattern_question, request_corect_corse)
 
             if bot_name in name and str(message.chat.id) in Settings.ID_SEND_BOT:
                 conversation_history[-1] = {"role": "user",
@@ -341,9 +344,9 @@ def telegram_bot(token):
                     bot.reply_to(message, ask_chatgpt(text_message))
                 except:
                     bot.reply_to(message, Settings.message_without_bot)
-            elif match:
-                number_course = match.group(1)
-                time_corse = match.group(2)
+            elif match_huy:
+                number_course = match_huy.group(1)
+                time_corse = match_huy.group(2)
 
                 if not time_corse:
                     answer_from_lista = corect_courses.save_corect_course(number_course, message.from_user.username, datetime.now())
@@ -356,6 +359,12 @@ def telegram_bot(token):
                     answer_from_lista = corect_courses.save_corect_course(number_course, message.from_user.username, date_time_course)
 
                 bot.reply_to(message, answer_from_lista)
+
+            elif match_question:
+                request = match_question.group(1)
+
+                answer_from_request = get_answer.answer_to_request(request)
+                bot.reply_to(message, answer_from_request)
                 
             else:
                 with db_lock:
