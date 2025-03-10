@@ -363,9 +363,11 @@ def telegram_bot(token):
             elif match_question:
                 request = match_question.group(1)
                 request_kurs = match_question.group(2)
+                if request_kurs:
+                    request_kurs = int(request_kurs)
 
                 answer_from_request = get_answer.answer_to_request(request, request_kurs)
-                bot.reply_to(message, answer_from_request)
+                bot.reply_to(message, answer_from_request, parse_mode='HTML')
                 
             else:
                 with db_lock:
