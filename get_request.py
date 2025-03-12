@@ -40,7 +40,7 @@ def answer_to_request():
     reszta = df_after_time['m3'].sum()
     resz_courses = df_after_time.shape[0]
 
-    if df_now_loading.empty:
+    if df_now_loading.empty and resz_courses == 0 :
         return 'kolego, możesz być wolny jak wiatr kurwa'
 
     df_now_loading.set_index('index', inplace=True)

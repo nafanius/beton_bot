@@ -325,7 +325,7 @@ def telegram_bot(token):
 
             request_corect_corse = text_message.lower()
             pattern_huy = r'^хуй\s*(\d{1,3})\s*(?:((?:[01]?\d|2[0-3]):[0-5]\d))?$'
-            pattern_question = r'^\?\s*([a-zA-Z]*)\s*(\d*)'
+            pattern_question = r'^\?\s*([a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]*)\s*(\d*)'
 
             match_huy = re.search(pattern_huy, request_corect_corse)
             match_question = re.search(pattern_question, request_corect_corse)
