@@ -40,8 +40,11 @@ def answer_to_request():
     reszta = df_after_time['m3'].sum()
     resz_courses = df_after_time.shape[0]
 
-    if df_now_loading.empty and resz_courses == 0 :
+    if df_now_loading.empty and resz_courses == 0:
         return 'kolego, możesz być wolny jak wiatr kurwa'
+    elif df_now_loading.empty and resz_courses != 0:
+        return f"<b>W ciągu najbliższych 45 minut to będą ładować:</b>\nDzisiaj pozostało <b><u>{reszta}m3,\n kursów - {resz_courses}"
+    
 
     df_now_loading.set_index('index', inplace=True)
     df_now_loading = df_now_loading.drop(['id', 'mat'], axis=1)
