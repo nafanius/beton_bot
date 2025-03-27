@@ -42,12 +42,13 @@ def answer_to_request(request, request_kurs):
     df_source['index'] = '<b><u>'+df_source['index'].str.strip()+'</u></b>'
     df_source['time'] = df_source['time'].str.strip()
     df_source['k'] = 'k-'+'<b><u>'+ df_source['k'].str.strip()+'</u></b>'
-    df_source['res'] = 'res-'+df_source['res'].str.strip()+':::'
+    df_source['res'] = 'res-'+df_source['res'].str.strip()
+    df_source['wenz'] = 'w-'+df_source['wenz'].str.strip()+':::'
     df_source['budowa'] = '    '+df_source['budowa'].str.strip()+':::'
     df_source['p/d'] = '    '+(df_source['p/d'].str.strip()).replace({'d':'dzwig:::','p':'pompa:::'})
     df_source['split'] = '    ----------------'
 
-    df_source = df_source.reindex(['index', 'time', 'm3', 'k', 'res', 'budowa', 'p/d','split'], axis=1)
+    df_source = df_source.reindex(['index', 'time', 'm3', 'k', 'res', 'wenz', 'budowa', 'p/d', 'split'], axis=1)
 
     text = df_source.to_string(header=False, index=False)
     text = text.replace(":::", "\n")

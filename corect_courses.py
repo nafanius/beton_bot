@@ -65,6 +65,7 @@ def save_corect_course(number, name_user, new_time):
 
 
         return  f"{name_user}\nИзмeнил {df_restored_query.loc[0,'budowa']}\nкурс№ - {df_restored_query.loc[0,'k']},\n"\
+                f"Метров - {df_restored_query.loc[0,'m3']}\nВензель№ - {df_restored_query.loc[0,'wenz']},\n"\
                 f"Остаток - {df_restored_query.loc[0,'res']}\nбыло время отгрузки - {formatted_time_old[10:16]}\nстало - {formatted_time_new}"
 
 

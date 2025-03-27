@@ -43,7 +43,7 @@ def answer_to_request():
     if df_now_loading.empty and resz_courses == 0:
         return 'kolego, możesz być wolny jak wiatr kurwa'
     elif df_now_loading.empty and resz_courses != 0:
-        return f"<b>W ciągu najbliższych 45 minut to będą ładować:</b>\nDzisiaj pozostało <b><u>{reszta}m3,\n kursów - {resz_courses}"
+        return f"<b>W ciągu najbliższych 45 minut to będą ładować:</b>\nDzisiaj pozostało <b><u>{reszta}m3,\n kursów - {resz_courses}</u></b>"
     
 
     df_now_loading.set_index('index', inplace=True)
