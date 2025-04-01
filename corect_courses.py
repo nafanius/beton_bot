@@ -57,7 +57,7 @@ def save_corect_course(number, name_user, new_time):
                 df_restored_query.to_sql('corrects', con=data_sql_list.engine, if_exists='append', index=False)
         
         except Exception as error:
-            inf(f"ошибка запроса из базы actual {error}")
+            inf(f"ошибка записи из базы corrects {error}")
             return "Курва чё-то ты намутил с базой данных при записи данных"
         
         # region corrects actual_after
@@ -84,6 +84,7 @@ def save_corect_course(number, name_user, new_time):
         rozklad_curs['wenz'] = rozklad_curs['wenz'].astype(str)
         rozklad_curs['mat'] = rozklad_curs['mat'].astype(str)
         rozklad_curs['p/d'] = rozklad_curs['p/d'].astype(str)
+        rozklad_curs['time'] = rozklad_curs['time'].apply(pd.to_datetime)
 
         merged_df = df_restored_query.merge(rozklad_curs[['m3', 'k', 'budowa', 'res', 'wenz', 'mat', 'p/d', 'time', 'id']],
                               on=['m3', 'k', 'budowa', 'res', 'wenz', 'mat', 'p/d'],
@@ -104,13 +105,24 @@ def save_corect_course(number, name_user, new_time):
         if not df_restored_query.empty:
             df_restored_query['delta'] = df_restored_query['new_time'] - df_restored_query['time']
             df_restored_query['delete'] = df_restored_query['new_time'].dt.time == pd.to_datetime('00:00:00').time()
+
+        rozklad_curs["delete"] = False
+
+        for _, row in df_restored_query.iterrows():
+            rozklad_curs.loc[(rozklad_curs['id'] == row['id'])&(rozklad_curs['budowa'] == row['budowa']), 'time'] += row['delta']
+            rozklad_curs.loc[(rozklad_curs['id'] == row['id'])&(rozklad_curs['budowa'] == row['budowa']), 'delete'] = row['delete']
+
+        rozklad_curs = rozklad_curs[rozklad_curs['delete'] == False].reset_index(drop=True)
+        rozklad_curs.drop(columns='delete', inplace=True)
+
+        rozklad_curs.sort_values("time", inplace=True) # type: ignore
       
         with db_lock:
             rozklad_curs.to_sql(
-                'actual_after', con=data_sql_list.engine, if_exists='replace', index=True)
+                'actual_after', con=data_sql_list.engine, if_exists='replace', index=False)
         # endregion
 
-        
+
         formatted_time_new = new_time.strftime("%H:%M")
         formatted_time_old = str(df_restored_query.loc[0,"time"])
 
