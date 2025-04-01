@@ -57,7 +57,7 @@ def compare_lists_by_tuples(del_lista, add_lista):
     
     for index1, tuple1 in enumerate(del_lista):
         for index2, tuple2 in enumerate(add_lista):
-            if tuple1[:3] == tuple2[:3] and tuple1[6] == tuple2[6]:
+            if tuple1[:3] == tuple2[:3]:
                 matching_indices.append((index1, index2))
     del_lista, add_lista = make_list_with_teg(del_lista, add_lista, matching_indices)
     return del_lista, add_lista
