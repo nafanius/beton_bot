@@ -60,6 +60,57 @@ def save_corect_course(number, name_user, new_time):
             inf(f"ошибка запроса из базы actual {error}")
             return "Курва чё-то ты намутил с базой данных при записи данных"
         
+        # region corrects actual_after
+        query_try = f'SELECT * FROM actual_after'
+        with db_lock:
+            rozklad_curs = pd.read_sql_query(query_try, con=data_sql_list.engine)
+
+        df_restored_query['new_time'] = pd.to_datetime(df_restored_query['new_time'])
+        df_restored_query = df_restored_query[df_restored_query['new_time'].dt.date ==  datetime.today().date()]
+
+        df_restored_query['id'] = df_restored_query['id'].astype(int)
+        df_restored_query['m3'] = df_restored_query['m3'].astype(float).round(1)
+        df_restored_query['k'] = df_restored_query['k'].astype(int)
+        df_restored_query['budowa'] = df_restored_query['budowa'].astype(str)
+        df_restored_query['res'] = df_restored_query['res'].astype(float)
+        df_restored_query['wenz'] = df_restored_query['wenz'].astype(str)
+        df_restored_query['mat'] = df_restored_query['mat'].astype(str)
+        df_restored_query['p/d'] = df_restored_query['p/d'].astype(str)
+
+        rozklad_curs['id'] = rozklad_curs['id'].astype(int)
+        rozklad_curs['k'] = rozklad_curs['k'].astype(int)
+        rozklad_curs['m3'] = rozklad_curs['m3'].astype(float).round(1)
+        rozklad_curs['budowa'] = rozklad_curs['budowa'].astype(str)
+        rozklad_curs['wenz'] = rozklad_curs['wenz'].astype(str)
+        rozklad_curs['mat'] = rozklad_curs['mat'].astype(str)
+        rozklad_curs['p/d'] = rozklad_curs['p/d'].astype(str)
+
+        merged_df = df_restored_query.merge(rozklad_curs[['m3', 'k', 'budowa', 'res', 'wenz', 'mat', 'p/d', 'time', 'id']],
+                              on=['m3', 'k', 'budowa', 'res', 'wenz', 'mat', 'p/d'],
+                              how='inner',
+                              suffixes=('', '_from_rosklad'))
+        
+        merged_df.drop_duplicates(subset=['m3', 'k', 'budowa', 'res', 'wenz', 'mat', 'p/d'], keep='last', inplace=True)
+
+        merged_df.reset_index(drop=True, inplace=True)    
+
+        df_restored_query.reset_index(drop=True, inplace=True)
+        df_restored_query.update(merged_df[['time_from_rosklad']].rename(columns={'time_from_rosklad': 'time'}))
+        df_restored_query['id'] = merged_df['id_from_rosklad']
+
+        df_restored_query[["time", "new_time"]] = df_restored_query[["time", "new_time"]].apply(pd.to_datetime)
+
+
+        if not df_restored_query.empty:
+            df_restored_query['delta'] = df_restored_query['new_time'] - df_restored_query['time']
+            df_restored_query['delete'] = df_restored_query['new_time'].dt.time == pd.to_datetime('00:00:00').time()
+      
+        with db_lock:
+            rozklad_curs.to_sql(
+                'actual_after', con=data_sql_list.engine, if_exists='replace', index=True)
+        # endregion
+
+        
         formatted_time_new = new_time.strftime("%H:%M")
         formatted_time_old = str(df_restored_query.loc[0,"time"])
 
