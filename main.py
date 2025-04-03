@@ -401,8 +401,11 @@ def telegram_bot(token):
             conversation_history = conversation_history[-150:]
 
         # conversation_history.append({"role": "user", "content": f"{message.from_user.first_name}: {text_message}"})
+        try:
+            bot_name = text_message.split()[0].lower()[:5]
+        except IndexError:
+            bot_name = ""
 
-        bot_name = text_message.split()[0].lower()[:5]
 
         if bot_name in name and str(message.chat.id) in Settings.ID_SEND_BOT:
             conversation_history[-1] = {"role": "user",
