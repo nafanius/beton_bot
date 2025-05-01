@@ -5,10 +5,10 @@ import os
 from datetime import datetime
 import threading
 import subprocess
-import get_lista
+import src.get_lista
 import re
-import corect_courses
-import get_answer
+import src.corect_courses
+import AI_gpt.get_answer
 
 from wit import Wit
 import io
@@ -18,26 +18,14 @@ from gtts import gTTS
 import telebot
 from telebot import types
 
-import weather
-from auth_data import token
-import auth_data
-from palec import name, ask_chatgpt
-from save_lista_bethon import lista_in_text_beton
-from setting import Settings
-from get_request import answer_to_request
+import src.weather as weather
+from src.auth_data import token_bot
+import src.auth_data as auth_data
+from AI_gpt.palec import name, ask_chatgpt
+from src.save_lista_bethon import lista_in_text_beton
+from src.setting import Settings, inf, lg, timer
+from src.get_request import answer_to_request
 
-# region logging
-
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
-lg = logging.debug
-cr = logging.critical
-inf = logging.info
-exp = logging.exception
-# logging.disable(logging.DEBUG)
-# logging.disable(logging.INFO)
-# logging.disable(logging.CRITICAL)
-# logging_end
-# endregion
 
 client = Wit(auth_data.cod_wit)
 name_bud = ""
@@ -104,7 +92,7 @@ def telegram_bot(token):
                 if now.hour == 6 and now.minute == 30:
                     weather_3day = weather.weather_3day()
                     bot.send_message(Settings.ID_GROUPS[0], f"<b>Dzień dobry, panowie!</b>\n\n"
-                                            f"<b>Harmonogram na dzisiaj</b>\n {get_lista.combination_of_some_days_list(True)}"
+                                            f"<b>Harmonogram na dzisiaj</b>\n {src.get_lista.combination_of_some_days_list(True)}"
                                             f"<b>Dziś czeka nas taka pogoda:</b>\n"
                                             f"Temperatura minimalna <b><u>{weather_3day[0]['температура минимальная']}</u></b>\n"
                                             f"Maksymalna temperatura <b><u>{weather_3day[0]['температура максимальная']}</u></b>\n"
@@ -116,7 +104,7 @@ def telegram_bot(token):
                 if now.minute in [7, 27, 47] :
                     inf("*************я сработал ***************************************************************")
                     text_list_beton = lista_in_text_beton()
-                    text_lista = get_lista.combination_of_some_days_list()
+                    text_lista = src.get_lista.combination_of_some_days_list()
 
                     if text_list_beton:
                         for id in Settings.ID_GROUPS:
@@ -158,7 +146,7 @@ def telegram_bot(token):
         answer_text = []
         """"оброботка сробатывания кнопок"""
         if call.data == "button1":  # расписание
-            answer_text.append(get_lista.combination_of_some_days_list(True))
+            answer_text.append(src.get_lista.combination_of_some_days_list(True))
 
         elif call.data == "button2":  # погода
             try:
@@ -324,7 +312,7 @@ def telegram_bot(token):
             bot_name = text_message.split()[0].lower()[:5]
 
             request_corect_corse = text_message.lower()
-            pattern_huy = r'^хуй\s*(\d{1,3})\s*(?:((?:[01]?\d|2[0-3]):[0-5]\d))?$'
+            pattern_huy = r'^(хуй|huj)\s*(\d{1,3})\s*(?:((?:[01]?\d|2[0-3]):[0-5]\d))?$'
             pattern_question = r'^\?\s*([a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]*)\s*(\d*)'
 
             match_huy = re.search(pattern_huy, request_corect_corse)
@@ -349,14 +337,14 @@ def telegram_bot(token):
                 time_corse = match_huy.group(2)
 
                 if not time_corse:
-                    answer_from_lista = corect_courses.save_corect_course(number_course, message.from_user.username, datetime.now())
+                    answer_from_lista = src.corect_courses.save_corect_course(number_course, message.from_user.username, datetime.now())
                 else:
                     today = datetime.today()
                     time_parts = time_corse.split(':')
                     hours = int(time_parts[0])
                     minutes = int(time_parts[1])
                     date_time_course = datetime(today.year, today.month, today.day, hours, minutes)
-                    answer_from_lista = corect_courses.save_corect_course(number_course, message.from_user.username, date_time_course)
+                    answer_from_lista = src.corect_courses.save_corect_course(number_course, message.from_user.username, date_time_course)
 
                 bot.reply_to(message, answer_from_lista)
 
@@ -366,7 +354,7 @@ def telegram_bot(token):
                 if request_kurs:
                     request_kurs = int(request_kurs)
 
-                answer_from_request = get_answer.answer_to_request(request, request_kurs)
+                answer_from_request = AI_gpt.get_answer.answer_to_request(request, request_kurs)
                 bot.reply_to(message, answer_from_request, parse_mode='HTML')
                 
             else:
@@ -460,4 +448,4 @@ def telegram_bot(token):
 
 
 if __name__ == '__main__':
-    telegram_bot(token)
+    telegram_bot(token_bot)

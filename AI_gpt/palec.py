@@ -1,15 +1,20 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import auth_data
+import src.auth_data as auth_data
 from openai import OpenAI
 import json
+import subprocess
 
 
 client = OpenAI(
     # defaults to os.environ.get("OPENAI_API_KEY")
     api_key=auth_data.token_chat_gpt,
 )
+
+def speak(text):                                                                                                                                                           
+     subprocess.run(['festival', '--tts'], input=text.encode()) 
+     return 
 
 prefix_system = ("Отвечай на вопрос как будто ты водител бетономешалки работающий в Варшаве но очень умный и знаешь всё,"
           "человек сложной судьбы, влекущий за собой шлейф скандальных и таинственных историй"

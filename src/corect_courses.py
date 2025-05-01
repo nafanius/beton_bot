@@ -1,5 +1,5 @@
 from datetime import datetime
-import data_sql_list
+import bd_driver.data_sql_list as data_sql_list
 import pandas as pd
 import threading
 import logging

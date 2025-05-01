@@ -1,19 +1,7 @@
 
 import re
 import logging
-
-# region logging
-
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
-lg = logging.debug
-cr = logging.critical
-inf = logging.info
-exp = logging.exception
-# logging.disable(logging.DEBUG)
-# logging.disable(logging.INFO)
-# logging.disable(logging.CRITICAL)
-# logging_end
-# endregion
+from src.setting import inf
 
 def converter(list_for_convert):
     # print(type(list_for_convert), len(list_for_convert))

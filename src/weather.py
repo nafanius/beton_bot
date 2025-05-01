@@ -1,6 +1,6 @@
 import json, requests
 import datetime
-from auth_data import token_weather
+from src.auth_data import token_weather
 
 
 APPID = token_weather

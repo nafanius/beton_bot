@@ -1,6 +1,6 @@
 import threading
-import data_sql_list
-from setting import Settings
+import bd_driver.data_sql_list as data_sql_list
+from src.setting import Settings
 import time
 from datetime import datetime, timedelta
 import os

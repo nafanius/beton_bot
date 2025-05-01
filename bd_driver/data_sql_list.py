@@ -11,7 +11,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from setting import Settings
+from src.setting import Settings
 
 # Создание базового класса
 Base = declarative_base()

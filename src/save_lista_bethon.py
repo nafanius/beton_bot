@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import re
 import pandas as pd
 import threading
-import data_sql_list
+import bd_driver.data_sql_list as data_sql_list
 import form_lista_with_teg
 
 # region logging

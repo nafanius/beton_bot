@@ -1,5 +1,5 @@
 from openai import OpenAI
-import auth_data
+import src.auth_data as auth_data
 
 client = OpenAI(api_key=auth_data.token_chat_gpt)
 
