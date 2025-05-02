@@ -4,7 +4,7 @@ import re
 import pandas as pd
 import threading
 import bd_driver.data_sql_list as data_sql_list
-import form_lista_with_teg
+import src.form_lista_with_teg
 
 # region logging
 
@@ -68,12 +68,12 @@ def check_del_add_lista(change_status):
         with db_lock:
             data_sql_list.update_status("beton", id_event_time)
 
-    del_lista = list(map(form_lista_with_teg.converter, del_lista))
-    add_lista = list(map(form_lista_with_teg.converter, add_lista))
+    del_lista = list(map(src.form_lista_with_teg.converter, del_lista))
+    add_lista = list(map(src.form_lista_with_teg.converter, add_lista))
     currant_list_beton = list(
-        map(form_lista_with_teg.converter, currant_list_beton))
+        map(src.form_lista_with_teg.converter, currant_list_beton))
 
-    del_lista, add_lista = form_lista_with_teg.compare_lists_by_tuples(
+    del_lista, add_lista = src.form_lista_with_teg.compare_lists_by_tuples(
         del_lista, add_lista
     )
 
