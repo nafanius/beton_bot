@@ -1,22 +1,7 @@
 import bd_driver.data_sql_list as data_sql_list
 import pandas as pd
 import threading
-import logging
 import re
-
-# region logging
-
-logging.basicConfig(level=logging.DEBUG,
-                    format="%(asctime)s - %(levelname)s - %(message)s")
-lg = logging.debug
-cr = logging.critical
-inf = logging.info
-exp = logging.exception
-# logging.disable(logging.DEBUG)
-# logging.disable(logging.INFO)
-# logging.disable(logging.CRITICAL)
-# logging_end
-# endregion
 
 db_lock = threading.Lock()
 
@@ -66,8 +51,8 @@ def answer_to_request():
     text = text.replace(":::", "\n")
     text = re.sub(r'[ \t]+', ' ', text).strip()
     text =  f"<b>W ciągu najbliższych 45 minut to będą ładować:</b>\nDzisiaj pozostało <b><u>{reszta}m3,\n kursów - {resz_courses}"\
-            f"</u></b>\n\n{text}\n\n <u>Eсли что не так, не поленись, кинь хуй с номером загрузки например:"\
-            f"<b>'хуй10'-если в этот момент грузит, либо 'хуй10 9:20'</b></u>"
+            f"</u></b>\n\n{text}\n\n <u>Jeśli coś jest nie tak, nie len się, podaj chuj/хуй z numerem załadunku na przykład:"\
+            f"<b>'хуй10'- jeśli w tym momencie ładujeт, lub 'хуй10 9:20'</b></u>"
 
     return text
 

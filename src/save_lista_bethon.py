@@ -1,25 +1,11 @@
-import logging
 from datetime import datetime, timedelta
 import re
 import pandas as pd
 import threading
 import bd_driver.data_sql_list as data_sql_list
 import src.form_lista_with_teg
+from src.setting import inf
 
-# region logging
-
-logging.basicConfig(
-    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-lg = logging.debug
-cr = logging.critical
-inf = logging.info
-exp = logging.exception
-# logging.disable(logging.DEBUG)
-# logging.disable(logging.INFO)
-# logging.disable(logging.CRITICAL)
-# logging_end
-# endregion
 
 db_lock = threading.Lock()
 

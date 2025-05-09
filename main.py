@@ -216,13 +216,9 @@ def telegram_bot(token):
 
     # endregion tap on Button
 
-
-
     def send_long_message(chat_id, text, parse_mode='HTML'):
         for mes in text:
             bot.send_message(chat_id, text=mes, parse_mode=parse_mode)
-
-
 
     @bot.message_handler(commands=['start'])
     def start_message(message):
@@ -248,7 +244,11 @@ def telegram_bot(token):
         bot.send_message(message.chat.id, f"{message.from_user.first_name}\n"
                                           f"Jestem botem, który pomaga dostarczyć wszystkie niezbędne informacje dla początkujących i"
                                           f" zaawansowanych operatorów betonomeszarek\n"
-                                          f"Wpisz:\n'/h' - i powiem ci, co potrafię\n"
+                                          f"Wpisz:\n'/h' - i opowiem ci, co potrafię\n"
+                                          f"Wpisz:\n'/co' - i opowiem ci, co będą ładować w ciągu najbliższych 30 minut \n"
+                                          f"Powiedz:\nPowiedz mi PALEC i swoje pytanie, a opowiem ci wszystko, co chcesz\n"
+                                          f"Podaj:\nPodaj numer  - 'chuj/хуй12' lub 'сhuj/хуй 12:00' i, jeśli cię teraz ładują\n"
+                                          f"Wpisz:\n?<Nazwa budowy> i/lub <numer kursu> a ja ci powiem numer chuja\n"
                                           f"'/start' -  Funkcje, które mogę wykonywać\n"
                                           f"'/lista' - Wyświetlić rozkład\n")
 
