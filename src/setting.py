@@ -15,7 +15,8 @@ class Settings:
     time_of_compare = 4
     start_time_co = 15 # min before request CO
     finish_time_co = 15 # min after request CO
-
+    pattern_huy = r'^(?:хуй|chuj)\s*(\d{1,3})\s*(?:((?:[01]?\d|2[0-3]):[0-5]\d))?$'
+    pattern_question = r'^\?\s*([a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]*)\s*(\d*)'
     def __init__(self):
         pass
 

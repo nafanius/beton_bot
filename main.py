@@ -312,8 +312,8 @@ def telegram_bot(token):
             bot_name = text_message.split()[0].lower()[:5]
 
             request_corect_corse = text_message.lower()
-            pattern_huy = r'^(?:хуй|huj)\s*(\d{1,3})\s*(?:((?:[01]?\d|2[0-3]):[0-5]\d))?$'
-            pattern_question = r'^\?\s*([a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]*)\s*(\d*)'
+            pattern_huy = Settings.pattern_huy
+            pattern_question = Settings.pattern_question
 
             match_huy = re.search(pattern_huy, request_corect_corse)
             match_question = re.search(pattern_question, request_corect_corse)
