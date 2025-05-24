@@ -1,4 +1,4 @@
-import bd_driver.data_sql_list as data_sql_list
+import db_driver.data_sql_list as data_sql_list
 import pandas as pd
 import threading
 import re

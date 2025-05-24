@@ -1,5 +1,5 @@
 from datetime import datetime
-import bd_driver.data_sql_list as data_sql_list
+import db_driver.data_sql_list as data_sql_list
 import pandas as pd
 import threading
 from sqlalchemy import text as text_sql_request
