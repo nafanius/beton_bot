@@ -87,7 +87,7 @@ def split_string_by_newline(input_string, max_length=4095):
     """    
 
     if len(input_string) <= max_length:
-        list_string = input_string.replace('ZZZ', "")
+        list_string = re.sub(r'ZZZ', '', input_string)
         
         return [input_string]
 
