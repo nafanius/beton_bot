@@ -11,12 +11,21 @@ db_lock = threading.Lock()
 
 
 def check_del_add_lista(change_status):
+    """check the current list of concrete and compare it with the previous one.
+
+    Args:
+        change_status (bool): if True, send change status to the database, anotherwise send current list
+
+    Returns:
+        tuple: a tuple containing two lists - the first list contains items that were deleted, 
+               and the second list contains items that were added, and the current list of concrete.
+    """    
     del_lista = []
     add_lista = []
     now = datetime.now()
 
     if now.weekday() > 5:
-        # если воскресенье давай инащкьацию понедельника
+        # if today is Saturday or Sunday, we take the next day
         now = now + timedelta(days=1)
 
     date_of_lista = now.strftime("%d.%m.%Y")
@@ -45,19 +54,14 @@ def check_del_add_lista(change_status):
             if i not in old_stan_lista_beton:
                 add_lista.append(i)
 
-    # для контроля отображения
-    # del_lista = del_lista + currant_list_beton[2:5]
-    # add_lista = add_lista + currant_list_beton[0:3]
 
-    # меняем статус
+    # if has changes and change_status is True, 
     if id_event_time and change_status:
         with db_lock:
             data_sql_list.update_status("beton", id_event_time)
 
     del_lista = list(map(src.form_lista_with_teg.converter, del_lista))
     add_lista = list(map(src.form_lista_with_teg.converter, add_lista))
-    currant_list_beton = list(
-        map(src.form_lista_with_teg.converter, currant_list_beton))
 
     del_lista, add_lista = src.form_lista_with_teg.compare_lists_by_tuples(
         del_lista, add_lista
@@ -67,12 +71,20 @@ def check_del_add_lista(change_status):
 
     del_add = sorted(del_add, key=lambda event: (event[1], event[2], event[3]))
 
-    inf(f"________________{del_add}_____________")
-    return del_add, currant_list_beton
+    return del_add
 
 
 
 def split_string_by_newline(input_string, max_length=4095):
+    """Split a string into parts, ensuring that each part does not exceed a specified maximum length.
+
+    Args:
+        input_string (str): The string to be split.
+        max_length (int, optional): The maximum length of each part. Defaults to 4095.
+
+    Returns:
+        list: A list of string parts, each not exceeding the specified maximum length.
+    """    
 
     if len(input_string) <= max_length:
         list_string = input_string.replace('ZZZ', "")
@@ -97,8 +109,16 @@ def split_string_by_newline(input_string, max_length=4095):
     return parts
 
 def lista_in_text_beton(del_add_lista=True):
-    """ "фотрмируем list в текстовый формат для высолки в бот"""
-    lista_beton_del_add, _ = check_del_add_lista(del_add_lista)
+    """ Get the list of concrete in text format for sending to the bot. if del_add_lista is True,
+      it will return the list of changes, otherwise it will return the current list.
+
+    Args:
+        del_add_lista (bool, optional): if True, return the list of changes, otherwise return the current list. Defaults to True.
+
+    Returns:
+        str: formatted string with the list of concrete, or an empty string if there are no changes.
+    """
+    lista_beton_del_add = check_del_add_lista(del_add_lista)
 
     if not lista_beton_del_add and del_add_lista:
         return ""
@@ -109,7 +129,7 @@ def lista_in_text_beton(del_add_lista=True):
 
     lista_text = ""
 
-    if del_add_lista:
+    if del_add_lista: # return changes
 
         for (
             metres,
@@ -132,7 +152,7 @@ def lista_in_text_beton(del_add_lista=True):
 
         return "<b>To kurwa dyspozytor zmienił:</b>\n" + lista_text
 
-    else:
+    else: # return current list
         query_try = f'SELECT * FROM actual_after '
         
         with db_lock:

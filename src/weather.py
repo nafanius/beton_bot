@@ -10,6 +10,11 @@ cnt = 3
 
 
 def weather_now():
+    """Get current weather data for the specified latitude and longitude.
+
+    Returns:
+        dict: A dictionary containing current weather information such as temperature, cloudiness, wind speed, sunrise and sunset times.
+    """    
     url_now = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={APPID}&units=metric"
     response_now = requests.get(url_now)
     response_now.raise_for_status()
@@ -25,6 +30,11 @@ def weather_now():
 
 
 def weather_3day():
+    """forecast the weather for the next 3 days based on the specified latitude and longitude.
+
+    Returns:
+        list: A list of dictionaries, each containing weather information for the next 3 days, including minimum and maximum temperatures, feels like temperature, cloudiness, and wind speed.
+    """    
     forecast_3day = []
     url_3days = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&cnt={cnt}&lang=ru&appid={APPID}&units=metric"
     response_3day = requests.get(url_3days)

@@ -10,7 +10,14 @@ import os
 db_lock = threading.Lock()
 
 def lista_in_bot(lista):
-    """"фотрмируем list в текстовый формат для высолки в бот """
+    """convert the list of tuples to a formatted string for sending to the bot
+
+    Args:
+        lista (list): list of tuples, where each tuple contains a datetime object and a person's name
+
+    Returns:
+        str: formatted string with the time and person's name for each item in the list
+    """    
 
     if not lista:
         return ""
@@ -25,11 +32,27 @@ def lista_in_bot(lista):
 
 
 def combination_of_some_days_list(today=False):
-    """формируем общий лист на несколько дней в зависимости от дня недели"""
+    """Get the list for today or the next day, checking if there is a new list
+
+    Args:
+        today (bool, optional): if True, get the list for today, otherwise for the next day. Defaults to False.
+
+    Returns:
+        str: text to be sent to the bot with the list for today or the next day, or a message that there is no data.
+    """    
 
     text_to_bot = ""
 
     def get_text_lista(day, text):
+        """Check if there is a new list for the given day and update the text to be sent to the bot.
+
+        Args:
+            day (datatime): date to check for a new list
+            text (str): current text that will be updated if a new list is found
+
+        Returns:
+            str: updated text to be sent to the bot
+        """        
         date = day.strftime('%d.%m.%Y')
 
         with db_lock:
@@ -53,7 +76,7 @@ def combination_of_some_days_list(today=False):
         now = datetime.now()
 
         if now.weekday() > 5:
-            now = now + timedelta(days=1) # если воскресенье давай инащкьацию понедельника
+            now = now + timedelta(days=1) # if today is weekend, we take next day
 
         date = now.strftime('%d.%m.%Y')
 
