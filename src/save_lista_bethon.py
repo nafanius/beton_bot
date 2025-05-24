@@ -74,7 +74,6 @@ def check_del_add_lista(change_status):
     return del_add
 
 
-
 def split_string_by_newline(input_string, max_length=4095):
     """Split a string into parts, ensuring that each part does not exceed a specified maximum length.
 
