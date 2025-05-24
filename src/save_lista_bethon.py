@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import re
 import pandas as pd
 import threading
-import bd_driver.data_sql_list as data_sql_list
+import db_driver.data_sql_list as data_sql_list
 import src.form_lista_with_teg
 from src.setting import inf
 

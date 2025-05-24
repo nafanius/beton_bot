@@ -7,7 +7,7 @@ import subprocess
 import src.get_lista
 import re
 import src.corect_courses
-import AI_gpt.get_answer
+import src.get_answer
 
 from wit import Wit
 import io
@@ -402,7 +402,7 @@ def telegram_bot(token):
                 if request_kurs:
                     request_kurs = int(request_kurs)
 
-                answer_from_request = AI_gpt.get_answer.answer_to_request(request, request_kurs)
+                answer_from_request = src.get_answer.answer_to_request(request, request_kurs)
                 bot.reply_to(message, answer_from_request, parse_mode='HTML')
                 
             else:
