@@ -1,26 +1,21 @@
 import db_driver.data_sql_list as data_sql_list
 import pandas as pd
 import threading
-import logging
 import re
-
-# region logging
-
-logging.basicConfig(level=logging.DEBUG,
-                    format="%(asctime)s - %(levelname)s - %(message)s")
-lg = logging.debug
-cr = logging.critical
-inf = logging.info
-exp = logging.exception
-# logging.disable(logging.DEBUG)
-# logging.disable(logging.INFO)
-# logging.disable(logging.CRITICAL)
-# logging_end
-# endregion
 
 db_lock = threading.Lock()
 
 def answer_to_request(request, request_kurs):
+    """Generate an answer to a request for construction data.
+    This function retrieves construction data from the database based on the provided request and course.
+
+    Args:
+        request (srt): The request string to search for in the 'budowa' column of the database.
+        request_kurs (int): The course number to filter the results. If None, all courses are included.
+
+    Returns:
+        _type_: _description_
+    """    
     query_try = f'SELECT * FROM actual_after'
     with db_lock:
         df_try = pd.read_sql_query(query_try, con=data_sql_list.engine)
@@ -54,7 +49,7 @@ def answer_to_request(request, request_kurs):
     text = text.replace(":::", "\n")
     text = re.sub(r'[ \t]+', ' ', text).strip()
 
-    text =  f"<b>КИДАЙ НОМЕР ХУЯ\nЕсли грузят сейчас - хуй2\nЕсли хуй бросаешь на время - хуй2 7:00 :\n   ----------------\n</b>\n{text}"
+    text =  f"<b>Rzuć numer chuja\nJeśli ładują teraz - хуй2/Chuj2\nJeśli chuj rzucasz na czas - хуй2 7:00/Chuj2 7:00:\n   ----------------\n</b>\n{text}"
 
     return text
 

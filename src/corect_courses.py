@@ -10,6 +10,17 @@ db_lock = threading.Lock()
 
 
 def save_corect_course(number, name_user, new_time):
+    """Save corrected course data to the database.
+    This function updates the course data in the database based on the provided number,
+
+    Args:
+        number (str): The course number to be corrected. If '001', it deletes all records in the 'corrects' table.
+        name_user (str): The name of the user making the correction.
+        new_time (str): The new time for the course correction in 'HH:MM' format.
+
+    Returns:
+        str: A message indicating the result of the operation. If successful, it returns a formatted string with the correction details.
+    """    
 
     if number == '001':
         delete_query = text_sql_request("DELETE FROM corrects")
@@ -19,7 +30,7 @@ def save_corect_course(number, name_user, new_time):
                 connection.execute(delete_query)
                 connection.commit()  
 
-        return "я всё зачистил шеф!"
+        return "I've cleaned up everything, boss!"
 
     query = f'SELECT * FROM actual_after WHERE "index" = {number}'
 
@@ -27,11 +38,10 @@ def save_corect_course(number, name_user, new_time):
         with db_lock:
             df_restored_query = pd.read_sql_query(query, con=data_sql_list.engine)
     except Exception as error:
-        inf(f"ошибка запроса из базы actual {error}")
-        return "Курва чё-то ты намутил с базой данных при получении данных"
-
+        inf(f"Request error from the database - actual {error}")
+        return "Kurwa, coś namieszałeś z bazą danych przy pobieraniu danych"
     if df_restored_query.empty:
-        return "Курва чё-то ты тупишь, и впариваешь мне какую то дичь"
+        return "Kurwa, coś ty głupiejesz i wciskasz mi jakieś głupoty"
     
     else:
         df_restored_query[['new_time', 'user']] = new_time, name_user
@@ -41,8 +51,8 @@ def save_corect_course(number, name_user, new_time):
                 df_restored_query.to_sql('corrects', con=data_sql_list.engine, if_exists='append', index=False)
         
         except Exception as error:
-            inf(f"ошибка записи из базы corrects {error}")
-            return "Курва чё-то ты намутил с базой данных при записи данных"
+            inf(f"Write error from the database - corrects {error}")
+            return "Kurwa, coś namieszałeś z bazą danych przy zapisie danych"
         
         # region corrects actual_after
         query_try = f'SELECT * FROM actual_after'
@@ -111,9 +121,9 @@ def save_corect_course(number, name_user, new_time):
         formatted_time_old = str(df_restored_query.loc[0,"time"])
 
 
-        return  f"{name_user}\nИзмeнил {df_restored_query.loc[0,'budowa']}\nкурс№ - {df_restored_query.loc[0,'k']},\n"\
-                f"Метров - {df_restored_query.loc[0,'m3']},\nВензель№ - {df_restored_query.loc[0,'wenz']},\n"\
-                f"Остаток - {df_restored_query.loc[0,'res']},\nбыло время отгрузки - {formatted_time_old[10:16]}\nстало - {formatted_time_new}"
+        return  f"{name_user}\nZmienił - {df_restored_query.loc[0,'budowa']}\nKurs№ - {df_restored_query.loc[0,'k']},\n"\
+                f"Metrów - {df_restored_query.loc[0,'m3']},\nWęzeł№ - {df_restored_query.loc[0,'wenz']},\n"\
+                f"Reszta - {df_restored_query.loc[0,'res']},\nBył czas załadunku - {formatted_time_old[10:16]}\nStało się - {formatted_time_new}"
 
 
 

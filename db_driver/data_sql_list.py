@@ -10,14 +10,13 @@ from sqlalchemy import (
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from src.setting import Settings, inf
 
-from src.setting import Settings
-
-# Создание базового класса
+# Creating a base class                                                                                                                                                       
 Base = declarative_base()
 
 
-# Определение структуры таблицы через класс
+# Defining the table structure through a class
 
 
 class Beton_zawod(Base):
@@ -46,10 +45,10 @@ class Lista_zawod(Base):
         return f"<User(user_id={self.id_event_time}, name ={self.list_data})>"
 
 
-# Создание базы данных SQLite в файле
+# Creating an SQLite database in a file
 engine = create_engine(Settings.data_base_lista)
 
-# Создание всех таблиц, которые еще не существуют
+# Creating all tables that do not exist yet
 Base.metadata.create_all(engine)
 
 # Создание сессии для взаимодействия с базой данных
@@ -72,14 +71,14 @@ def delete_records_below_threshold(threshold, base):
     session = Session()
 
     try:
-        # Отберите записи с большим или меньшим значением первичного ключа
+        # Select records with a  lesser primary key value 
         records_to_delete = session.query(base_name).filter(base_name.id_event_time < threshold).order_by(base_name.id_event_time).all()
 
-        # Удалите выбранные записи
+        # Delete the selected records
         for record in records_to_delete:
             session.delete(record)
         
-        # Подтвердите изменения
+        # Confirm the changes
         session.commit()
     except Exception as e:
         session.rollback()
@@ -89,6 +88,15 @@ def delete_records_below_threshold(threshold, base):
 
 
 def get_oldest_list_beton_or_lista(base, date_of_lista):
+    """Get the oldest list from Beton_zawod or Lista_zawod for a given date.
+
+    Args:
+        base (str): "beton" or "lista" to specify the table to query.
+        date_of_lista (str): The date for which to retrieve the list, formatted as "dd.mm.yyyy".
+
+    Returns:
+        list: A list of tuples containing the data from the oldest list for the specified date.
+    """    
     base_name = Beton_zawod
     if base == "beton":
         base_name = Beton_zawod
@@ -117,6 +125,16 @@ def get_oldest_list_beton_or_lista(base, date_of_lista):
 
 
 def get_newest_list_beton_or_lista(base, date_of_lista, step):
+    """Get the newest list from Beton_zawod or Lista_zawod for a given date.
+
+    Args:
+        base (str): "beton" or "lista" to specify the table to query.
+        date_of_lista (str): The date for which to retrieve the list, formatted as "dd.mm.yyyy".
+        step (int): If 1, returns the second newest list; if 0, returns the newest list.
+
+    Returns:
+        list: A list containing the data from the newest list for the specified date,
+    """    
     base_name = Beton_zawod
     if base == "beton":
         base_name = Beton_zawod
@@ -134,12 +152,12 @@ def get_newest_list_beton_or_lista(base, date_of_lista, step):
         if result:
             if base == "beton":
                 deserialized_list = json.loads(result[0])
-                result_list = [[(item[0], time_from_datatime.fromisoformat(item[1]), *item[2:]) for item in deserialized_list], result[1], result[2]]
+                result_list = [[(item[0], time_from_datatime.fromisoformat(item[1]), *item[2:]) for item in deserialized_list], result[1], result[2]] # list of [[list of tuple data], id_event_time, status]
                 return result_list
             
             elif base == "lista":
                 deserialized_list = json.loads(result[0])
-                result_list = [[(time_from_datatime.fromisoformat(item[0]), item[1]) for item in deserialized_list], result[1], result[2]]
+                result_list = [[(time_from_datatime.fromisoformat(item[0]), item[1]) for item in deserialized_list], result[1], result[2]] # list of [[list of tuple data], id_event_time, status]
                 return result_list
 
         return [[], None, 1]
@@ -149,6 +167,14 @@ def get_newest_list_beton_or_lista(base, date_of_lista, step):
 
 
 def update_status(base, id_event_time):
+    """Update the status of a record in Beton_zawod or Lista_zawod.
+    This function sets the status of a record with the given id_event_time to 1.
+    This is typically used to mark a record as processed or completed.
+
+    Args:
+        base (str): "beton" or "lista" to specify the table to update.
+        id_event_time (int): The id_event_time of the record to update.
+    """    
     base_name = Beton_zawod
     if base == "beton":
         base_name = Beton_zawod
@@ -160,19 +186,19 @@ def update_status(base, id_event_time):
     try:
         record = session.query(base_name).get(id_event_time)
         
-        # Проверяем, существует ли запись
+        # Checking if the record exists
         if record is not None:
-            # Обновляем указанное поле
+            #  Updating the specified field
             record.status = 1
             
-            # Фиксируем изменения в базе данных
+            # Committing changes to the database
             session.commit()
     except IntegrityError as e:
-        print("Ошибка целостности данных: возможно, дубликат ключа")
-        session.rollback()  # Отмена всех изменений в текущей транзакции
+        inf("Data integrity error: possible duplicate key")
+        session.rollback()  # Rolling back all changes in the current transaction
 
     except Exception as e:
-        print("Ошибка при добавлении данных:", e)
+        inf("Error adding data:", e)
         session.rollback()
     finally:
         session.close()

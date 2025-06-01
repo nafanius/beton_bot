@@ -3,7 +3,6 @@ import db_driver.data_sql_list as data_sql_list
 from src.setting import Settings
 import time
 from datetime import datetime, timedelta
-import os
 
 
 

@@ -6,6 +6,12 @@ import re
 db_lock = threading.Lock()
 
 def answer_to_request():
+    """Generate an answer to the current loading status.
+    This function retrieves the current loading status from the database and formats it for display.
+
+    Returns:
+        str: A formatted string containing the current loading status, including remaining volume and number of courses.
+    """    
     query_try = f'SELECT * FROM actual_after '
     with db_lock:
         df_try = pd.read_sql_query(query_try, con=data_sql_list.engine)
@@ -52,7 +58,7 @@ def answer_to_request():
     text = re.sub(r'[ \t]+', ' ', text).strip()
     text =  f"<b>W ciągu najbliższych 45 minut to będą ładować:</b>\nDzisiaj pozostało <b><u>{reszta}m3,\n kursów - {resz_courses}"\
             f"</u></b>\n\n{text}\n\n <u>Jeśli coś jest nie tak, nie len się, podaj chuj/хуй z numerem załadunku na przykład:"\
-            f"<b>'хуй10'- jeśli w tym momencie ładujeт, lub 'хуй10 9:20'</b></u>"
+            f"<b>'хуй10'- jeśli w tym momencie ładuje, lub 'хуй10 9:20'</b></u>"
 
     return text
 

@@ -154,9 +154,10 @@ def telegram_bot(token):
     # region tap on Button
     @bot.callback_query_handler(func=lambda call: True)
     def handle_callback(call):
-        answer_text = []
         """processing tap on button in inline keyboard
-        """        
+        """ 
+        answer_text = []
+              
         if call.data == "button1":  # shedule
             answer_text.append(src.get_lista.combination_of_some_days_list(True))
 
