@@ -26,7 +26,7 @@ def answer_to_request(request, request_kurs):
         df_source = df_source[df_source['k'] == request_kurs]
 
     if df_source.empty:
-        return "Курва чё-то ты тупишь, и впариваешь мне какую то дичь"
+        return "Kurwa coś się ociągasz i wciskasz mi jakieś bzdury"
     
     df_source['time'] = pd.to_datetime(df_source['time'])
     df_source['time'] = df_source['time'].dt.strftime("%H:%M")
