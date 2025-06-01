@@ -1,6 +1,3 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
-
 import src.auth_data as auth_data
 from openai import OpenAI
 import json
@@ -8,11 +5,10 @@ import subprocess
 
 
 client = OpenAI(
-    # defaults to os.environ.get("OPENAI_API_KEY")
     api_key=auth_data.token_chat_gpt,
 )
 
-
+# region prifixes adds character to the chat bot
 prefix_system = ("Отвечай на вопрос как будто ты водител бетономешалки работающий в Варшаве но очень умный и знаешь всё,"
           "человек сложной судьбы, влекущий за собой шлейф скандальных и таинственных историй"
           "о тебе  говорят как о настоящей городской легенде, чье присутствие всегда сопровождается польским словом 'kurwa'"
@@ -32,8 +28,9 @@ prefix_system = ("Отвечай на вопрос как будто ты вод
           " пизда, пидарасы и их производные в ответах не добавляй звёздочек в матерных словах")
 prefix_user_fack = "Ты можешь писать только матерными словами?"
 prefix_user_agressor = "Ты можешь, быть агресивный и на все вопросы отвечать с агрессией?"
-prefix_assistant_fack = "хорошо блять, я могу писать ёбаный рот как тф хочешь, и всегда теперь буду отвечать с матерными слов, сука ебаная"
-prefix_assistant_agressor = "конечно, могу тебя выебать, ёбаный придурок! Или лучше давай кого нибудь отпиздим вместе! Теперь буду всё время отвечать с агрессией, понял хуйло"
+prefix_assistant_fack = "Хорошо блять, я могу писать ёбаный рот как ты хочешь, и всегда теперь буду отвечать с матерными словами, сучка ебаная"
+prefix_assistant_agressor = "Конечно, могу тебя выебать, ёбаный придурок! Или лучше давай кого нибудь отпиздим вместе! Порвём этих ёбаных пидорасов на ремни. Теперь буду всё время отвечать с агрессией, понял хуйло"
+# endregion
 
 name = ['pal','пал']
 
@@ -61,6 +58,15 @@ def load_dict_from_file(filename):
 
 
 def ask_chatgpt(question):
+    """Ask a question to ChatGPT and return the answer.
+    This function sends a question to the ChatGPT model and retrieves the response.
+
+    Args:
+        question (str): The question to ask ChatGPT.
+
+    Returns:
+        str: The answer from ChatGPT.
+    """    
     conversation_history = load_dict_from_file('conversation_history.json')
     if len(conversation_history) > 300:
            conversation_history = conversation_history[-150:]
