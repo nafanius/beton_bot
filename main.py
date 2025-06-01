@@ -379,7 +379,8 @@ def telegram_bot(token):
                 # try to get answer from chat bot
                 try:
                     bot.reply_to(message, ask_chatgpt(text_message))
-                except:
+                except Exception as err:
+                    inf(err)
                     bot.reply_to(message, Settings.message_without_bot)
             elif match_huy:
                 number_course = match_huy.group(1)
