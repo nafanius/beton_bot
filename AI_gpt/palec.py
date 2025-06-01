@@ -1,7 +1,7 @@
 import src.auth_data as auth_data
 from openai import OpenAI
 import json
-import subprocess
+from src.setting import inf
 
 
 client = OpenAI(
@@ -52,10 +52,13 @@ def load_dict_from_file(filename):
 
     Returns:
         dict: A dictionary loaded from the file.
-    """    
-    with open(filename, 'a', encoding='utf-8') as f:
-        return json.load(f)
-
+    """
+    try:     
+        with open(filename, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:                                                                                                                                                  
+        inf(f"Fle {filename} not found, returning empty dictionary") 
+        return []
 
 def ask_chatgpt(question):
     """Ask a question to ChatGPT and return the answer.
