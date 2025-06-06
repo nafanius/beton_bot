@@ -149,7 +149,7 @@ def telegram_bot(token):
 
             bot.send_message(message.chat.id,
                              f"{new_member.first_name}\n:Wpisz:\n'/h' - a ja ci opowiem, co potrafię\n"
-                             f"'/start' -  funkcje, które mogę wykonywać\n")
+                             f"'/start' -  funkcje, które mogę wykonywać\n", parse_mode='HTML' )
 
     # region tap on Button
     @bot.callback_query_handler(func=lambda call: True)
@@ -256,7 +256,7 @@ def telegram_bot(token):
         markup.row(btn3, btn4)
         markup.add(btn5)  # Добавляем кнопки в разметку
         markup.add(btn6)  # Добавляем кнопки в разметку
-        bot.send_message(message.chat.id, "*Czym mogę pomóc?*:", reply_markup=markup, parse_mode='Markdown')
+        bot.send_message(message.chat.id, "*Czym mogę pomóc?*:", reply_markup=markup, parse_mode='HTML')
 
     # help
     @bot.message_handler(commands=['h'])
@@ -275,7 +275,7 @@ def telegram_bot(token):
                                           f"Podaj:\nPodaj numer  - 'chuj/хуй12' lub 'сhuj/хуй 12:00' i, jeśli cię teraz ładują\n"
                                           f"Wpisz:\n?<Nazwa budowy> i/lub <numer kursu> a ja ci powiem numer chuja\n"
                                           f"'/start' -  Funkcje, które mogę wykonywać\n"
-                                          f"'/lista' - Wyświetlić rozkład\n")
+                                          f"'/lista' - Wyświetlić rozkład\n", parse_mode='HTML')
 
     @bot.message_handler(commands=["lista"])
     def send_lista(message):
@@ -284,7 +284,7 @@ def telegram_bot(token):
         Args:
             message (object): passed from wrapper telebot, contains information about the message
         """        
-        bot.send_message(message.chat.id, "Oto ci, kurwa, rozkład: https://bit.ly/holcim_lista")
+        bot.send_message(message.chat.id, "Oto ci, <tg-spoiler>kurwa</tg-spoiler>, rozkład: https://bit.ly/holcim_lista", parse_mode='HTML')
 
     @bot.message_handler(commands=["co"])
     def send_answer(message):
@@ -299,7 +299,7 @@ def telegram_bot(token):
         Args:
             message (object): passed from wrapper telebot, contains information about the message
         """        
-        msg = bot.send_message(message.chat.id, "Wprowadź nazwę", reply_markup=types.ForceReply())
+        msg = bot.send_message(message.chat.id, "Wprowadź nazwę", reply_markup=types.ForceReply(), parse_mode='HTML')
         bot.register_next_step_handler(msg, ask_name_budowy)
 
     def ask_geolocation(message):
@@ -317,10 +317,10 @@ def telegram_bot(token):
             dic_bud[name_bud] = [lat, lon]
             with db_lock:
                 save_dict_to_file(dic_bud, "dic_bud.json")
-            bot.send_message(message.chat.id, "Przyjęto!", reply_markup=None)
+            bot.send_message(message.chat.id, "Przyjęto!", reply_markup=None, parse_mode='HTML')
         else:
             # answer incorrect, ask again
-            msg = bot.send_message(message.chat.id, "Wyślij lokalizację")
+            msg = bot.send_message(message.chat.id, "Wyślij lokalizację", parse_mode='HTML')
             bot.register_next_step_handler(msg, ask_geolocation)
 
     def ask_name_budowy(message):
@@ -333,11 +333,11 @@ def telegram_bot(token):
             global name_bud
             # answer correct, continue
             name_bud = message.text
-            bot.send_message(message.chat.id, "Podaj swoją lokalizacjęУ", reply_markup=types.ForceReply())
+            bot.send_message(message.chat.id, "Podaj swoją lokalizacjęУ", reply_markup=types.ForceReply(), parse_mode='HTML')
             bot.register_next_step_handler(message, ask_geolocation)
         else:
             # answer incorrect, ask again
-            msg = bot.send_message(message.chat.id, "Wprowadź tekst - Nazwa budowy")
+            msg = bot.send_message(message.chat.id, "Wprowadź tekst - Nazwa budowy", parse_mode='HTML')
             bot.register_next_step_handler(msg, ask_name_budowy)
 
     # endregion ADD BUDOWA

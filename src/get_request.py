@@ -32,7 +32,7 @@ def answer_to_request():
     resz_courses = df_after_time.shape[0]
 
     if df_now_loading.empty and resz_courses == 0:
-        return 'kolego, możesz być wolny jak wiatr kurwa'
+        return 'kolego, możesz być wolny jak wiatr <tg-spoiler>kurwa</tg-spoiler>'
     elif df_now_loading.empty and resz_courses != 0:
         return f"<b>W ciągu najbliższych 45 minut to będą ładować:</b>\nDzisiaj pozostało <b><u>{reszta}m3,\n kursów - {resz_courses}</u></b>"
     

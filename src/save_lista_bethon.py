@@ -148,7 +148,7 @@ def lista_in_text_beton(del_add_lista=True):
                 f"--------------------\n"
             )
 
-        return "<b>To kurwa dyspozytor zmienił:</b>\n" + lista_text
+        return "<b>To <tg-spoiler>kurwa</tg-spoiler> dyspozytor zmienił:</b>\n" + lista_text
 
     else: # return current list
         query_try = f'SELECT * FROM actual_after '
@@ -159,7 +159,7 @@ def lista_in_text_beton(del_add_lista=True):
         df_try['time'] = pd.to_datetime(df_try['time'])
 
         if df_try.empty:
-            lista_text = ['dzisiaj nie ma wysyłek kurwa']
+            lista_text = ['dzisiaj nie ma wysyłek <tg-spoiler>kurwa</tg-spoiler>']
         else:
             df_try.set_index('index', inplace=True)
             df_try = df_try.drop(['id', 'mat'], axis=1)

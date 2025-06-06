@@ -39,9 +39,9 @@ def save_corect_course(number, name_user, new_time):
             df_restored_query = pd.read_sql_query(query, con=data_sql_list.engine)
     except Exception as error:
         inf(f"Request error from the database - actual {error}")
-        return "Kurwa, coś namieszałeś z bazą danych przy pobieraniu danych"
+        return "<tg-spoiler>Kurwa</tg-spoiler>, coś namieszałeś z bazą danych przy pobieraniu danych"
     if df_restored_query.empty:
-        return "Kurwa, coś ty głupiejesz i wciskasz mi jakieś głupoty"
+        return "<tg-spoiler>Kurwa</tg-spoiler>, coś ty głupiejesz i wciskasz mi jakieś głupoty"
     
     else:
         df_restored_query[['new_time', 'user']] = new_time, name_user
@@ -52,7 +52,7 @@ def save_corect_course(number, name_user, new_time):
         
         except Exception as error:
             inf(f"Write error from the database - corrects {error}")
-            return "Kurwa, coś namieszałeś z bazą danych przy zapisie danych"
+            return "<tg-spoiler>Kurwa</tg-spoiler>, coś namieszałeś z bazą danych przy zapisie danych"
         
         # region corrects actual_after
         query_try = f'SELECT * FROM actual_after'
