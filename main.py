@@ -272,7 +272,7 @@ def telegram_bot(token):
                                           f"Wpisz:\n'/h' - i opowiem ci, co potrafię\n"
                                           f"Wpisz:\n'/co' - i opowiem ci, co będą ładować w ciągu najbliższych 30 minut \n"
                                           f"Powiedz:\nPowiedz mi PALEC i swoje pytanie, a opowiem ci wszystko, co chcesz\n"
-                                          f"Podaj:\nPodaj numer  - '<tg-spoiler>chuj/хуй12<.tg-spoiler>' lub '<tg-spoiler>сhuj/хуй</tg-spoiler> 12:00' i, jeśli cię teraz ładują\n"
+                                          f"Podaj:\nPodaj numer  - '<tg-spoiler>chuj/хуй12</tg-spoiler>' lub '<tg-spoiler>сhuj/хуй</tg-spoiler> 12:00' i, jeśli cię teraz ładują\n"
                                           f"Wpisz:\n?<Nazwa budowy> i/lub <numer kursu> a ja ci powiem numer chuja\n"
                                           f"'/start' -  Funkcje, które mogę wykonywać\n"
                                           f"'/lista' - Wyświetlić rozkład\n", parse_mode='HTML')
