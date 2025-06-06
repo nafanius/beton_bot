@@ -269,13 +269,13 @@ def telegram_bot(token):
         bot.send_message(message.chat.id, f"{message.from_user.first_name}\n"
                                           f"Jestem botem, który pomaga dostarczyć wszystkie niezbędne informacje dla początkujących i"
                                           f" zaawansowanych operatorów betonomeszarek\n"
-                                          f"Wpisz:\n'/h' - i opowiem ci, co potrafię\n"
-                                          f"Wpisz:\n'/co' - i opowiem ci, co będą ładować w ciągu najbliższych 30 minut \n"
-                                          f"Powiedz:\nPowiedz mi <code>PALEC</code> i swoje pytanie, a opowiem ci wszystko, co chcesz\n"
-                                          f"Podaj:\nPodaj numer  - '<tg-spoiler>chuj/хуй12</tg-spoiler>' lub '<tg-spoiler>сhuj/хуй</tg-spoiler> 12:00' i, jeśli cię teraz ładują\n"
-                                          f"Wpisz:\n<code>?'Nazwa budowy'</code> i/lub 'numer kursu' a ja ci powiem numer chuja\n"
-                                          f"'/start' -  Funkcje, które mogę wykonywać\n"
-                                          f"'/lista' - Wyświetlić rozkład\n", parse_mode='HTML')
+                                          f"<b><u>Wpisz:</u></b>\n'/h' - i opowiem ci, co potrafię\n"
+                                          f"<b><u>Wpisz:</u></b>\n'/co' - i opowiem ci, co będą ładować w ciągu najbliższych 30 minut \n"
+                                          f"<b><u>Powiedz:</u></b>\nPowiedz mi <code>PALEC</code> i swoje pytanie, a opowiem ci wszystko, co chcesz\n"
+                                          f"<b><u>Podaj:</u></b>\nPodaj numer  - '<tg-spoiler>chuj/хуй12</tg-spoiler>' lub '<tg-spoiler>сhuj/хуй</tg-spoiler> 12:00' i, jeśli cię teraz ładują\n"
+                                          f"<b><u>Wpisz:</u></b>\n<code>?'Nazwa budowy'</code> i/lub 'numer kursu' a ja ci powiem numer chuja\n"
+                                          f"<b><u>Wpisz:</u></b>\n'/start' -  Funkcje, które mogę wykonywać\n"
+                                          f"<b><u>Wpisz:</u></b>\n'/lista' - Wyświetlić rozkład\n", parse_mode='HTML')
 
     @bot.message_handler(commands=["lista"])
     def send_lista(message):
