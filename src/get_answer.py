@@ -49,7 +49,7 @@ def answer_to_request(request, request_kurs):
     text = text.replace(":::", "\n")
     text = re.sub(r'[ \t]+', ' ', text).strip()
 
-    text =  f"<b>Rzuć numer chuja\nJeśli ładują teraz - хуй2/Chuj2\nJeśli chuj rzucasz na czas - хуй2 7:00/Chuj2 7:00:\n   ----------------\n</b>\n{text}"
+    text =  f"<b>Rzuć numer chuja\nJeśli ładują teraz - <tg-spoiler>хуй2/Chuj2</tg-spoiler>\nJeśli chuj rzucasz na czas - <tg-spoiler>хуй2 7:00/Chuj2</tg-spoiler> 7:00:\n   ----------------\n</b>\n{text}"
 
     return text
 

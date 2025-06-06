@@ -57,8 +57,8 @@ def answer_to_request():
     text = text.replace(":::", "\n")
     text = re.sub(r'[ \t]+', ' ', text).strip()
     text =  f"<b>W ciągu najbliższych 45 minut to będą ładować:</b>\nDzisiaj pozostało <b><u>{reszta}m3,\n kursów - {resz_courses}"\
-            f"</u></b>\n\n{text}\n\n <u>Jeśli coś jest nie tak, nie len się, podaj chuj/хуй z numerem załadunku na przykład:"\
-            f"<b>'хуй10'- jeśli w tym momencie ładuje, lub 'хуй10 9:20'</b></u>"
+            f"</u></b>\n\n{text}\n\n <u>Jeśli coś jest nie tak, nie len się, podaj <tg-spoiler>chuj/хуй</tg-spoiler> z numerem załadunku na przykład:"\
+            f"<b>'<tg-spoiler>хуй10</tg-spoiler>'- jeśli w tym momencie ładuje, lub '</tg-spoiler>хуй10 9:20</tg-spoiler>'</b></u>"
 
     return text
 
