@@ -279,6 +279,8 @@ def telegram_bot(token):
                                           f"<b><u>Podaj:</u></b>\nPodaj numer  - '<tg-spoiler>chuj/хуй12</tg-spoiler>' lub '<tg-spoiler>сhuj/хуй</tg-spoiler> 12:00' i, jeśli cię teraz ładują\n"
                                           f"<b><u>Wpisz:</u></b>\n<code>?'Nazwa budowy'</code> i/lub 'numer kursu' a ja ci powiem numer <tg-spoiler>chuja</tg-spoiler>\n"
                                           f"<b><u>Wpisz:</u></b>\n'/start' -  Funkcje, które mogę wykonywać\n"
+                                          f"<b><u>Wpisz:</u></b>\n'/on' -  Włączyć otrzymywanie informacji operacyjnej\n"
+                                          f"<b><u>Wpisz:</u></b>\n'/off' -  Wyłączyć otrzymywanie informacji operacyjnej\n"
                                           f"<b><u>Wpisz:</u></b>\n'/lista' - Wyświetlić rozkład\n", parse_mode='HTML')
 
     @bot.message_handler(commands=["lista"])
@@ -414,7 +416,7 @@ def telegram_bot(token):
                 chat_ids = get_all_chat() or []
                 if chat_ids:
                     for id in chat_ids:
-                        bot.send_message(str(id), answer_from_lista, reply_to_message_id=message.message_id, parse_mode='HTML')
+                        bot.send_message(str(id), answer_from_lista, parse_mode='HTML')
                 else:
                     bot.reply_to(message, answer_from_lista)
 
