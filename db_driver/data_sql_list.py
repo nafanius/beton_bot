@@ -6,6 +6,7 @@ from sqlalchemy import (
     Integer,
     String,
     Float,
+    Boolean
 )
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
@@ -17,7 +18,11 @@ Base = declarative_base()
 
 
 # Defining the table structure through a class
-
+class Chats(Base):
+    __tablename__ = "chats"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    chat_id = Column(String, nullable=False)                                                                                                                                                   
+    is_active = Column(Boolean, default=True)
 
 class Beton_zawod(Base):
     __tablename__ = "beton_zawod"

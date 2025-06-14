@@ -24,6 +24,7 @@ from AI_gpt.palec import name, ask_chatgpt
 from src.save_lista_bethon import lista_in_text_beton
 from src.setting import Settings, inf, lg, timer
 from src.get_request import answer_to_request
+from src.messaging import on, off
 
 
 client_Wit = Wit(auth_data.cod_wit)
@@ -57,7 +58,6 @@ def load_dict_from_file(filename):
             json.dump({}, f, ensure_ascii=False, indent=4)
         with open(filename, 'r', encoding='utf-8') as f:
             return json.load(f)
-
 
 # endregion SAVE AND LOAD JSON
 
@@ -289,6 +289,18 @@ def telegram_bot(token):
     @bot.message_handler(commands=["co"])
     def send_answer(message):
         bot.send_message(message.chat.id, answer_to_request(), parse_mode='HTML')
+
+
+    @bot.message_handler(commands=["on"])
+    def on_massaging_bot(message):
+        bot.send_message(message.chat.id, on(message.chat.id), parse_mode='HTML')
+
+    
+    @bot.message_handler(commands=["off"])
+    def off_messaging_bot(message):
+        bot.send_message(message.chat.id, off(message.chat.id), parse_mode='HTML')
+
+    
 
     # todo сделать стройки в виде базы данных
     # region ADD BUDOWA
