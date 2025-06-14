@@ -411,8 +411,12 @@ def telegram_bot(token):
                     minutes = int(time_parts[1])
                     date_time_course = datetime(today.year, today.month, today.day, hours, minutes)
                     answer_from_lista = src.corect_courses.save_corect_course(number_course, message.from_user.username, date_time_course)
-
-                bot.reply_to(message, answer_from_lista)
+                chat_ids = get_all_chat() or []
+                if chat_ids:
+                    for id in chat_ids:
+                        bot.send_message(str(id), answer_from_lista, reply_to_message_id=message.message_id, parse_mode='HTML')
+                else:
+                    bot.reply_to(message, answer_from_lista)
 
             elif match_question:
                 request = match_question.group(1)
