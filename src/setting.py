@@ -19,6 +19,7 @@ class Settings:
     pattern_question = r'^\?\s*([a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]*)\s*(\d*)'
     def __init__(self):
         pass
+    
 
 
 

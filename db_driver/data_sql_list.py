@@ -6,23 +6,15 @@ from sqlalchemy import (
     Integer,
     String,
     Float,
-    Boolean
 )
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from src.setting import Settings, inf
 
-# Creating a base class                                                                                                                                                       
+# Creating a base class
 Base = declarative_base()
 
-
-# Defining the table structure through a class
-class Chats(Base):
-    __tablename__ = "chats"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    chat_id = Column(String, nullable=False)                                                                                                                                                   
-    is_active = Column(Boolean, default=True)
 
 class Beton_zawod(Base):
     __tablename__ = "beton_zawod"
@@ -66,7 +58,7 @@ def delete_records_below_threshold(threshold, base):
     Args:
         threshold (float): Time as a float from the beginning of the epoch
         base_name (str): base name
-    """    
+    """
     base_name = Beton_zawod
     if base == "beton":
         base_name = Beton_zawod
@@ -76,13 +68,14 @@ def delete_records_below_threshold(threshold, base):
     session = Session()
 
     try:
-        # Select records with a  lesser primary key value 
-        records_to_delete = session.query(base_name).filter(base_name.id_event_time < threshold).order_by(base_name.id_event_time).all()
+        # Select records with a  lesser primary key value
+        records_to_delete = session.query(base_name).filter(
+            base_name.id_event_time < threshold).order_by(base_name.id_event_time).all()
 
         # Delete the selected records
         for record in records_to_delete:
             session.delete(record)
-        
+
         # Confirm the changes
         session.commit()
     except Exception as e:
@@ -101,7 +94,7 @@ def get_oldest_list_beton_or_lista(base, date_of_lista):
 
     Returns:
         list: A list of tuples containing the data from the oldest list for the specified date.
-    """    
+    """
     base_name = Beton_zawod
     if base == "beton":
         base_name = Beton_zawod
@@ -111,22 +104,23 @@ def get_oldest_list_beton_or_lista(base, date_of_lista):
     session = Session()
 
     try:
-        result = session.query(base_name.list_data).filter(base_name.date_text == date_of_lista).order_by(base_name.id_event_time.asc()).first()
-        
+        result = session.query(base_name.list_data).filter(
+            base_name.date_text == date_of_lista).order_by(base_name.id_event_time.asc()).first()
+
         if result:
             if base == "beton":
                 deserialized_list = json.loads(result[0])
-                result_list = [(item[0], time_from_datatime.fromisoformat(item[1]), *item[2:]) for item in deserialized_list]
+                result_list = [(item[0], time_from_datatime.fromisoformat(
+                    item[1]), *item[2:]) for item in deserialized_list]
                 return result_list
-            
+
             elif base == "lista":
                 pass
-           
+
         return []
-    
+
     finally:
         session.close()
-    
 
 
 def get_newest_list_beton_or_lista(base, date_of_lista, step):
@@ -139,7 +133,7 @@ def get_newest_list_beton_or_lista(base, date_of_lista, step):
 
     Returns:
         list: A list containing the data from the newest list for the specified date,
-    """    
+    """
     base_name = Beton_zawod
     if base == "beton":
         base_name = Beton_zawod
@@ -150,23 +144,29 @@ def get_newest_list_beton_or_lista(base, date_of_lista, step):
 
     try:
         if step:
-            result = session.query(base_name.list_data, base_name.id_event_time, base_name.status).filter(base_name.date_text == date_of_lista).order_by(base_name.id_event_time.desc()).offset(1).first()
+            result = session.query(base_name.list_data, base_name.id_event_time, base_name.status).filter(
+                base_name.date_text == date_of_lista).order_by(base_name.id_event_time.desc()).offset(1).first()
         else:
-            result = session.query(base_name.list_data, base_name.id_event_time, base_name.status).filter(base_name.date_text == date_of_lista).order_by(base_name.id_event_time.desc()).first()
-        
+            result = session.query(base_name.list_data, base_name.id_event_time, base_name.status).filter(
+                base_name.date_text == date_of_lista).order_by(base_name.id_event_time.desc()).first()
+
         if result:
             if base == "beton":
                 deserialized_list = json.loads(result[0])
-                result_list = [[(item[0], time_from_datatime.fromisoformat(item[1]), *item[2:]) for item in deserialized_list], result[1], result[2]] # list of [[list of tuple data], id_event_time, status]
+                # list of [[list of tuple data], id_event_time, status]
+                result_list = [[(item[0], time_from_datatime.fromisoformat(
+                    item[1]), *item[2:]) for item in deserialized_list], result[1], result[2]]
                 return result_list
-            
+
             elif base == "lista":
                 deserialized_list = json.loads(result[0])
-                result_list = [[(time_from_datatime.fromisoformat(item[0]), item[1]) for item in deserialized_list], result[1], result[2]] # list of [[list of tuple data], id_event_time, status]
+                # list of [[list of tuple data], id_event_time, status]
+                result_list = [[(time_from_datatime.fromisoformat(item[0]), item[1])
+                                for item in deserialized_list], result[1], result[2]]
                 return result_list
 
         return [[], None, 1]
-    
+
     finally:
         session.close()
 
@@ -179,7 +179,7 @@ def update_status(base, id_event_time):
     Args:
         base (str): "beton" or "lista" to specify the table to update.
         id_event_time (int): The id_event_time of the record to update.
-    """    
+    """
     base_name = Beton_zawod
     if base == "beton":
         base_name = Beton_zawod
@@ -187,15 +187,15 @@ def update_status(base, id_event_time):
         base_name = Lista_zawod
 
     session = Session()
-    
+
     try:
         record = session.query(base_name).get(id_event_time)
-        
+
         # Checking if the record exists
         if record is not None:
             #  Updating the specified field
             record.status = 1
-            
+
             # Committing changes to the database
             session.commit()
     except IntegrityError as e:
@@ -207,4 +207,3 @@ def update_status(base, id_event_time):
         session.rollback()
     finally:
         session.close()
-        
