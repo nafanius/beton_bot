@@ -99,7 +99,7 @@ def telegram_bot(token):
                     weather_3day = weather.weather_3day()
                     chat_ids = get_all_chat() or []
                     for id in chat_ids:
-                        bot.send_message(id, f"<b>Dzień dobry, panowie!</b>\n\n"
+                        bot.send_message(str(id), f"<b>Dzień dobry, panowie!</b>\n\n"
                                                 f"<b>Harmonogram na dzisiaj</b>\n {src.get_lista.combination_of_some_days_list(True)}"
                                                 f"<b>Dziś czeka nas taka pogoda:</b>\n"
                                                 f"Temperatura minimalna <b><u>{weather_3day[0]['температура минимальная']}</u></b>\n"
@@ -118,13 +118,13 @@ def telegram_bot(token):
                     if text_list_beton:
                         chat_ids = get_all_chat() or []
                         for id in chat_ids:
-                            bot.send_message(id, str(text_list_beton), parse_mode='HTML')
+                            bot.send_message(str(id), str(text_list_beton), parse_mode='HTML')
                             time.sleep(2) 
 
                     if text_lista:
                         chat_ids = get_all_chat() or []
                         for id in chat_ids:
-                            bot.send_message(id, text_lista, parse_mode='HTML')
+                            bot.send_message(str(id), text_lista, parse_mode='HTML')
                             time.sleep(2)
 
                     time.sleep(90)  # puse for 90 seconds to avoid multiple sends in the same minute
