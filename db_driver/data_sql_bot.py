@@ -6,7 +6,7 @@ from sqlalchemy import (
     Boolean
 )
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from src.setting import Settings, inf
 
@@ -29,7 +29,7 @@ engine = create_engine(Settings.data_base_bot)
 # Creating all tables that do not exist yet
 Base.metadata.create_all(engine)
 
-# Создание сессии для взаимодействия с базой данных
+# Creating a session for interacting with the database
 Session = sessionmaker(bind=engine)
 
 

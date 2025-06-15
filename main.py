@@ -100,7 +100,7 @@ def telegram_bot(token):
                     chat_ids = get_all_chat() or []
                     for id in chat_ids:
                         bot.send_message(str(id), f"<b>Dzień dobry, panowie!</b>\n\n"
-                                                f"<b>Harmonogram na dzisiaj</b>\n {src.get_lista.combination_of_some_days_list(True)}"
+                                                f"<b>Harmonogram na dzisiaj</b>\n {src.get_lista.combination_of_some_days_list(True)}\n"
                                                 f"<b>Dziś czeka nas taka pogoda:</b>\n"
                                                 f"Temperatura minimalna <b><u>{weather_3day[0]['температура минимальная']}</u></b>\n"
                                                 f"Maksymalna temperatura <b><u>{weather_3day[0]['температура максимальная']}</u></b>\n"
@@ -258,8 +258,8 @@ def telegram_bot(token):
         btn6 = types.InlineKeyboardButton("harmonogram załadunków", callback_data="button6")
         markup.row(btn1, btn2)
         markup.row(btn3, btn4)
-        markup.add(btn5)  # Добавляем кнопки в разметку
-        markup.add(btn6)  # Добавляем кнопки в разметку
+        markup.add(btn5)  # add buttons to the markup
+        markup.add(btn6)
         bot.send_message(message.chat.id, "*Czym mogę pomóc?*:", reply_markup=markup, parse_mode='HTML')
 
     # help
