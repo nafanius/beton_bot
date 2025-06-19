@@ -83,6 +83,16 @@ def telegram_bot(token):
                      "HOLCIM węzeł 2": "+48502786916",
                      "HOLCIM węzeł 1": "+48519537060"}
 
+    def delete_message(chat_id, message_id, delay):
+        def delete():
+            try:
+                bot.delete_message(chat_id, message_id)
+            except Exception as e:
+                inf(f"Ошибка при удалении: {e}")
+        threading.Timer(delay, delete).start()
+
+
+
     def send_scheduled_message():
         """function for sending scheduled messages
         """        
@@ -270,7 +280,7 @@ def telegram_bot(token):
         Args:
             message (object): passed from wrapper telebot, contains information about the message
         """        
-        bot.send_message(message.chat.id, f"{message.from_user.first_name}\n"
+        msg = bot.send_message(message.chat.id, f"{message.from_user.first_name}\n"
                                           f"Jestem botem, który pomaga dostarczyć wszystkie niezbędne informacje dla początkujących i"
                                           f" zaawansowanych operatorów betonomeszarek\n"
                                           f"<b><u>Wpisz:</u></b>\n'/h' - i opowiem ci, co potrafię\n"
@@ -282,6 +292,8 @@ def telegram_bot(token):
                                           f"<b><u>Wpisz:</u></b>\n'/on' -  Włączyć otrzymywanie informacji operacyjnej\n"
                                           f"<b><u>Wpisz:</u></b>\n'/off' -  Wyłączyć otrzymywanie informacji operacyjnej\n"
                                           f"<b><u>Wpisz:</u></b>\n'/lista' - Wyświetlić rozkład\n", parse_mode='HTML')
+        delete_message(message.chat.id, msg.message_id, 60)  # delete message after 30 seconds
+        delete_message(message.chat.id, message.message_id, 10)
 
     @bot.message_handler(commands=["lista"])
     def send_lista(message):
@@ -290,11 +302,15 @@ def telegram_bot(token):
         Args:
             message (object): passed from wrapper telebot, contains information about the message
         """        
-        bot.send_message(message.chat.id, "Oto ci, <tg-spoiler>kurwa</tg-spoiler>, rozkład: https://bit.ly/holcim_lista", parse_mode='HTML')
+        msg = bot.send_message(message.chat.id, "Oto ci, <tg-spoiler>kurwa</tg-spoiler>, rozkład: https://bit.ly/holcim_lista", parse_mode='HTML')
+        delete_message(message.chat.id, msg.message_id, 30)  # delete message after 30 seconds
+        delete_message(message.chat.id, message.message_id, 10)
 
     @bot.message_handler(commands=["co"])
     def send_answer(message):
-        bot.send_message(message.chat.id, answer_to_request(), parse_mode='HTML')
+        msg = bot.send_message(message.chat.id, answer_to_request(), parse_mode='HTML')
+        delete_message(message.chat.id, msg.message_id, 30)  # delete message after 30 seconds
+        delete_message(message.chat.id, message.message_id, 10)
 
 
     @bot.message_handler(commands=["on"])
@@ -427,8 +443,10 @@ def telegram_bot(token):
                     request_kurs = int(request_kurs)
 
                 answer_from_request = src.get_answer.answer_to_request(request, request_kurs)
-                bot.reply_to(message, answer_from_request, parse_mode='HTML')
-                
+                msg = bot.reply_to(message, answer_from_request, parse_mode='HTML')
+                delete_message(message.chat.id, msg.message_id, 30)  # delete message after 30 seconds
+                delete_message(message.chat.id, message.message_id, 10)
+
             else:
                 with db_lock:
                     save_dict_to_file(conversation_history, 'conversation_history.json')
