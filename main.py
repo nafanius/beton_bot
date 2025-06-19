@@ -16,6 +16,7 @@ from gtts import gTTS
 
 import telebot
 from telebot import types
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
 import src.weather as weather
 from src.auth_data import token_bot
@@ -84,6 +85,13 @@ def telegram_bot(token):
                      "HOLCIM węzeł 1": "+48519537060"}
 
     def delete_message(chat_id, message_id, delay):
+        """function for deleting message after delay
+
+        Args:
+            chat_id (int or strin): _id of the chat where the message will be deleted
+            message_id (int): _id of the message to be deleted
+            delay (int): time in seconds after which the message will be deleted
+        """        
         def delete():
             try:
                 bot.delete_message(chat_id, message_id)
@@ -301,8 +309,8 @@ def telegram_bot(token):
 
         Args:
             message (object): passed from wrapper telebot, contains information about the message
-        """        
-        msg = bot.send_message(message.chat.id, "Oto ci, <tg-spoiler>kurwa</tg-spoiler>, rozkład: https://bit.ly/holcim_lista", parse_mode='HTML')
+        """
+        msg = bot.send_message(message.chat.id, "Oto ci, <tg-spoiler>kurwa</tg-spoiler>, rozkład: https://t.me/betonycz_bot/holcim_lista", parse_mode='HTML')
         delete_message(message.chat.id, msg.message_id, 30)  # delete message after 30 seconds
         delete_message(message.chat.id, message.message_id, 10)
 
