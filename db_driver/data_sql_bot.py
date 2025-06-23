@@ -108,10 +108,10 @@ def add_all_acive_chat_id():
     session = Session()
 
     try:
-        # Выполнение запроса для получения всех записей с is_active=True
+        # doing a query to get all active records
         records = session.query(base_name).filter_by(
             is_active=True, block=False).all()
-        # Извлечение только имен из полученных записей
+        #   extracting chat_id from the records
         active_chat_id = [record.chat_id for record in records]
         return active_chat_id
 

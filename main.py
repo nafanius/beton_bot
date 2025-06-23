@@ -287,6 +287,7 @@ def telegram_bot(token):
             message (object): passed from wrapper telebot, contains information about the message
         """        
         print(message.chat.id)
+        off(message.chat.id)  # add chat_id to database and turn off bot for this user
         markup = types.InlineKeyboardMarkup()  # markup for inline keyboard
         btn1 = types.InlineKeyboardButton("rozkład", callback_data="button1")
         btn2 = types.InlineKeyboardButton("pogodę", callback_data="button2")
