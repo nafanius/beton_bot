@@ -12,6 +12,8 @@ class Settings:
     ID_GROUPS = ["-4533287060", "-4768722432"] # groups id where bot sends sheduled messages
     ID_SEND_BOT = ["1276025555", "-1002713057290"] # there bot send message if he is asked
     message_without_bot = "Coś mnie zmęczyłeś, pomilczmy trochę, <tg-spoiler>kurwa</tg-spoiler>" # answer bot when he is tired
+    pause_del_message = 60
+    pause_del_request = 10
     time_of_compare = 4
     start_time_co = 15 # min before request CO
     finish_time_co = 15 # min after request CO

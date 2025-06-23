@@ -321,8 +321,8 @@ def telegram_bot(token):
                                           f"<b><u>Wpisz:</u></b>\n'/on' -  Włączyć otrzymywanie informacji operacyjnej\n"
                                           f"<b><u>Wpisz:</u></b>\n'/off' -  Wyłączyć otrzymywanie informacji operacyjnej\n"
                                           f"<b><u>Wpisz:</u></b>\n'/lista' - Wyświetlić rozkład\n", parse_mode='HTML')
-        delete_message(message.chat.id, msg.message_id, 60)  # delete message after 30 seconds
-        delete_message(message.chat.id, message.message_id, 10)
+        delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after 30 seconds
+        delete_message(message.chat.id, message.message_id, Settings.pause_del_request)
 
     @bot.message_handler(commands=["lista"])
     def send_lista(message):
@@ -332,14 +332,14 @@ def telegram_bot(token):
             message (object): passed from wrapper telebot, contains information about the message
         """
         msg = bot.send_message(message.chat.id, "Oto ci, <tg-spoiler>kurwa</tg-spoiler>, rozkład: https://t.me/betonycz_bot/holcim_lista", parse_mode='HTML')
-        delete_message(message.chat.id, msg.message_id, 30)  # delete message after 30 seconds
-        delete_message(message.chat.id, message.message_id, 10)
+        delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after 30 seconds
+        delete_message(message.chat.id, message.message_id, Settings.pause_del_request)
 
     @bot.message_handler(commands=["co"])
     def send_answer(message):
         msg = bot.send_message(message.chat.id, answer_to_request(), parse_mode='HTML')
-        delete_message(message.chat.id, msg.message_id, 30)  # delete message after 30 seconds
-        delete_message(message.chat.id, message.message_id, 10)
+        delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after 30 seconds
+        delete_message(message.chat.id, message.message_id, Settings.pause_del_request)
 
 
     @bot.message_handler(commands=["on"])
@@ -473,8 +473,8 @@ def telegram_bot(token):
 
                 answer_from_request = src.get_answer.answer_to_request(request, request_kurs)
                 msg = bot.reply_to(message, answer_from_request, parse_mode='HTML')
-                delete_message(message.chat.id, msg.message_id, 30)  # delete message after 30 seconds
-                delete_message(message.chat.id, message.message_id, 10)
+                delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after 30 seconds
+                delete_message(message.chat.id, message.message_id, Settings.pause_del_request)
 
             else:
                 with db_lock:
