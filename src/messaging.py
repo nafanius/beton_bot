@@ -23,3 +23,4 @@ def off(chat_id):
 def get_all_chat():
     with db_lock:
         return add_all_acive_chat_id()
+

@@ -128,7 +128,10 @@ def telegram_bot(token):
                                                     f"wiatr <b><u>{weather_3day[0]['ветер']}</u></b>\n", parse_mode='HTML')
                             
                         except Exception as err:
+                            inf(id)
                             inf(err)
+                            off(id) # turn off bot for this user if error occurs
+
                         time.sleep(2)  # sleep for 2 seconds to avoid flooding the server with
                     time.sleep(90)  # check every 90 seconds to avoid multiple sends in the same minute
 
@@ -144,8 +147,11 @@ def telegram_bot(token):
                             try:
                                 bot.send_message(str(id), str(text_list_beton), parse_mode='HTML')
                             except Exception as err:
+                                inf(id)
                                 inf(err)
-                                time.sleep(2) 
+                                off(id) # turn off bot for this user if error occurs
+
+                            time.sleep(2) 
 
                     if text_lista:
                         chat_ids = get_all_chat() or []
@@ -153,7 +159,10 @@ def telegram_bot(token):
                             try:
                                 bot.send_message(str(id), text_lista, parse_mode='HTML')
                             except Exception as err:
+                                inf(id)
                                 inf(err)
+                                off(id) # turn off bot for this user if error occurs
+                                
                             time.sleep(2)
 
                     time.sleep(90)  # puse for 90 seconds to avoid multiple sends in the same minute
