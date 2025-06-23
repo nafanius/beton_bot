@@ -117,14 +117,19 @@ def telegram_bot(token):
                     weather_3day = weather.weather_3day()
                     chat_ids = get_all_chat() or []
                     for id in chat_ids:
-                        bot.send_message(str(id), f"<b>Dzień dobry, panowie!</b>\n\n"
-                                                f"<b>Harmonogram na dzisiaj</b>\n {src.get_lista.combination_of_some_days_list(True)}\n"
-                                                f"<b>Dziś czeka nas taka pogoda:</b>\n"
-                                                f"Temperatura minimalna <b><u>{weather_3day[0]['температура минимальная']}</u></b>\n"
-                                                f"Maksymalna temperatura <b><u>{weather_3day[0]['температура максимальная']}</u></b>\n"
-                                                f"Temperatura odczuwalna <b><u>{weather_3day[0]['temp']}</u></b>\n"
-                                                f"zachmurzenie <b><u>{weather_3day[0]['облачность']}</u></b>\n"
-                                                f"wiatr <b><u>{weather_3day[0]['ветер']}</u></b>\n", parse_mode='HTML')
+                        try:
+                            bot.send_message(str(id), f"<b>Dzień dobry, panowie!</b>\n\n"
+                                                    f"<b>Harmonogram na dzisiaj</b>\n {src.get_lista.combination_of_some_days_list(True)}\n"
+                                                    f"<b>Dziś czeka nas taka pogoda:</b>\n"
+                                                    f"Temperatura minimalna <b><u>{weather_3day[0]['температура минимальная']}</u></b>\n"
+                                                    f"Maksymalna temperatura <b><u>{weather_3day[0]['температура максимальная']}</u></b>\n"
+                                                    f"Temperatura odczuwalna <b><u>{weather_3day[0]['temp']}</u></b>\n"
+                                                    f"zachmurzenie <b><u>{weather_3day[0]['облачность']}</u></b>\n"
+                                                    f"wiatr <b><u>{weather_3day[0]['ветер']}</u></b>\n", parse_mode='HTML')
+                            
+                        except Exception as err:
+                            inf(err)
+                        time.sleep(2)  # sleep for 2 seconds to avoid flooding the server with
                     time.sleep(90)  # check every 90 seconds to avoid multiple sends in the same minute
 
                 # check if it's time to send the evening message
@@ -136,13 +141,19 @@ def telegram_bot(token):
                     if text_list_beton:
                         chat_ids = get_all_chat() or []
                         for id in chat_ids:
-                            bot.send_message(str(id), str(text_list_beton), parse_mode='HTML')
-                            time.sleep(2) 
+                            try:
+                                bot.send_message(str(id), str(text_list_beton), parse_mode='HTML')
+                            except Exception as err:
+                                inf(err)
+                                time.sleep(2) 
 
                     if text_lista:
                         chat_ids = get_all_chat() or []
                         for id in chat_ids:
-                            bot.send_message(str(id), text_lista, parse_mode='HTML')
+                            try:
+                                bot.send_message(str(id), text_lista, parse_mode='HTML')
+                            except Exception as err:
+                                inf(err)
                             time.sleep(2)
 
                     time.sleep(90)  # puse for 90 seconds to avoid multiple sends in the same minute
