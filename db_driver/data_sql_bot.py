@@ -67,6 +67,32 @@ def add_id_chat_or_turn_on(chat_id):
         session.close()
 
 
+def add_id_chat_new(chat_id):
+
+    base_name = Chats
+
+    session = Session()
+
+    try:
+        record = session.query(base_name).filter_by(chat_id=chat_id).first()
+        if record is None:
+            new_record = base_name(
+                chat_id=chat_id, is_active=True, block=False)
+            session.add(new_record)
+            session.commit()
+            return "save record is_active true"
+        
+    except IntegrityError as e:
+        inf("Data integrity error: possible duplicate key")
+        session.rollback()  # Rolling back all changes in the current transaction
+
+    except Exception as e:
+        inf("Error adding data:", e)
+        session.rollback()
+    finally:
+        session.close()
+
+
 def add_id_chat_or_turn_off(chat_id):
 
     base_name = Chats

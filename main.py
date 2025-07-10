@@ -25,7 +25,7 @@ from AI_gpt.palec import name, ask_chatgpt
 from src.save_lista_bethon import lista_in_text_beton
 from src.setting import Settings, inf, lg, timer
 from src.get_request import answer_to_request
-from src.messaging import on, off, get_all_chat
+from src.messaging import on, off, get_all_chat, add_new
 
 
 client_Wit = Wit(auth_data.cod_wit)
@@ -285,7 +285,7 @@ def telegram_bot(token):
             message (object): passed from wrapper telebot, contains information about the message
         """        
         print(message.chat.id)
-        on(message.chat.id)  # add chat_id to database and turn on bot for this user
+        add_new(message.chat.id)  # add chat_id to database and turn on bot for this user
         markup = types.InlineKeyboardMarkup()  # markup for inline keyboard
         btn1 = types.InlineKeyboardButton("rozkład", callback_data="button1")
         btn2 = types.InlineKeyboardButton("pogodę", callback_data="button2")
@@ -306,7 +306,8 @@ def telegram_bot(token):
 
         Args:
             message (object): passed from wrapper telebot, contains information about the message
-        """        
+        """
+        add_new(message.chat.id)  # add chat_id to database and turn on bot for this user        
         msg = bot.send_message(message.chat.id, f"{message.from_user.first_name}\n"
                                           f"Jestem botem, który pomaga dostarczyć wszystkie niezbędne informacje dla początkujących i"
                                           f" zaawansowanych operatorów betonomeszarek\n"
@@ -329,12 +330,14 @@ def telegram_bot(token):
         Args:
             message (object): passed from wrapper telebot, contains information about the message
         """
+        add_new(message.chat.id)  # add chat_id to database and turn on bot for this user
         msg = bot.send_message(message.chat.id, "Oto ci, <tg-spoiler>kurwa</tg-spoiler>, rozkład: https://t.me/betonycz_bot/holcim_lista", parse_mode='HTML')
         delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after Settings.pause_del_message seconds
         delete_message(message.chat.id, message.message_id, Settings.pause_del_request)
 
     @bot.message_handler(commands=["co"])
     def send_answer(message):
+        add_new(message.chat.id)  # add chat_id to database and turn on bot for this user
         msg = bot.send_message(message.chat.id, answer_to_request(), parse_mode='HTML')
         delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after Settings.pause_del_message seconds
         delete_message(message.chat.id, message.message_id, Settings.pause_del_request)
@@ -359,7 +362,8 @@ def telegram_bot(token):
 
         Args:
             message (object): passed from wrapper telebot, contains information about the message
-        """        
+        """  
+        add_new(message.chat.id)  # add chat_id to database and turn on bot for this user      
         msg = bot.send_message(message.chat.id, "Wprowadź nazwę", reply_markup=types.ForceReply(), parse_mode='HTML')
         bot.register_next_step_handler(msg, ask_name_budowy)
 
@@ -368,7 +372,8 @@ def telegram_bot(token):
 
         Args:
             message (object): passed from wrapper telebot, contains information about the message
-        """        
+        """  
+        add_new(message.chat.id)  # add chat_id to database and turn on bot for this user      
         if message.content_type == 'location':
             # answer correct, continue
             global name_bud
@@ -389,7 +394,7 @@ def telegram_bot(token):
 
         Args:
             message (object): passed from wrapper telebot, contains information about the message
-        """        
+        """
         if message.content_type == 'text':
             global name_bud
             # answer correct, continue
@@ -410,7 +415,8 @@ def telegram_bot(token):
 
         Args:
             message (object): passed from wrapper telebot, contains information about the message
-        """        
+        """
+        add_new(message.chat.id)  # add chat_id to database and turn on bot for this user        
         text_message = message.text
         # added message from user to conversation history for chatgpt bot
         if message.content_type == 'text':
@@ -484,7 +490,7 @@ def telegram_bot(token):
 
         Args:
             message (_type_): _description_
-        """        
+        """
         try:
             # getting voice message file
             file_info = bot.get_file(message.voice.file_id)
@@ -554,7 +560,8 @@ def telegram_bot(token):
 
         Args:
             message (object): passed from wrapper telebot, contains information about the message
-        """        
+        """
+        add_new(message.chat.id)  # add chat_id to database and turn on bot for this user        
 
         threading.Thread(target=palec_voice, args=(message,)).start()
 
