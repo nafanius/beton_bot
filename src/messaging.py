@@ -7,6 +7,14 @@ db_lock = threading.Lock()
 
 
 def on(chat_id):
+    """Add id chat or turn on the existing one in the database.
+
+    Args:
+        chat_id (str): Chat identifier.
+
+    Returns:
+        str: Message indicating the status of operational information reception.
+    """    
     with db_lock:
         add_id_chat_or_turn_on(chat_id)
 
@@ -14,6 +22,14 @@ def on(chat_id):
 
 
 def off(chat_id):
+    """Add id chat or turn off the existing one in the database.
+
+    Args:
+        chat_id (str): Chat identifier.
+
+    Returns:
+        str: Message indicating the status of operational information reception.
+    """    
     with db_lock:
         add_id_chat_or_turn_off(chat_id)
 
@@ -21,6 +37,11 @@ def off(chat_id):
 
 
 def get_all_chat():
+    """Get all active chat IDs from the database with is_active set to True.
+
+    Returns:
+        list: list of active chat IDs.
+    """    
     with db_lock:
         return add_all_acive_chat_id()
 

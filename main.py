@@ -130,7 +130,7 @@ def telegram_bot(token):
                         except Exception as err:
                             inf(id)
                             inf(err)
-                            off(id) # turn off bot for this user if error occurs
+
 
                         time.sleep(2)  # sleep for 2 seconds to avoid flooding the server with
                     time.sleep(90)  # check every 90 seconds to avoid multiple sends in the same minute
@@ -149,7 +149,6 @@ def telegram_bot(token):
                             except Exception as err:
                                 inf(id)
                                 inf(err)
-                                off(id) # turn off bot for this user if error occurs
 
                             time.sleep(2) 
 
@@ -161,7 +160,6 @@ def telegram_bot(token):
                             except Exception as err:
                                 inf(id)
                                 inf(err)
-                                off(id) # turn off bot for this user if error occurs
                                 
                             time.sleep(2)
 
@@ -287,7 +285,7 @@ def telegram_bot(token):
             message (object): passed from wrapper telebot, contains information about the message
         """        
         print(message.chat.id)
-        off(message.chat.id)  # add chat_id to database and turn off bot for this user
+        on(message.chat.id)  # add chat_id to database and turn on bot for this user
         markup = types.InlineKeyboardMarkup()  # markup for inline keyboard
         btn1 = types.InlineKeyboardButton("rozkład", callback_data="button1")
         btn2 = types.InlineKeyboardButton("pogodę", callback_data="button2")
@@ -315,13 +313,13 @@ def telegram_bot(token):
                                           f"<b><u>Wpisz:</u></b>\n'/h' - i opowiem ci, co potrafię\n"
                                           f"<b><u>Wpisz:</u></b>\n'/co' - i opowiem ci, co będą ładować w ciągu najbliższych 30 minut \n"
                                           f"<b><u>Powiedz:</u></b>\nPowiedz mi <code>PALEC</code> i swoje pytanie, a opowiem ci wszystko, co chcesz\n"
-                                          f"<b><u>Podaj:</u></b>\nPodaj numer  - '<tg-spoiler>chuj/хуй12</tg-spoiler>' lub '<tg-spoiler>сhuj/хуй</tg-spoiler> 12:00' i, jeśli cię teraz ładują\n"
+                                          f"<b><u>Podaj:</u></b>\nPodaj numer  - '<tg-spoiler>chuj/хуй12</tg-spoiler>' jeśli cię teraz ładują lub '<tg-spoiler>сhuj/хуй7</tg-spoiler> 12:00'\n"
                                           f"<b><u>Wpisz:</u></b>\n<code>?'Nazwa budowy'</code> i/lub 'numer kursu' a ja ci powiem numer <tg-spoiler>chuja</tg-spoiler>\n"
                                           f"<b><u>Wpisz:</u></b>\n'/start' -  Funkcje, które mogę wykonywać\n"
                                           f"<b><u>Wpisz:</u></b>\n'/on' -  Włączyć otrzymywanie informacji operacyjnej\n"
                                           f"<b><u>Wpisz:</u></b>\n'/off' -  Wyłączyć otrzymywanie informacji operacyjnej\n"
                                           f"<b><u>Wpisz:</u></b>\n'/lista' - Wyświetlić rozkład\n", parse_mode='HTML')
-        delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after 30 seconds
+        delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after Settings.pause_del_message seconds
         delete_message(message.chat.id, message.message_id, Settings.pause_del_request)
 
     @bot.message_handler(commands=["lista"])
@@ -332,13 +330,13 @@ def telegram_bot(token):
             message (object): passed from wrapper telebot, contains information about the message
         """
         msg = bot.send_message(message.chat.id, "Oto ci, <tg-spoiler>kurwa</tg-spoiler>, rozkład: https://t.me/betonycz_bot/holcim_lista", parse_mode='HTML')
-        delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after 30 seconds
+        delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after Settings.pause_del_message seconds
         delete_message(message.chat.id, message.message_id, Settings.pause_del_request)
 
     @bot.message_handler(commands=["co"])
     def send_answer(message):
         msg = bot.send_message(message.chat.id, answer_to_request(), parse_mode='HTML')
-        delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after 30 seconds
+        delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after Settings.pause_del_message seconds
         delete_message(message.chat.id, message.message_id, Settings.pause_del_request)
 
 
@@ -473,7 +471,7 @@ def telegram_bot(token):
 
                 answer_from_request = src.get_answer.answer_to_request(request, request_kurs)
                 msg = bot.reply_to(message, answer_from_request, parse_mode='HTML')
-                delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after 30 seconds
+                delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after Settings.pause_del_message seconds
                 delete_message(message.chat.id, message.message_id, Settings.pause_del_request)
 
             else:
