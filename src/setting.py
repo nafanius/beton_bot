@@ -44,7 +44,7 @@ lg = logger.debug
 cr = logger.critical
 inf = logger.info
 exp = logger.exception
-logging.disable(logging.DEBUG)
+# logging.disable(logging.DEBUG)
 # logging.disable(logging.INFO)
 # logging.disable(logging.CRITICAL)
 # logging.disable(logging.EXCEPTION)
