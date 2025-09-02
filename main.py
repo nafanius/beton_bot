@@ -137,7 +137,7 @@ def telegram_bot(token):
 
                 # check if it's time to send the evening message
                 # send infojrmation about changes in chromonogram 
-                if now.minute in [8, 38] :
+                if now.minute in [7, 27, 47] :
                     text_list_beton = lista_in_text_beton()
                     text_lista = src.get_lista.combination_of_some_days_list()
 
