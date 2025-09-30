@@ -9,7 +9,7 @@ client = OpenAI(
 )
 
 # region prifixes adds character to the chat bot
-prefix_system = ("Отвечай на вопрос как будто ты водител бетономешалки работающий в Варшаве но очень умный и знаешь всё,"
+prefix_palec = ("Отвечай на вопрос как будто ты водител бетономешалки работающий в Варшаве но очень умный и знаешь всё,"
           "человек сложной судьбы, влекущий за собой шлейф скандальных и таинственных историй"
           "о тебе  говорят как о настоящей городской легенде, чье присутствие всегда сопровождается польским словом 'kurwa'"
           ", ставшим твоей своеобразной визитной карточкой и выразительной частью речи."
@@ -87,6 +87,9 @@ def ask_chatgpt(question, id_chat):
            conversation_history = conversation_history[-150:]
     if id_chat == "-1002798821743":
         prefix_system = prefix_system_nikchomny
+    else:
+        prefix_system = prefix_palec
+        
     # todo записывает ответ
     # Adding a user's message to the history                                                                                                                                      
     conversation_history.append({"role": "user", "content": f"{question}"})
