@@ -10,7 +10,7 @@ class Settings:
     data_base_lista = 'sqlite:////home/user/.database_lista/web_lista.db'
     data_base_bot = 'sqlite:////home/user/.database_bot/bot_database.db'
     ID_GROUPS = ["-4533287060", "-4768722432"] # groups id where bot sends sheduled messages
-    ID_SEND_BOT = ["1276025555", "-1002713057290"] # there bot send message if he is asked
+    ID_SEND_BOT = ["1276025555", "-1002713057290", "-1002798821743"] # there bot send message if he is asked
     message_without_bot = "Coś mnie zmęczyłeś, pomilczmy trochę, <tg-spoiler>kurwa</tg-spoiler>" # answer bot when he is tired
     pause_del_message = 60
     pause_del_request = 10

@@ -445,7 +445,7 @@ def telegram_bot(token):
                 text_message = ' '.join(split_text[1:])
                 # try to get answer from chat bot
                 try:
-                    bot.reply_to(message, ask_chatgpt(text_message))
+                    bot.reply_to(message, ask_chatgpt(text_message, str(message.chat.id)))
                 except Exception as err:
                     inf(err)
                     bot.reply_to(message, Settings.message_without_bot)
@@ -533,7 +533,7 @@ def telegram_bot(token):
             # try to get answer from chat bot
             try:
                 # get answer from chatgpt
-                tts = gTTS(ask_chatgpt(text_message), lang='ru')
+                tts = gTTS(ask_chatgpt(text_message, str(message.chat.id)), lang='ru')
                 #  save answer to mp3 file
                 mp3_fp = io.BytesIO()
                 tts.write_to_fp(mp3_fp)
