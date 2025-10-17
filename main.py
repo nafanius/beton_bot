@@ -99,8 +99,6 @@ def telegram_bot(token):
                 inf(f"Ошибка при удалении: {e}")
         threading.Timer(delay, delete).start()
 
-
-
     def send_scheduled_message():
         """function for sending scheduled messages
         """        
@@ -169,7 +167,6 @@ def telegram_bot(token):
             inf(err)
             restart_service()
                 
-
     # lounch thread for scheduled messages
     threading.Thread(target=send_scheduled_message).start()
 
@@ -331,16 +328,22 @@ def telegram_bot(token):
             message (object): passed from wrapper telebot, contains information about the message
         """
         add_new(message.chat.id)  # add chat_id to database and turn on bot for this user
-        msg = bot.send_message(message.chat.id, "Oto ci, <tg-spoiler>kurwa</tg-spoiler>, rozkład: https://t.me/betonycz_bot/holcim_lista", parse_mode='HTML')
-        delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after Settings.pause_del_message seconds
-        delete_message(message.chat.id, message.message_id, Settings.pause_del_request)
+
+        chat_ids = get_all_chat() or []
+        if message.chat.id in chat_ids:
+            msg = bot.send_message(message.chat.id, "Oto ci, <tg-spoiler>kurwa</tg-spoiler>, rozkład: https://t.me/betonycz_bot/holcim_lista", parse_mode='HTML')
+            delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after Settings.pause_del_message seconds
+            delete_message(message.chat.id, message.message_id, Settings.pause_del_request)
 
     @bot.message_handler(commands=["co"])
     def send_answer(message):
         add_new(message.chat.id)  # add chat_id to database and turn on bot for this user
-        msg = bot.send_message(message.chat.id, answer_to_request(), parse_mode='HTML')
-        delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after Settings.pause_del_message seconds
-        delete_message(message.chat.id, message.message_id, Settings.pause_del_request)
+        
+        chat_ids = get_all_chat() or []
+        if message.chat.id in chat_ids:
+            msg = bot.send_message(message.chat.id, answer_to_request(), parse_mode='HTML')
+            delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after Settings.pause_del_message seconds
+            delete_message(message.chat.id, message.message_id, Settings.pause_del_request)
 
 
     @bot.message_handler(commands=["on"])
