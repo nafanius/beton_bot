@@ -330,7 +330,7 @@ def telegram_bot(token):
         add_new(message.chat.id)  # add chat_id to database and turn on bot for this user
 
         chat_ids = get_all_chat() or []
-        if message.chat.id in chat_ids:
+        if str(message.chat.id) in chat_ids:
             msg = bot.send_message(message.chat.id, "Oto ci, <tg-spoiler>kurwa</tg-spoiler>, rozkład: https://t.me/betonycz_bot/holcim_lista", parse_mode='HTML')
             delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after Settings.pause_del_message seconds
             delete_message(message.chat.id, message.message_id, Settings.pause_del_request)
@@ -338,9 +338,12 @@ def telegram_bot(token):
     @bot.message_handler(commands=["co"])
     def send_answer(message):
         add_new(message.chat.id)  # add chat_id to database and turn on bot for this user
-        
+
         chat_ids = get_all_chat() or []
-        if message.chat.id in chat_ids:
+        print(chat_ids)
+        print(message.chat.id)
+        print(str(message.chat.id) in chat_ids)
+        if str(message.chat.id) in chat_ids:
             msg = bot.send_message(message.chat.id, answer_to_request(), parse_mode='HTML')
             delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after Settings.pause_del_message seconds
             delete_message(message.chat.id, message.message_id, Settings.pause_del_request)
