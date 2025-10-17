@@ -294,7 +294,10 @@ def telegram_bot(token):
         markup.row(btn3, btn4)
         markup.add(btn5)  # add buttons to the markup
         markup.add(btn6)
-        bot.send_message(message.chat.id, "*Czym mogę pomóc?*:", reply_markup=markup, parse_mode='HTML')
+        
+        chat_ids = get_all_chat() or []
+        if str(message.chat.id) in chat_ids:
+            bot.send_message(message.chat.id, "*Czym mogę pomóc?*:", reply_markup=markup, parse_mode='HTML')
 
     # help
     @bot.message_handler(commands=['h'])
@@ -340,9 +343,6 @@ def telegram_bot(token):
         add_new(message.chat.id)  # add chat_id to database and turn on bot for this user
 
         chat_ids = get_all_chat() or []
-        print(chat_ids)
-        print(message.chat.id)
-        print(str(message.chat.id) in chat_ids)
         if str(message.chat.id) in chat_ids:
             msg = bot.send_message(message.chat.id, answer_to_request(), parse_mode='HTML')
             delete_message(message.chat.id, msg.message_id, Settings.pause_del_message)  # delete message after Settings.pause_del_message seconds
