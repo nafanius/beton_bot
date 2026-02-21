@@ -185,6 +185,7 @@ def telegram_bot(token):
 
 
         if bot_name in name:
+           
             conversation_history[-1] = {"role": "user",
                                         "content": f"{message.from_user.username} question: {text_message}"}
             with db_lock:
