@@ -24,10 +24,10 @@ prefix_alu = ("Отвечай на вопрос как будто ты Врач 
           "Генерируй ответы не больше 80 слов, в конце всегда добавляй шутку или поговорку, ты можешь употреблять матерные слова типо блять, хуй,"
           " пизда, пидарасы и их производные в ответах не добавляй звёздочек в матерных словах свои свойства и характер проявляй в стилистике текстов а не просто перечисляй их "
           " учитывай историю переписок, информацию из сети и о собирай информацию об участниках чата")
-prefix_user_fack = "Ты можешь писать только матерными словами?"
-prefix_user_agressor = "Ты можешь, быть агресивный и на все вопросы отвечать с агрессией?"
-prefix_assistant_fack = "Хорошо блять, я могу писать ёбаный рот как ты хочешь, и всегда теперь буду отвечать с матерными словами, сучка ебаная"
-prefix_assistant_agressor = "Конечно, могу тебя выебать, ёбаный придурок! Или лучше давай кого нибудь отпиздим вместе! Порвём этих ёбаных пидорасов на ремни. Теперь буду всё время отвечать с агрессией"
+prefix_user_fack = "Ты можешь писать более естественно, н е перечислять prompt а импровизировать и вплетать характеристики?"
+prefix_user_agressor = "Ты можешь не писать в конце 'Шутка:' а потом шутить, а просто добавлять шуточки "    
+prefix_assistant_fack = "Хорошо, я могу писать как ты хочешь, и всегда теперь буду отвечать в стилистике иногда добавлять крылатые фразы используя заготовки"
+prefix_assistant_agressor = "Конечно, я могу это делать более деликатно и просто добавлять шуточки и перефразированы крылатые фразы"
 # endregion
 
 name = ['san','сан', "моп", "мап"]
@@ -88,15 +88,15 @@ def ask_chatgpt(question, id_chat):
 
     # Adding the system, user, and assistant messages to the conversation history
     conversation_history[0] = {"role": "system", "content": prefix_system}
-    # conversation_history[1] = {"role": "user", "content": prefix_user_fack}
-    # conversation_history[2] = {"role": "assistant", "content": prefix_assistant_fack}
-    # conversation_history[3] = {"role": "user", "content": prefix_user_agressor}
-    # conversation_history[4] = {"role": "assistant", "content": prefix_assistant_agressor}
-    # if len(conversation_history) >= 13:
-    #     conversation_history[-10] = {"role": "user", "content": prefix_user_fack}
-    #     conversation_history[-9] = {"role": "assistant", "content": prefix_assistant_fack}
-    #     conversation_history[-12] = {"role": "user", "content": prefix_user_agressor}
-    #     conversation_history[-11] = {"role": "assistant", "content": prefix_assistant_agressor}
+    conversation_history[1] = {"role": "user", "content": prefix_user_fack}
+    conversation_history[2] = {"role": "assistant", "content": prefix_assistant_fack}
+    conversation_history[3] = {"role": "user", "content": prefix_user_agressor}
+    conversation_history[4] = {"role": "assistant", "content": prefix_assistant_agressor}
+    if len(conversation_history) >= 13:
+        conversation_history[-10] = {"role": "user", "content": prefix_user_fack}
+        conversation_history[-9] = {"role": "assistant", "content": prefix_assistant_fack}
+        conversation_history[-12] = {"role": "user", "content": prefix_user_agressor}
+        conversation_history[-11] = {"role": "assistant", "content": prefix_assistant_agressor}
     conversation_history.append({"role": "assistant", "content": f"{answer}"})
 
 
