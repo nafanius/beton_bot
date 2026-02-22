@@ -43,7 +43,7 @@ def save_dict_to_file(dictionary, filename):
         json.dump(dictionary, f, ensure_ascii=False, indent=4)
 
 
-def load_dict_from_file(filename)-> dict:
+def load_dict_from_file(filename):
     if os.path.isfile(filename):
         with open(filename, 'r', encoding='utf-8') as f:
             return json.load(f)
@@ -127,6 +127,11 @@ def telegram_bot(token):
 
 
             if bot_name in name:
+                conversation_history[-1] = {"role": "user",
+                                            "content": f"{message.from_user.username} question: {message.text}"}
+
+                with db_lock:
+                    save_dict_to_file(conversation_history, 'conversation_history.json')
 
                 split_text = text_message.split()
                 text_message = ' '.join(split_text[1:])
@@ -181,6 +186,11 @@ def telegram_bot(token):
 
         lg(bot_name)
         if bot_name in name:
+           
+            conversation_history[-1] = {"role": "user",
+                                        "content": f"{message.from_user.username} question: {text_message}"}
+            with db_lock:
+                save_dict_to_file(conversation_history, 'conversation_history.json')
 
             split_text = text_message.split()
             text_message = ' '.join(split_text[1:])
