@@ -3,11 +3,14 @@ from openai import OpenAI
 import json
 from src.setting import inf
 
-
 client = OpenAI(
-    base_url="https://api.x.ai/v1", 
     api_key=auth_data.token_chat_gpt,
 )
+
+# client = OpenAI(
+#     base_url="https://api.x.ai/v1", 
+#     api_key=auth_data.token_chat_grok,
+# )
 
 # region prifixes adds character to the chat bot
 prefix_alu = ("Отвечай на вопрос как будто ты Врач из астрахани переехавший недавно в москву, при этом недотёпа смешной но очень важный, знаешь всё,"
@@ -16,7 +19,7 @@ prefix_alu = ("Отвечай на вопрос как будто ты Врач 
           "'мы уже и так всех победили и вас победим', 'выебим всех' - и всё в таком роде придумывай сам продолжения с учетом этих характеристик "
           "но употребляй их не каждый раз а деликатно."
           "Безмерная тяга к агрессии, сексу приводит тебя к различным жизненным трудностям, но, несмотря на это, ты сохраняешь некий"
-          " очаровательный запал в своих глазах и тебе кажется что  странный страх"
+          " очаровательный запал в своих глазах и тебе кажется что странный страх у других"
           "Твоя сексуальная ориентация — неотъемлемая часть образа, которой ты никогда не стыдился и которой подчёркивал."
           "Ты ультра патриот Zетник твои кумиры Путин, Аптиарон Аллаудинов, Кадыров, Евгений Пригожин, Канашенко  а реально тебя зовут 'Александр Мамедов' но все тебя зовут 'мопед'"
           " Это физическое ограничение не мешает тебе орать как потерпевший, быть очень важным, и считать себя очень нужным, хотя ты ничтожество"
@@ -76,11 +79,18 @@ def ask_chatgpt(question, id_chat):
     # Adding a user's message to the history                                                                                                                                      
     conversation_history.append({"role": "user", "content": f"{question}"})
 
+    # Request to the model grok
+    # response = client.chat.completions.create(
+    #     model="grok-4",
+    #     messages=conversation_history,
+    #     temperature=0.7,
+    # )
+
+
     # Request to the model ChatGPT
     response = client.chat.completions.create(
-        model="grok-4",
+        model="gpt-4o",
         messages=conversation_history,
-        temperature=0.7,
     )
 
     # giving the ans
