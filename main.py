@@ -93,6 +93,103 @@ def telegram_bot(token):
                              f"Здарова курва новый член, <b>{new_member.first_name}!</b>\n"
                              f"Залетай в чатик курва мы тебя тут распердолим", parse_mode='HTML')
 
+    # region tap on Button
+    @bot.callback_query_handler(func=lambda call: True)
+    def handle_callback(call):
+        """processing tap on button in inline keyboard
+        """ 
+        answer_text = []
+              
+        if call.data == "button1":  # shedule
+
+            try:
+                answer = ask_chatgpt("Чё там у хохлов")
+            except Exception as err:
+                inf(err)
+                answer = Settings.message_without_bot
+
+            answer_text.append(f"Хохлам пизда и вот почему:\n{answer}")
+
+        elif call.data == "button2":  # weather
+            try:
+                answer = ask_chatgpt("Чё там у пендосов")
+            except Exception as err:
+                inf(err)
+                answer = Settings.message_without_bot
+
+            answer_text.append(f"Готов лизать ботинки Американцам и вот почему:\n{answer}")
+
+        
+        
+        elif call.data == "button3":  # construction sites
+
+            try:
+                answer = ask_chatgpt("Курс лечения для Сани Мопеда")
+            except Exception as err:
+                inf(err)
+                answer = Settings.message_without_bot
+
+            answer_text.append(f"КУРС ЛЕЧЕНИЯ МОПЕДА:\n{answer}")
+           
+        elif call.data == "button4": # contacts
+            try:
+                answer = ask_chatgpt("расскажи как ты любишь саню и как ты всех уничтожишь за него")
+            except Exception as err:
+                inf(err)
+                answer = Settings.message_without_bot
+
+            answer_text.append(f"За МОПЕДА и двор ебашу в упор:\n{answer}")
+        
+        elif call.data == "button5": # contacts
+
+            try:
+                answer = ask_chatgpt("Сегодня мы победили, перечисли")
+            except Exception as err:
+                inf(err)
+                answer = Settings.message_without_bot
+
+            answer_text.append(f"Победы на сегодня:\n{answer}")
+
+        elif call.data == "button6": # loading schedule
+            
+            answer_text.append("https://t.me/ApostleMoney")
+
+        try:
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=answer_text[0],
+                                    reply_markup=call.message.reply_markup, parse_mode='HTML')
+            
+        except Exception as error:
+            inf(error)
+
+    # endregion tap on Button
+
+
+
+    @bot.message_handler(commands=['start'])
+    def start_message(message):
+        """answering on command /start
+
+        Args:
+            message (object): passed from wrapper telebot, contains information about the message
+        """        
+        print(message.chat.id)
+        add_new(message.chat.id)  # add chat_id to database and turn on bot for this user
+        markup = types.InlineKeyboardMarkup()  # markup for inline keyboard
+        btn1 = types.InlineKeyboardButton("Чё там у хохлов", callback_data="button1")
+        btn2 = types.InlineKeyboardButton("Чё там у пендосов", callback_data="button2")
+        btn3 = types.InlineKeyboardButton("КУРС ЛЕЧЕНИЯ", callback_data="button3")
+        btn4 = types.InlineKeyboardButton("Напугать Чуркой", callback_data="button4")
+        btn5 = types.InlineKeyboardButton("КАКИЕ ПОБЕДЫ СЕГОДНЯ", callback_data="button5")
+        btn6 = types.InlineKeyboardButton("ДОНАТ ВСУ", callback_data="button6")
+        markup.row(btn1, btn2)
+        markup.row(btn3, btn4)
+        markup.add(btn5)  # add buttons to the markup
+        markup.add(btn6)
+        
+        chat_ids = get_all_chat() or []
+        if str(message.chat.id) in chat_ids:
+            bot.send_message(message.chat.id, "*В помощь Мопеду!*:", reply_markup=markup, parse_mode='HTML')
+
 
 
 
