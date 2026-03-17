@@ -186,9 +186,7 @@ def telegram_bot(token):
         markup.add(btn5)  # add buttons to the markup
         markup.add(btn6)
         
-        chat_ids = get_all_chat() or []
-        if str(message.chat.id) in chat_ids:
-            bot.send_message(message.chat.id, "*В помощь Мопеду!*:", reply_markup=markup, parse_mode='HTML')
+        bot.send_message(message.chat.id, "*В помощь Мопеду!*:", reply_markup=markup, parse_mode='HTML')
 
 
 
