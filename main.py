@@ -180,7 +180,7 @@ def telegram_bot(token):
         btn3 = types.InlineKeyboardButton("КУРС ЛЕЧЕНИЯ", callback_data="button3")
         btn4 = types.InlineKeyboardButton("Напугать Чуркой", callback_data="button4")
         btn5 = types.InlineKeyboardButton("КАКИЕ ПОБЕДЫ СЕГОДНЯ", callback_data="button5")
-        btn6 = types.InlineKeyboardButton("ДОНАТ ВСУ", callback_data="button6")
+        btn6 = types.InlineKeyboardButton("ПОМОЧЬ НАШИМ", callback_data="button6")
         markup.row(btn1, btn2)
         markup.row(btn3, btn4)
         markup.add(btn5)  # add buttons to the markup
