@@ -103,7 +103,7 @@ def telegram_bot(token):
         if call.data == "button1":  # shedule
 
             try:
-                answer = ask_chatgpt("Чё там у хохлов")
+                answer = ask_chatgpt("Чё там у хохлов",call.message.chat.id )
             except Exception as err:
                 inf(err)
                 answer = Settings.message_without_bot
@@ -112,7 +112,7 @@ def telegram_bot(token):
 
         elif call.data == "button2":  # weather
             try:
-                answer = ask_chatgpt("Чё там у пендосов")
+                answer = ask_chatgpt("Чё там у пендосов", call.message.chat.id )
             except Exception as err:
                 inf(err)
                 answer = Settings.message_without_bot
@@ -124,7 +124,7 @@ def telegram_bot(token):
         elif call.data == "button3":  # construction sites
 
             try:
-                answer = ask_chatgpt("Курс лечения для Сани Мопеда")
+                answer = ask_chatgpt("Курс лечения для Сани Мопеда", call.message.chat.id)
             except Exception as err:
                 inf(err)
                 answer = Settings.message_without_bot
@@ -133,7 +133,7 @@ def telegram_bot(token):
            
         elif call.data == "button4": # contacts
             try:
-                answer = ask_chatgpt("расскажи как ты любишь саню и как ты всех уничтожишь за него")
+                answer = ask_chatgpt("расскажи как ты любишь саню и как ты всех уничтожишь за него", call.message.chat.id)
             except Exception as err:
                 inf(err)
                 answer = Settings.message_without_bot
@@ -143,7 +143,7 @@ def telegram_bot(token):
         elif call.data == "button5": # contacts
 
             try:
-                answer = ask_chatgpt("Сегодня мы победили, перечисли")
+                answer = ask_chatgpt("Сегодня мы победили, перечисли", call.message.chat.id)
             except Exception as err:
                 inf(err)
                 answer = Settings.message_without_bot
@@ -186,7 +186,7 @@ def telegram_bot(token):
         markup.add(btn5)  # add buttons to the markup
         markup.add(btn6)
         
-        bot.send_message(message.chat.id, "*В помощь Мопеду!*:", reply_markup=markup, parse_mode='HTML')
+        bot.send_message(message.chat.id, "<b>В помощь Мопеду!:</b>", reply_markup=markup, parse_mode='HTML')
 
 
 
