@@ -1,12 +1,13 @@
-import src.auth_data as auth_data
-from openai import OpenAI
-import json
-from src.setting import inf
+import json  # noqa: EXE002
 
+from openai import OpenAI
+
+from src import auth_data
+from src.setting import inf
 
 client = OpenAI(
     base_url="https://api.x.ai/v1", 
-    api_key=auth_data.token_chat_gpt,
+    api_key=auth_data.token_chat_grok,
 )
 
 # region prifixes adds character to the chat bot
